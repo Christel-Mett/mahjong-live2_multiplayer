@@ -1,0 +1,14 @@
+# Abhängigkeiten
+node_modules/
+
+# Sensible Daten
+.env
+
+# Dokumente & Scripte aus dem Root (laut deinem Script)
+impressum.html
+datenschutz.html
+nutzung.html
+news.html
+MahjongTreff2*.md
+# Zip-Dateien
+*.zip

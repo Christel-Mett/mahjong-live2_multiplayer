@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Mahjong-Treff - Lobby</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="shared/bilder/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="shared/bilder/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="shared/bilder/favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="shared/bilder/favicon/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="shared/bilder/favicon/android-icon-192x192.png">
+    <link rel="shortcut icon" href="shared/bilder/favicon/favicon-32x32.ico">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Overlay Styles */
+        #search-overlay, #leaderboard-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: #d2b48c;
+        }
+
+        #leaderboard-overlay {
+            z-index: 3000;
+        }
+
+        .loader-box {
+            background-color: #2c3e50;
+            padding: 40px;
+            border: 2px solid #d2b48c;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .spinner {
+            border: 4px solid rgba(210, 180, 140, 0.3);
+            border-top: 4px solid #d2b48c;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .cancel-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #c0392b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .cancel-btn:hover {
+            background-color: #e74c3c;
+        }
+
+        /* Tabelle für Rangliste */
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            margin: 20px 0;
+        }
+        .leaderboard-table th {
+            padding: 10px;
+            border-bottom: 2px solid #d2b48c;
+            position: sticky;
+            top: 0;
+            background: #2c3e50;
+        }
+        .leaderboard-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid rgba(210,180,140,0.2);
+        }
+
+        /* Neue Stile für die Footer-Links */
+        .footer-links {
+            margin-left: 15px;
+        }
+        .footer-links a {
+            color: #ffffff;
+            text-decoration: none;
+            margin: 0 5px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        .footer-links a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+        
+			/* Container für die gesamte Emoji-Zeile inkl. Pfeile */
+			.emoji-wrapper {
+			    display: flex;
+			    align-items: center;
+			    background: rgba(255,255,255,0.05);
+			    border-radius: 5px;
+			    margin-bottom: 5px;
+			    border: 1px solid #444;
+			}
+			
+			/* Der eigentliche Emoji-Bereich */
+			#emoji-container {
+			    padding: 4px 8px !important;
+			    overflow-x: auto;
+			    white-space: nowrap;
+			    flex-grow: 1;
+			    /* Versteckt den Scrollbalken in allen Browsern */
+			    scrollbar-width: none; /* Firefox */
+			    -ms-overflow-style: none; /* IE/Edge */
+			}
+			#emoji-container::-webkit-scrollbar {
+			    display: none; /* Chrome/Safari */
+			}
+			
+			/* Styling für die Scroll-Pfeile */
+			.scroll-arrow {
+			    padding: 0 10px;
+			    cursor: pointer;
+			    font-weight: bold;
+			    color: #d2b48c;
+			    user-select: none;
+			    font-size: 1.2em;
+			}
+			.scroll-arrow:hover {
+			    color: #ffffff;
+			}
+    </style>
+</head>
+<body>
+    <div id="search-overlay">
+        <div class="loader-box">
+            <div class="spinner"></div>
+            <h2 id="search-status">Gegner wird gesucht...</h2>
+            <p>Bitte warten, wir finden einen passenden Partner.</p>
+            <button class="cancel-btn" onclick="cancelSearch()">Suche abbrechen</button>
+        </div>
+    </div>
+
+    <div id="leaderboard-overlay">
+        <div class="loader-box" style="width: 80%; max-width: 500px; max-height: 80vh; display: flex; flex-direction: column;">
+            <h2 style="margin-top: 0;">Globale Rangliste</h2>
+            
+            <div style="flex-grow: 1; overflow-y: auto; background: rgba(0,0,0,0.3); border: 1px solid #d2b48c; border-radius: 5px;">
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>Rang</th>
+                            <th>Name</th>
+                            <th style="text-align: right;">Punkte</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body">
+                        </tbody>
+                </table>
+            </div>
+
+            <button class="cancel-btn" style="background-color: #7f8c8d;" onclick="closeLeaderboard()">Schließen</button>
+        </div>
+    </div>
+
+<div id="idle-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 4000; justify-content: center; align-items: center; flex-direction: column; color: #d2b48c;">
+        <div class="loader-box">
+            <h2 id="idle-title" style="margin-top: 0;">Inaktivität</h2>
+            <p id="idle-text">Du bist seit längerer Zeit inaktiv. Willst du noch spielen?<br>Bestätige mit OK, andernfalls wirst du in <span id="idle-timer" style="font-weight: bold; font-size: 1.2em;">5:00</span> Minuten automatisch ausgeloggt.</p>
+            <button id="idle-ok-btn" class="nav-btn" style="background-color: #2ecc71; color: white; padding: 10px 40px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;" onclick="stayActive()">OK</button>
+        </div>
+    </div>
+
+    <div class="lobby-container-flex">
+        <h1 class="top-title">Mahjong-Treff Lobby</h1>
+        
+        <div class="lobby-content-row">
+				<div class="chat-area">
+				    <div class="area-label">Chatbereich</div>
+				    
+				    <div id="chat-messages"></div>
+				
+				    <div class="emoji-wrapper">
+				        <div class="scroll-arrow" onclick="scrollEmojis(-150)">&#10094;</div>
+				        
+				        <div id="emoji-container">
+				            </div>
+				        
+				        <div class="scroll-arrow" onclick="scrollEmojis(150)">&#10095;</div>
+				    </div>
+				
+				    <div class="chat-input-row">
+				        <input type="text" id="chatInput" placeholder="Nachricht schreiben...">
+				        <button class="send-btn" onclick="sendMessage()">Senden</button>
+				    </div>
+				</div>
+
+            <div class="user-area">
+                <div class="area-label">User online</div>
+                <div id="user-list"></div>
+            </div>
+        </div>
+
+
+        <div class="lobby-footer-nav" style="display: flex; gap: 10px; width: 100%; justify-content: space-between;">
+			    <button onclick="startMode('single')" class="nav-btn btn-1" style="flex: 1; min-width: 0; padding: 10px 5px; white-space: nowrap;">Einzelspiel</button>
+			    <button onclick="startMode('multi-random')" class="nav-btn btn-3" style="flex: 1; min-width: 0; padding: 10px 5px; white-space: nowrap;">Multi Zufall</button>
+			    <button onclick="startMode('multi-select')" class="nav-btn btn-3" style="flex: 1; min-width: 0; padding: 10px 5px; white-space: nowrap;">Multi Auswahl</button>
+			    <button onclick="showLeaderboard()" class="nav-btn" style="flex: 1; min-width: 0; padding: 10px 5px; white-space: nowrap; background-color: #f39c12; color: white;">Rangliste</button>
+			    <button onclick="logout()" class="nav-btn btn-4" style="flex: 1; min-width: 0; padding: 10px 5px; white-space: nowrap;">Abmelden</button>
+			</div>
+			        
+        <div class="login-info">
+            Angemeldet als: <strong id="display-name-footer">-</strong>
+            <span class="footer-links">
+                <a href="impressum.html">Impressum</a> | 
+                <a href="datenschutz.html">Datenschutz</a> | 
+                <a href="nutzung.html">Nutzungsbedingungen</a> |
+                <a href="anleitung.html"><b>Spielanleitung</b></a> |
+					 <a href="news.html" class="info-pop-link">
+    <img src="shared/bilder/link/news.png" alt="News" style="height: 40px; vertical-align: middle; margin: 0 5px;">
+</a>
+            </span>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const meinName = localStorage.getItem('mahjongPlayerName');
+        
+        let searchStartTime = 0;
+
+        // Identifizierung beim Server
+        if (meinName) {
+            document.getElementById('display-name-footer').textContent = meinName;
+            socket.emit('re-identify', meinName);
+        } else {
+            window.location.href = 'index.html';
+        }
+
+
+			socket.on('update_user_list', (users) => {
+			    const list = document.getElementById('user-list');
+			    list.innerHTML = '';
+			    
+			    users.forEach(userData => {
+			        const div = document.createElement('div');
+			        div.className = 'user-entry';
+			        
+			        // Standardanzeige
+			        div.textContent = `${userData.username} (${userData.rang})`;
+			
+			        // Logik für die Farbhierarchie:
+			        if (userData.ingame) {
+			            // Spieler ist im Spiel -> gelb
+			            div.style.color = '#ede027'; 
+			            div.textContent += " (im Spiel)";
+			        } else if (userData.username.toLowerCase() === meinName.toLowerCase()) {
+			            // Ich selbst (und nicht im Spiel) -> Grün
+			            div.style.color = '#2ecc71';
+			            div.style.fontWeight = 'bold';
+			        }
+			
+			        list.appendChild(div);
+			    });
+			});
+
+        // Event wenn ein Match gefunden wurde
+        socket.on('match_found', (data) => {
+            const statusLabel = document.getElementById('search-status');
+            if (statusLabel) statusLabel.textContent = "Gegner gefunden! Synchronisiere Start...";
+            
+            const jetzt = Date.now();
+            const verzögerung = data.startTime - jetzt;
+
+            setTimeout(() => {
+                sessionStorage.setItem('mp_room', data.room);
+                sessionStorage.setItem('mp_layout', data.layout);
+                sessionStorage.setItem('mp_seed', data.seed);
+                sessionStorage.setItem('mp_opponent', data.opponent);
+                
+                window.location.href = 'multi/index.html';
+            }, Math.max(0, verzögerung));
+        });
+
+        // Ranglisten-Logik
+        function showLeaderboard() {
+            socket.emit('get_leaderboard');
+            document.getElementById('leaderboard-overlay').style.display = 'flex';
+        }
+
+        function closeLeaderboard() {
+            document.getElementById('leaderboard-overlay').style.display = 'none';
+        }
+
+			socket.on('leaderboard_data', (data) => {
+            const tbody = document.getElementById('leaderboard-body');
+            tbody.innerHTML = ''; 
+
+            data.forEach((user) => {
+                const row = document.createElement('tr');
+                if (user.username === meinName) {
+                    row.style.backgroundColor = 'rgba(210, 180, 140, 0.2)';
+                    row.style.fontWeight = 'bold';
+                }
+
+                // Wir nutzen jetzt user.rang statt index + 1
+                row.innerHTML = `
+                    <td>${user.rang}.</td>
+                    <td>${user.username}</td>
+                    <td style="text-align: right;">${user.mp_points}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        });
+
+			function startMode(mode) {
+			    if (mode === 'single') {
+			        window.location.href = 'single/index.html';
+			    } else if (mode === 'multi-random') {
+			        showSearchOverlay();
+			    } else if (mode === 'multi-select') {
+			        // Neu: Weiterleitung zur Auswahl-Lobby
+			        window.location.href = 'auswahl/lobby-auswahl.html';
+			    } else {
+			        alert('Modus kommt bald!');
+			    }
+			}
+			        function showSearchOverlay() {
+            searchStartTime = Date.now();
+            document.getElementById('search-status').textContent = "Gegner wird gesucht...";
+            document.getElementById('search-overlay').style.display = 'flex';
+            socket.emit('join_queue');
+        }
+
+        function cancelSearch() {
+            socket.emit('cancel_queue');
+            document.getElementById('search-overlay').style.display = 'none';
+        }
+
+       function logout() {
+		    // 1. Dem Server via Socket Bescheid geben (optional, aber sauber für die Userliste)
+		    socket.emit('logout'); 
+		    
+		    // 2. Den lokal gespeicherten Namen entfernen
+		    localStorage.removeItem('mahjongPlayerName');
+		    
+		    // 3. Den HTTP-Logout aufrufen (zerstört die Session und leitet zur index.html um)
+		    window.location.href = '/logout'; 
+		}
+
+        // ******************************
+        // Die alte sendMessage Funktion wurde entfernt.
+        // ******************************
+        
+        // --- Inaktivitäts-Management ---
+			let idleTimer;
+			let countdownInterval;
+			const IDLE_LIMIT = 30 * 60 * 1000; // 30 Minuten bis zur Warnung
+			const COUNTDOWN_LIMIT = 5 * 60;    // 5 Minuten Countdown nach Erscheinen
+			
+			function resetIdleTimer() {
+			    // Falls wir bereits "Abgemeldet" sind, stoppen wir jegliche Aktivitätsprüfung
+			    const titleElement = document.getElementById('idle-title');
+			    if (titleElement && titleElement.textContent === "Abgemeldet") return;
+			
+			    clearTimeout(idleTimer);
+			    hideIdleOverlay();
+			    
+			    // Timer neu starten
+			    idleTimer = setTimeout(showIdleOverlay, IDLE_LIMIT);
+			}
+			
+			function showIdleOverlay() {
+			    const overlay = document.getElementById('idle-overlay');
+			    const timerDisplay = document.getElementById('idle-timer');
+			    if (!overlay || !timerDisplay) return;
+			
+			    overlay.style.display = 'flex';
+			    
+			    let timeLeft = COUNTDOWN_LIMIT;
+			
+			    clearInterval(countdownInterval);
+			    countdownInterval = setInterval(() => {
+			        timeLeft--;
+			        
+			        const mins = Math.floor(timeLeft / 60);
+			        const secs = timeLeft % 60;
+			        timerDisplay.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+			
+			        // Optische Warnung: In der letzten Minute wird der Timer rot
+			        if (timeLeft <= 60) {
+			            timerDisplay.style.color = "#c0392b";
+			        } else {
+			            timerDisplay.style.color = "#d2b48c";
+			        }
+			
+			        if (timeLeft <= 0) {
+			            performAutoLogout();
+			        }
+			    }, 1000);
+			}
+			
+			function stayActive() {
+			    hideIdleOverlay();
+			    resetIdleTimer();
+			}
+			
+			function hideIdleOverlay() {
+			    clearInterval(countdownInterval);
+			    const overlay = document.getElementById('idle-overlay');
+			    if (overlay) overlay.style.display = 'none';
+			}
+			
+			function performAutoLogout() {
+			    clearInterval(countdownInterval);
+			    
+			    // UI auf "Abgemeldet" umstellen
+			    const title = document.getElementById('idle-title');
+			    const text = document.getElementById('idle-text');
+			    const btn = document.getElementById('idle-ok-btn');
+			
+			    if (title) title.textContent = "Abgemeldet";
+			    if (text) text.innerHTML = "Du wurdest wegen längerer Inaktivität ausgeloggt.";
+			    if (btn) {
+			        btn.textContent = "Zum Login";
+			        btn.style.backgroundColor = "#7f8c8d";
+			        btn.onclick = () => { window.location.href = '/logout'; };
+			    }
+			    
+			    // Server informieren (zerstört die Session serverseitig)
+			    socket.emit('logout');
+			    
+			    // Nach 5 Sekunden automatisch umleiten, falls der User nicht klickt
+			    setTimeout(() => {
+			        window.location.href = '/logout';
+			    }, 5000);
+			}
+			
+			// Event-Listener für Interaktionen
+			// Jede dieser Aktionen setzt den 30-Minuten-Timer auf Null zurück
+			['mousedown', 'keydown', 'touchstart'].forEach(event => {
+			    window.addEventListener(event, resetIdleTimer);
+			});
+			
+			// Initialer Start beim Laden der Seite
+			resetIdleTimer();
+    </script>
+
+    <script src="chat-module.js"></script>
+    <script>
+        initChat(socket);
+    </script>
+    </body>
+</html>

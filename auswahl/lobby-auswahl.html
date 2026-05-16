@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Mahjong-Treff - Layout Auswahl</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="../shared/bilder/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="../shared/bilder/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../shared/bilder/favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../shared/bilder/favicon/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../shared/bilder/favicon/android-icon-192x192.png">
+    <link rel="shortcut icon" href="../shared/bilder/favicon/favicon-32x32.ico">
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        body {
+            background-image: url('../shared/hintergrund/chinese.png');
+            background-size: cover;
+            background-attachment: fixed;
+            color: #d2b48c;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .selection-container {
+            background: rgba(20, 30, 40, 0.95);
+            border: 3px solid #d2b48c;
+            border-radius: 15px;
+            padding: 30px;
+            width: 95%;
+            max-width: 1100px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 0 30px rgba(0,0,0,0.7);
+            position: relative;
+        }
+
+        h1 {
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            width: 100%;
+            overflow-y: auto;
+            padding-right: 10px;
+            margin-bottom: 20px;
+        }
+
+        .layout-grid::-webkit-scrollbar {
+            width: 8px;
+        }
+        .layout-grid::-webkit-scrollbar-thumb {
+            background: #d2b48c;
+            border-radius: 4px;
+        }
+
+        .layout-card {
+            background: rgba(44, 62, 80, 0.9);
+            border: 2px solid #d2b48c;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+        }
+
+        .layout-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #d2b48c;
+            background: rgba(52, 73, 94, 1);
+        }
+
+        .layout-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .layout-name {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .back-button {
+            background: #d2b48c;
+            color: #2c3e50;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: background 0.2s;
+        }
+
+        .back-button:hover {
+            background: #e5c9a5;
+        }
+
+        .top-back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 8px 15px;
+        }
+
+        /* Sub-Lobby Overlay */
+        #sub-lobby-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sub-lobby-box {
+            background: #2c3e50;
+            border: 3px solid #d2b48c;
+            border-radius: 15px;
+            /* Korrektur 1: Box etwas größer */
+            width: 750px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sub-lobby-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #d2b48c;
+            padding-bottom: 10px;
+        }
+
+        .sub-lobby-content {
+            display: flex;
+            gap: 20px;
+            /* Erlaubt der Userliste, die Höhe zu bestimmen */
+            align-items: stretch;
+        }
+
+        .layout-preview {
+            flex: 1;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .layout-preview img {
+            width: 100%;
+            border: 1px solid #d2b48c;
+            border-radius: 5px;
+        }
+
+        /* Korrektur 2: Buttons unter dem Vorschaubild untereinander */
+        .sub-lobby-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .user-list-container {
+            flex: 1;
+            background: rgba(0,0,0,0.3);
+            border-radius: 5px;
+            padding: 10px;
+            /* Korrektur 3: Höhe anpassen */
+            display: flex;
+            flex-direction: column;
+        }
+
+        #sub-lobby-users {
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .user-entry {
+            padding: 5px 10px;
+            border-bottom: 1px solid rgba(210, 180, 140, 0.2);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .user-rank {
+            color: #f1c40f;
+            font-size: 0.9em;
+        }
+
+        .btn-play {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+
+        .btn-cancel {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Stile für die Footer-Links */
+        .footer-links {
+            margin-top: 15px;
+            text-align: center;
+        }
+        .footer-links a {
+            color: #ffffff;
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 0.85em;
+            opacity: 0.7;
+        }
+        .footer-links a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        /* Spezifische Footer-Links für das Overlay */
+        .overlay-footer-links {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .overlay-footer-links a {
+            color: #ffffff;
+            text-decoration: none;
+            margin: 0 5px;
+            font-size: 0.75em;
+            opacity: 0.6;
+        }
+        .overlay-footer-links a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+		<div id="idle-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 4000; justify-content: center; align-items: center; flex-direction: column; color: #d2b48c;">
+		    <div class="loader-box" style="background: #2c3e50; padding: 30px; border-radius: 10px; border: 2px solid #d2b48c; text-align: center;">
+		        <h2 id="idle-title" style="margin-top: 0;">Inaktivität</h2>
+		        <p id="idle-text">Du bist seit längerer Zeit inaktiv. Willst du noch spielen?<br>Bestätige mit OK, andernfalls wirst du in <span id="idle-timer" style="font-weight: bold; font-size: 1.2em;">5:00</span> Minuten automatisch ausgeloggt.</p>
+		        <button id="idle-ok-btn" class="nav-btn" style="background-color: #2ecc71; color: white; padding: 10px 40px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;" onclick="stayActive()">OK</button>
+		    </div>
+		</div>
+    <div class="selection-container">
+        <h1>Wähle dein Layout</h1>
+        
+        <div class="layout-grid" id="layoutGrid">
+            </div>
+
+        <button class="back-button" onclick="window.location.href='../lobby.html'">Zurück zur Hauptlobby</button>
+
+        <div class="footer-links">
+            <a href="../impressum.html" target="_blank">Impressum</a> | 
+            <a href="../datenschutz.html" target="_blank">Datenschutz</a> | 
+            <a href="../nutzung.html" target="_blank">Nutzungsbedingungen</a>
+        </div>
+    </div>
+
+    <div id="sub-lobby-overlay">
+        <div class="sub-lobby-box">
+            <div class="sub-lobby-header">
+                <h2 id="selected-layout-title">Layout Name</h2>
+                <span id="lobby-status-text" style="color: #d2b48c; font-size: 0.9em;">Bereit zum Spielen</span>
+            </div>
+            
+            <div class="sub-lobby-content">
+                <div class="layout-preview">
+                    <img id="selected-layout-img" src="" alt="Preview">
+                    <div class="sub-lobby-buttons">
+                        <button class="btn-play" onclick="searchOpponent()">Jetzt Spielen</button>
+                        <button class="btn-cancel" onclick="closeSubLobby()">Abbrechen</button>
+                    </div>
+                    <div class="overlay-footer-links">
+                        <a href="../impressum.html" target="_blank">Impressum</a> | 
+                        <a href="../datenschutz.html" target="_blank">Datenschutz</a> | 
+                        <a href="../nutzung.html" target="_blank">Nutzungsbedingungen</a>
+                    </div>
+                </div>
+                <div class="user-list-container">
+                    <div style="font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #d2b48c;">Spieler in diesem Raum:</div>
+                    <div id="sub-lobby-users">
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        let currentLayoutId = null;
+        const meinName = localStorage.getItem('mahjongPlayerName');
+
+        socket.on('connect', () => {
+            if (meinName) {
+                socket.emit('reconnect_user', { username: meinName });
+            }
+        });
+
+        const layouts = [
+            { id: 'arrow', name: 'Pfeil', img: 'pfeil.png' },
+            { id: 'balance', name: 'Waage', img: 'waage.png' },
+            { id: 'bug', name: 'Käfer', img: 'kaefer.png' },
+            { id: 'chip', name: 'Chip', img: 'chip.png' },
+            { id: 'eagle', name: 'Adler', img: 'adler.png' },
+            { id: 'enterprise', name: 'Enterprise', img: 'enterprise.png' },
+            { id: 'flowers', name: 'Blumen', img: 'blumen.png' },
+            { id: 'future', name: 'Zukunft', img: 'zukunft.png' },
+            { id: 'garden', name: 'Garten', img: 'garten.png' },
+            { id: 'glade', name: 'Lichtung', img: 'lichtung.png' },
+            { id: 'helios', name: 'Helios', img: 'helios.png' },
+            { id: 'inner_circle', name: 'Innerer Kreis', img: 'innerer_kreis.png' },
+            { id: 'km', name: 'KM', img: 'km.png' },
+            { id: 'mesh', name: 'Netz', img: 'netz.png' },
+            { id: 'rocket', name: 'Rakete', img: 'rakete.png' },
+            { id: 'the_door', name: 'Die Tür', img: 'die_tuer.png' },
+            { id: 'time_tunnel', name: 'Zeittunnel', img: 'zeittunnel.png' }
+        ];
+
+        const grid = document.getElementById('layoutGrid');
+
+        layouts.forEach(layout => {
+            const card = document.createElement('div');
+            card.className = 'layout-card';
+            card.onclick = () => openSubLobby(layout);
+
+            card.innerHTML = `
+                <img src="../shared/bilder/layout-multi/${layout.img}" alt="${layout.name}">
+                <div class="layout-name">${layout.name}</div>
+                <div class="layout-stats" id="stats-${layout.id}" style="font-size: 0.85em; opacity: 0.8; margin-top: 5px;">0 User</div>
+            `;
+
+            grid.appendChild(card);
+        });
+
+        function openSubLobby(layout) {
+            currentLayoutId = layout.id;
+            document.getElementById('selected-layout-title').textContent = layout.name;
+            document.getElementById('selected-layout-img').src = `../shared/bilder/layout-multi/${layout.img}`;
+            document.getElementById('sub-lobby-overlay').style.display = 'flex';
+            
+            socket.emit('join_layout_room', layout.id);
+        }
+
+		  function closeSubLobby() {
+            if (currentLayoutId) {
+                socket.emit('leave_layout_room', currentLayoutId);
+                socket.emit('cancel_layout_queue'); // Suche abbrechen beim Schließen
+            }
+            document.getElementById('sub-lobby-overlay').style.display = 'none';
+            document.getElementById('lobby-status-text').textContent = "Bereit zum Spielen";
+            
+            // Button-Status zurücksetzen
+            document.querySelector('.btn-play').disabled = false;
+            document.querySelector('.btn-play').style.opacity = "1";
+            
+            currentLayoutId = null;
+        }
+
+        socket.on('update_layout_userlist', (users) => {
+            updateUserList(users);
+        });
+
+				function updateUserList(users) {
+				    const list = document.getElementById('sub-lobby-users');
+				    list.innerHTML = '';
+				    
+				    users.forEach((u) => {
+				        const div = document.createElement('div');
+				        div.className = 'user-entry';
+				        
+				        // Nutzt jetzt den echten 'rang' vom Server statt des Listen-Index
+				        div.innerHTML = `<span>${u.username}</span> <span class="user-rank">(${u.rang})</span>`;
+				        
+				        // Eigenen Namen zur besseren Orientierung hervorheben
+				        if (u.username === meinName) {
+				            div.style.color = '#2ecc71';
+				            div.style.fontWeight = 'bold';
+				        }
+				
+				        list.appendChild(div);
+				    });
+				}
+        
+        socket.on('match_found', (data) => {
+    console.log("Match gefunden! Daten:", data);
+    
+    // Wir speichern die Match-Daten im sessionStorage für die game.js
+    sessionStorage.setItem('mahjongMatchData', JSON.stringify(data));
+    
+    // Weiterleitung zum Spielverzeichnis
+    // WICHTIG: Pfad anpassen, falls deine multi/index.html woanders liegt
+    window.location.href = 'index.html'; 
+});
+
+		socket.on('layout_stats_update', (stats) => {
+		    for (const [layoutId, count] of Object.entries(stats)) {
+		        const statsElement = document.getElementById(`stats-${layoutId}`);
+		        if (statsElement) {
+		            statsElement.textContent = `${count} User`;
+		        }
+		    }
+		});
+
+		function searchOpponent() {
+		    console.log("Button geklickt. Aktuelle Layout-ID:", currentLayoutId); // Browser-Konsole Check
+		    
+		    if (!currentLayoutId) {
+		        alert("Fehler: Kein Layout ausgewählt!");
+		        return;
+		    }
+		    
+		    // Visuelles Feedback
+		    document.getElementById('lobby-status-text').textContent = "Suche Gegner...";
+		    document.querySelector('.btn-play').disabled = true;
+		    document.querySelector('.btn-play').style.opacity = "0.5";
+		
+		    console.log("Sende join_layout_queue an Server...");
+		    socket.emit('join_layout_queue', { layoutId: currentLayoutId });
+		}
+			// --- Inaktivitäts-Management (Angepasst für Unterordner) ---
+			let idleTimer;
+			let countdownInterval;
+			const IDLE_LIMIT = 30 * 60 * 1000; //30 Minuten
+			const COUNTDOWN_LIMIT = 5 * 60; //5 Minuten
+			
+			function resetIdleTimer() {
+			    if (document.getElementById('idle-title') && 
+			        document.getElementById('idle-title').textContent === "Abgemeldet") return;
+			    clearTimeout(idleTimer);
+			    hideIdleOverlay();
+			    idleTimer = setTimeout(showIdleOverlay, IDLE_LIMIT);
+			}
+			
+			function showIdleOverlay() {
+			    const overlay = document.getElementById('idle-overlay');
+			    const timerDisplay = document.getElementById('idle-timer');
+			    if (overlay) overlay.style.display = 'flex';
+			    let timeLeft = COUNTDOWN_LIMIT;
+			    clearInterval(countdownInterval);
+			    countdownInterval = setInterval(() => {
+			        timeLeft--;
+			        const mins = Math.floor(timeLeft / 60);
+			        const secs = timeLeft % 60;
+			        if (timerDisplay) timerDisplay.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+			        if (timeLeft <= 60 && timerDisplay) timerDisplay.style.color = "#c0392b";
+			        if (timeLeft <= 0) performAutoLogout();
+			    }, 1000);
+			}
+			
+			function stayActive() {
+			    hideIdleOverlay();
+			    resetIdleTimer();
+			}
+			
+			function hideIdleOverlay() {
+			    clearInterval(countdownInterval);
+			    const overlay = document.getElementById('idle-overlay');
+			    if (overlay) overlay.style.display = 'none';
+			}
+			
+			function performAutoLogout() {
+			    clearInterval(countdownInterval);
+			    const title = document.getElementById('idle-title');
+			    const text = document.getElementById('idle-text');
+			    const btn = document.getElementById('idle-ok-btn');
+			    if (title) title.textContent = "Abgemeldet";
+			    if (text) text.innerHTML = "Du wurdest wegen längerer Inaktivität ausgeloggt.";
+			    if (btn) {
+			        btn.textContent = "Zum Login";
+			        // PFAD-ANPASSUNG: Hier brauchen wir ../logout, da wir im Ordner /auswahl/ sind
+			        btn.onclick = () => { window.location.href = '../logout'; };
+			    }
+			    
+			    if (typeof socket !== 'undefined') {
+			        socket.emit('logout');
+			    }
+			    
+			    localStorage.removeItem('mahjongPlayerName');
+			
+			    setTimeout(() => {
+			        window.location.href = '../logout'; 
+			    }, 5000);
+			}
+			
+			['mousedown', 'keydown', 'touchstart'].forEach(evt => window.addEventListener(evt, resetIdleTimer));
+			resetIdleTimer();
+    </script>
+</body>
+</html>

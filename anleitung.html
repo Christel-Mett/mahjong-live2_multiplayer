@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Anleitung - Mahjong-Treff</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #2c3e50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+        .overlay-screen {
+            background: rgba(0, 0, 0, 0.85);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+        .menu-container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            line-height: 1.6;
+            text-align: left;
+        }
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 35px;
+            cursor: pointer;
+            color: #999;
+            line-height: 1;
+        }
+        .close-btn:hover { color: #333; }
+
+        h1 { 
+            margin-top: 0; 
+            border-bottom: 2px solid #d2b48c; 
+            padding-bottom: 10px;
+            color: #2c3e50;
+            font-size: 1.8em;
+        }
+
+        .odt-section {
+/*            white-space: pre-wrap;*/
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay-screen">
+        <div class="menu-container">
+            <span class="close-btn" onclick="window.history.back()">&times;</span>
+            <h1>Spielanleitung</h1>
+            
+            <div class="odt-section">Das Spiel ist ein Solitär-Mahjong.</div>
+<div class="odt-section">Das Spiel ist konzipiert als Browserspiel für einen PC. Es ist auch auf größeren Tablets mit einer 
+„Fullscreen Browser App“ (z. B. „Fully Kiosk Browser“) spielbar, 
+wurde aber nicht dafür konzipiert, einige Elemente sind ohne Maus und externe Tastatur nur schwer erreichbar.
+Auf einem Smartphone kann man es auch laden, dort dürfte es aber aufgrund des kleinen Bildschirms kaum spielbar sein.
+Das gesamte Spiel ist Open Source und steht unter GNU GPL Lizenz.
+Bilder und Spiellayouts sind dem unter gleicher Lizenz stehenden Spiel "KMahjong" entnommen<br><br>
+Es gibt in allen Spielvarianten eine Sidebar in der mit Schiebereglern die Lautstärke und die Größe der Spielfigur 
+angepasst werden können.<br><br>
+Ziel des Spiels ist es möglichst alle Steine auf einem Spielfeld zu entfernen.
+Dies geschieht durch anklicken zweier Steine mit dem selben Symbol.
+Ein Stein ist nur dann anklickbar wenn er vollständig nach oben und zu mindestens einer Seite (links o. Rechts) 
+frei liegt.<br><br>
+Für jedes so entfernte Steinpaar erhält der Spieler einen Punkt.
+Wird direkt im Anschluss ein weiteres Steinpaar mit dem gleichen Symbol angeklickt erhält er für dieses und jedes 
+weitere mit gleichen Symbol fünf Punkte.
+Wird das Feld vollständig abgebaut erhält der Spieler 50 Zusatzpunkte. Zusätzlich erhält er für jede Sekunde die 
+noch bis zur Erreichung von dreieinhalb Minuten Spielzeit übrig sind je einen weiteren Punkt.
+Nach 3:30 Minuten Spielzeit gibt es diesen Bonus nicht mehr.<br><br>
+Die Steine für „Blumen“ (mit Zahl) und „Jahreszeiten“ (mit Schriftzeichen) bilden je eine Gruppe in der alle Steine 
+miteinander gematcht werden können.<br><br>
+Das Spiel endet entweder durch das Entfernen aller Steine auf dem Spielfeld, durch Erreichen einer „Sackgasse“ 
+(es sind keine klickbaren Paare mehr vorhanden) 
+oder durch Aufgabe durch den Spieler.<br><br>
+Es stehen drei Spielvarianten zur Verfügung:<br>
++ Singlespiel – für einen Einzelspieler ohne Punktewertung in der Rangliste.<br>
++ Multiplayer Zufall – Spiel mit einem Gegner und zufälliger Wahl des Spielbrettes.<br>
++ Multiplayer Auswahl – Spiel mit einem Gegner und vorheriger Spielbrettwahl.<br><br>
+In der Singleplayervariante kann man einen oder mehrere Züge rückgängig machen und sich einen Tipp für ein 
+freies Steinpaar geben lassen.
+Es ist möglich den gleichen Spielbrettaufbau erneut zu starten oder ein neues Spiel zu beginnen.
+Die Wahl der Spielbretter ist direkt möglich. Es gibt 62 verschieden Spielbretter.
+Es gibt eine Bestenliste die aber nur lokal auf dem Endgerät gespeichert wird. Sie hat keine Auswirkung auf die 
+Rangliste.<br><br>
+Die Multiplayerspiele sind auf 17 Bretter beschränkt von denen jedes mit 144 Steinen aufgebaut ist.
+In der Variante „Auswahl“ lässt sich ein bestimmtes Brett wählen.<br><br>
+Das Matching zweier Spieler erfolgt in mehreren Stufen.<br>
+Zunächst für die Variante Zufall:<br>
+Stufe 1: Es wird nach einem Gegner gesucht mit höchstens +-20 Rangplätzen zum eigenen Rang.<br>
+Stufe 2: Wird innerhalb von 30 Sekunden kein passender Gegner gefunden wird mit dem nächstgelegenen verbunden.<br><br>
+Für die Variante Auswahl:<br>
+Stufe 1: wie in Zufall<br>
+Stufe 2: Nach Ablauf der 30 Sekunden wird weitere 30 Sekunden nach einem beliebigen Gegner für das gewählte Brett gesucht.<br>
+Stufe 3: Danach wird mit einem beliebigen Spieler eines anderen Raumes gematcht. 
+Hier wird dann das Spielfeld des Spielers genommen der die Gegnersuche zuerst auslöste.<br><br>
+Die Multiplayerspiele enden genau so wie die Singleplayerspiele, einziger Unterschied: 
+Nachdem der erste Spieler sein Spiel beendet hat erhält der zweite Spieler noch eine Restspielzeit von 
+30 Sekunden bevor auch sein Spiel endet.<br><br>
+Die Punkte werden für beide Spieler gewertet, es gibt keinen „Sieg-Bonus“, es gibt keine Punktabzüge.<br><br>
+Die Ränge / Plätze der Spieler ergeben sich aus ihrer Gesamtpunktzahl aller bisher gespielten Partien.<br><br>
+Es gibt Chatfunktionen.
+In der Lobby gibt es ein großes Chatfenster das jeder angemeldete User nutzen kann.
+In den Multiplayerspielen gibt es einen „Zwei-Personen-Chat“. Diese Funktion ist auf Tablets eigentlich nur mit 
+externer Tastatur nutzbar.
+Für alle Chats gilt die <a href="https://de.wikipedia.org/wiki/Netiquette" target="_blank" style="color: #2c3e50; text-decoration: underline;">Netiquette</a>, siehe hierzu auch den Part in den Nutzungsbedingungen. Die Chats werden nicht 
+dauerhaft gespeichert.
+Im Lobbychat werden nur die letzten 50 Nachrichten angezeigt, ältere werden automatisch gelöscht.
+Die Spielechats werden automatisch gelöscht wenn das Spielfeld verlassen wird.<br><br>
+
+<span class="bold">Viel Spaß beim Spielen!</span></div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Mahjong-Treff</title>
+    <meta name="description" content="Spiele Mahjong kostenlos online bei Mahjong-Treff, dem einzigen echten Multiplayer Solitär-Mahjongspiel. Triff Gleichgesinnte, verbessere deine Strategie und genieße spannende Partien mit echten Gegnern direkt im Browser.">
+<meta name="keywords" content="Mahjong, Online-Spiel, Multiplayer, Mahjong-Treff, Brettspiel, kostenlos spielen">    
+    
+    <link rel="icon" type="image/png" sizes="32x32" href="shared/bilder/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="shared/bilder/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="shared/bilder/favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="shared/bilder/favicon/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="shared/bilder/favicon/android-icon-192x192.png">
+    <link rel="shortcut icon" href="shared/bilder/favicon/favicon-32x32.ico">
+    <link rel="stylesheet" href="style.css">
+    <style>
+		    /* Piktogramm unten links */
+			.corner-piktogramm {
+			    position: fixed;
+			    bottom: 10px;
+			    left: 10px;
+			    z-index: 5; /* Hinter der Navigation, falls sie sich überlagern */
+			    pointer-events: none; /* Verhindert, dass das Bild Klicks abfängt */
+			}
+			
+			.corner-piktogramm img {
+			    width: 30%; /* 30% der Originalgröße */
+			    height: auto;
+			    display: block;
+			    opacity: 0.8; /* Optional: Leichte Transparenz für bessere Integration */
+			}
+        /* Kapsel-Navigation für das Startbild */
+        .bottom-nav {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(1px);
+            padding: 8px 25px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            white-space: nowrap;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .bottom-nav a, .bottom-nav a:visited {
+            color: #000 !important;
+            text-decoration: none;
+            margin: 0 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .bottom-nav a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        /* Stile für die rechtlichen Links innerhalb der Overlays */
+        .overlay-footer {
+            margin-top: 10px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(210, 180, 140, 0.3);
+            font-size: 0.8em;
+        }
+
+        #main-overlay .overlay-footer a, 
+        #main-overlay .overlay-footer a:visited {
+            color: #ffffff !important;
+            text-decoration: none;
+            margin: 0 5px;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        #main-overlay .overlay-footer a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        .start-prompt {
+            padding-bottom: 60px;
+        }
+        
+        /* Verhindert, dass das gesamte Overlay bei langen Inhalten springt */
+			#main-overlay .menu-container {
+			    max-height: 80vh;
+			    display: flex;
+			    flex-direction: column;
+			}
+			
+			/* Nur wenn die Registrierung aktiv ist, wird der Inhalt scrollbar */
+/* Rückt die Überschrift nach oben auf die Höhe des Schließen-Buttons */
+			#main-overlay .menu-container h1 {
+			    margin-top: -10px; /* Zieht die Überschrift nach oben */
+			    padding-right: 30px; /* Verhindert, dass Text und 'X' kollidieren */
+}
+			#register-section {
+			    max-height: 80vh; /* Deine bevorzugte Einstellung */
+			    overflow-y: auto;
+			    padding-right: 5px; /* Platzhalter, falls doch mal ein Rest-Abstand nötig ist */
+			
+			    /* Scrollbalken für Firefox verstecken */
+			    scrollbar-width: none; 
+			
+			    /* Scrollbalken für Internet Explorer und alte Edge-Versionen verstecken */
+			    -ms-overflow-style: none; 
+			}
+			
+			/* Scrollbalken für Chrome, Safari, Edge und Brave komplett unsichtbar machen */
+			#register-section::-webkit-scrollbar {
+			    display: none;
+			}
+			
+			/* Damit das "X" zum Schließen immer oben rechts fixiert bleibt */
+			.close-btn {
+			    position: absolute;
+			    z-index: 10;
+			}
+
+        /* Neu: Stil für die E-Mail Fehlermeldung */
+        #email-error {
+            color: #ff4d4d;
+            font-size: 0.75em;
+            margin-top: -10px;
+            margin-bottom: 10px;
+            display: none;
+        }
+        
+			.single-tape-badge {
+			    position: fixed;
+			    top: 80px;
+			    left: 10px;
+			    width: 240px;
+			    padding: 20px 15px;
+			    background: #cc1111;
+			    color: #FFE000 !important;
+			    text-decoration: none;
+			    font-size: 1em;
+			    font-weight: 1000;
+			    text-align: center;
+			    line-height: 1.4;
+			    transform: rotate(-40deg);
+			    z-index: 20;
+			    display: block;
+			    clip-path: polygon(
+			        0% 0%,
+			        100% 0%,
+			        96% 9%, 100% 19%, 95% 29%, 99% 39%, 94% 50%, 98% 61%, 96% 71%, 100% 82%, 95% 91%,
+			        100% 100%,
+			        0% 100%,
+			        4% 91%, 1% 80%, 5% 69%, 0% 58%, 6% 47%, 2% 36%, 5% 25%, 1% 14%, 4% 5%
+			    );
+			    filter: drop-shadow(2px 3px 5px rgba(0,0,0,0.5));
+			    text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+			    transition: background 0.2s;
+			}
+			.single-tape-badge:hover {
+			    background: #ee2222;
+			    color: #FFE000 !important;
+			}
+    </style>
+    
+<script src="https://www.google.com/recaptcha/api.js?render=6Lf74JQsAAAAAKrolQf2ldBBwaCLwSxhj0bhhJAO"></script>    
+    
+</head>
+<body onclick="showOverlay()">
+
+    <div id="initial-prompt" class="start-prompt">
+        Klicke zum Starten
+    </div>
+
+    <div class="bottom-nav" id="site-footer" onclick="event.stopPropagation()">
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
+        <a href="nutzung.html">Nutzungsbedingungen</a>
+        <a href="anleitung.html">Spielanleitung</a>
+    </div>
+
+    <div id="main-overlay" class="overlay-screen" onclick="event.stopPropagation()">
+        <div class="menu-container">
+            <span class="close-btn" onclick="closeOverlay()">&times;</span>
+            
+            <h1>Mahjong-Treff</h1>
+
+            <div id="login-section">
+                <div class="input-group">
+                    <label for="playerName">Benutzername</label>
+                    <input type="text" id="playerName" placeholder="Name eingeben..." maxlength="15">
+                </div>
+                <div class="input-group">
+                    <label for="playerPass">Passwort</label>
+                    <input type="password" id="playerPass" placeholder="Passwort...">
+                </div>
+                <button onclick="attemptLogin()" class="menu-btn">Anmelden</button>
+                
+                <p class="footer-note">
+                    <a href="#" onclick="forgotPassword()" class="reg-link" style="font-size: 0.85em; opacity: 0.7;">Passwort vergessen?</a>
+                </p>
+
+                <p class="footer-note">
+                    Noch kein Konto? <br>
+                    <a href="#" onclick="toggleView('register')" class="reg-link">Hier registrieren</a>
+                </p>
+
+                <div class="overlay-footer">
+                    <a href="impressum.html">Impressum</a> | 
+                    <a href="datenschutz.html">Datenschutz</a> | 
+                    <a href="nutzung.html">Nutzungsbedingungen</a>
+                </div>
+            </div>
+
+            <div id="register-section" class="hidden">
+                <h2>Registrierung</h2>
+                <div class="input-group">
+                    <label for="regName">Benutzername</label>
+                    <input type="text" id="regName" maxlength="15">
+                </div>
+                <div class="input-group">
+                    <label for="regEmail">E-Mail Adresse</label>
+                    <input type="text" id="regEmail" oninput="toggleRegisterButton()">
+                </div>
+                <div class="input-group">
+                    <label for="regEmailConfirm">E-Mail Adresse wiederholen</label>
+                    <input type="text" id="regEmailConfirm" oninput="toggleRegisterButton()">
+                </div>
+                <div id="email-error">Die E-Mail-Adressen stimmen nicht überein.</div>
+                <div class="input-group">
+                    <label for="regPass">Passwort</label>
+                    <input type="password" id="regPass">
+                </div>
+                <div class="input-group">
+                    <label for="regPassConfirm">Passwort wiederholen</label>
+                    <input type="password" id="regPassConfirm">
+                </div>
+               
+                <div class="input-group" style="text-align: left; margin-bottom: 15px;">
+                    <input type="checkbox" id="acceptTerms" style="width: auto; margin-right: 10px;" onclick="toggleRegisterButton()">
+                    <label for="acceptTerms" style="display: inline; font-size: 0.8em; cursor: pointer;">
+                        Datenschutzbestimmungen und die Nutzungsbedingungen gelesen
+                    </label>
+                </div>
+                
+                <button id="registerBtn" onclick="attemptRegister()" class="menu-btn" disabled style="opacity: 0.5; cursor: not-allowed;">
+                    Konto erstellen
+                </button>
+
+                <p class="footer-note">
+                    Bereits registriert? <br>
+                    <a href="#" onclick="toggleView('login')" class="reg-link">Zurück zum Login</a>
+                </p>
+
+                <div class="overlay-footer">
+                    <a href="impressum.html">Impressum</a> | 
+                    <a href="datenschutz.html">Datenschutz</a> | 
+                    <a href="nutzung.html">Nutzungsbedingungen</a>
+               <p style="font-size: 0.7em; opacity: 0.6; margin-top: 10px;">
+					    Diese Seite ist durch reCAPTCHA geschützt. Es gelten die 
+					    <a href="https://policies.google.com/privacy" target="_blank">Datenschutzbestimmungen</a> und 
+					    <a href="https://policies.google.com/terms" target="_blank">Nutzungsbedingungen</a> von Google.
+					</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="/single/" onclick="event.stopPropagation()" class="single-tape-badge">
+    Singlespiel –<br>ohne Anmeldung testen
+	 </a>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        function showOverlay() {
+            document.getElementById('main-overlay').style.display = 'flex';
+            document.getElementById('initial-prompt').classList.add('hidden');
+            document.getElementById('site-footer').classList.add('hidden');
+        }
+
+        function closeOverlay() {
+            document.getElementById('main-overlay').style.display = 'none';
+            document.getElementById('initial-prompt').classList.remove('hidden');
+            document.getElementById('site-footer').classList.remove('hidden');
+        }
+
+        function toggleView(view) {
+            const loginSide = document.getElementById('login-section');
+            const regSide = document.getElementById('register-section');
+
+            if (view === 'register') {
+                loginSide.classList.add('hidden');
+                regSide.classList.remove('hidden');
+                document.getElementById('acceptTerms').checked = false;
+                toggleRegisterButton();
+            } else {
+                regSide.classList.add('hidden');
+                loginSide.classList.remove('hidden');
+            }
+        }
+
+        function toggleRegisterButton() {
+            const checkbox = document.getElementById('acceptTerms');
+            const email = document.getElementById('regEmail').value.trim();
+            const emailConf = document.getElementById('regEmailConfirm').value.trim();
+            const errorMsg = document.getElementById('email-error');
+            const btn = document.getElementById('registerBtn');
+            
+            // Fehlermeldung anzeigen, wenn beide Felder befüllt sind aber nicht matchen
+            if (email !== "" && emailConf !== "" && email !== emailConf) {
+                errorMsg.style.display = 'block';
+            } else {
+                errorMsg.style.display = 'none';
+            }
+
+            if (checkbox.checked && email === emailConf && email !== "") {
+                btn.disabled = false;
+                btn.style.opacity = "1";
+                btn.style.cursor = "pointer";
+            } else {
+                btn.disabled = true;
+                btn.style.opacity = "0.5";
+                btn.style.cursor = "not-allowed";
+            }
+        }
+
+        function attemptLogin() {
+            const name = document.getElementById('playerName').value.trim();
+            const pass = document.getElementById('playerPass').value.trim();
+            if (!name || !pass) {
+                alert('Bitte Name und Passwort eingeben!');
+                return;
+            }
+            socket.emit('login_attempt', { username: name, password: pass });
+        }
+
+			socket.on('login_response', (response) => {
+			    if (response.success) {
+			        // Wir speichern den Namen wie gewohnt
+			        localStorage.setItem('mahjongPlayerName', response.username);
+			        
+			        // NEU: Die Brücke zum Express-Server schlagen
+			        fetch('/set-session', {
+			            method: 'POST',
+			            headers: { 'Content-Type': 'application/json' },
+			            body: JSON.stringify({ username: response.username })
+			        })
+			        .then(res => res.json())
+			        .then(sessionData => {
+			            if (sessionData.success) {
+			                // Erst wenn der Server "Ok" sagt, leiten wir weiter
+			                window.location.href = 'lobby.html';
+			            } else {
+			                alert('Sitzungsfehler: Der Server konnte die Anmeldung nicht bestätigen.');
+			            }
+			        })
+			        .catch(err => {
+			            console.error('Session-Error:', err);
+			            alert('Verbindungsfehler beim Erstellen der Sitzung.');
+			        });
+			    } else {
+			        alert('Fehler: ' + response.message);
+			    }
+			});
+
+			function attemptRegister() {
+			    const name = document.getElementById('regName').value.trim();
+			    const email = document.getElementById('regEmail').value.trim();
+			    const emailConf = document.getElementById('regEmailConfirm').value.trim();
+			    const pass = document.getElementById('regPass').value;
+			    const passConf = document.getElementById('regPassConfirm').value;
+			
+			    if (!name || !email || !pass) {
+			        alert('Bitte alle Felder ausfüllen!');
+			        return;
+			    }
+			    if (email !== emailConf) {
+			        // Button sollte eigentlich disabled sein, aber Sicherheitshalber:
+			        return;
+			    }
+			    if (pass !== passConf) {
+			        alert('Die Passwörter stimmen nicht überein!');
+			        return;
+			    }
+			
+			    // NEU: ReCaptcha v3 Token generieren
+			    grecaptcha.ready(function() {
+			        grecaptcha.execute('6Lf74JQsAAAAAKrolQf2ldBBwaCLwSxhj0bhhJAO', {action: 'submit'}).then(function(token) {
+			            socket.emit('register_attempt', { 
+			                username: name, 
+			                email: email, 
+			                password: pass, 
+			                captchaToken: token // Das Token wird hier mitgeschickt
+			            });
+			        });
+			    });
+			}
+
+			function forgotPassword() {
+			    const email = prompt("Bitte gib deine E-Mail-Adresse ein, um einen Reset-Link zu erhalten:");
+			    if (email && email.trim() !== "") {
+			        socket.emit('forgot_password_attempt', email.trim());
+			    }
+			}
+			
+			// Antwort vom Server (aus der neuen pw_reset.js) verarbeiten
+			socket.on('forgot_password_response', (response) => {
+			    alert(response.message);
+			});
+
+        socket.on('register_response', (response) => {
+            if (response.success) {
+                alert('Registrierung erfolgreich! Bitte klicke auf den Bestätigungslink in deinem E-Mail-Postfach, um dein Konto freizuschalten. Hast du keine Email erhalten, dann überprüfe die Schreibweise deine Emailadresse.');
+                toggleView('login');
+            } else {
+                alert('Fehler: ' + response.message);
+            }
+        });
+
+        document.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                const isRegVisible = !document.getElementById('register-section').classList.contains('hidden');
+                if (isRegVisible) {
+                    const btn = document.getElementById('registerBtn');
+                    if(!btn.disabled) attemptRegister();
+                } else {
+                    attemptLogin();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

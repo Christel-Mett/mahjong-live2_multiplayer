@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Mahjong-Treff - Multiplayer</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="../shared/bilder/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="../shared/bilder/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../shared/bilder/favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../shared/bilder/favicon/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../shared/bilder/favicon/android-icon-192x192.png">
+    <link rel="shortcut icon" href="../shared/bilder/favicon/favicon-32x32.ico">
+    <link rel="stylesheet" href="auswahl.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
+<style>
+        /* Sidebar Fix für vertikales Scrollen */
+        #sidebar {
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            display: flex;
+            flex-direction: column;
+            padding: 10px !important; 
+        }
+
+        /* Hauptüberschrift kompakter */
+        #sidebar h1 {
+            color: #d2b48c;
+            font-size: 1.3em !important; 
+            margin: 0 0 8px 0 !important; 
+            text-align: center;
+            flex-shrink: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Live-Ansicht Fenster */
+        #opponent-view {
+            width: 100%;
+            height: 20vh !important; 
+            position: relative;
+            overflow: hidden;
+            background: rgba(0,0,0,0.4); 
+            border-radius: 5px;
+            border: 1px solid rgba(210, 180, 140, 0.3);
+            margin-bottom: 0px;
+            flex-shrink: 0;
+        }
+        
+        .opponent-label {
+            position: absolute;
+            top: 3px;
+            left: 5px;
+            background: rgba(0,0,0,0.6);
+            color: #d2b48c;
+            padding: 1px 6px;
+            font-size: 0.7em;
+            border-radius: 3px;
+            z-index: 10;
+        }
+
+        #opponent-name-tag {
+            margin-top: 3px !important;
+            margin-bottom: 10px !important; 
+            padding: 0 !important;
+            font-size: 1.0em !important; 
+            color: #d2b48c;
+            text-align: center;
+            line-height: 1.1;
+            flex-shrink: 0;
+        }
+
+        .info-panel {
+            margin-bottom: 10px !important; 
+            padding: 8px !important; 
+            flex-shrink: 0;
+        }
+
+        .info-panel h2 {
+            margin-top: 0;
+            margin-bottom: 6px !important; 
+            font-size: 1.1em !important; 
+        }
+
+        .stat-row {
+            margin-bottom: 3px !important; 
+            font-size: 0.9em; 
+        }
+
+        input[type="range"] {
+            margin-top: 2px !important;
+            margin-bottom: 5px !important;
+        }
+
+        button {
+            padding: 8px !important; 
+            margin-top: 10px !important; 
+            font-size: 0.9em !important;
+        }
+
+        #external-chat-placeholder {
+            margin-top: auto; 
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px dashed #d2b48c; 
+            border-radius: 5px;
+            height: 150px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: rgba(210, 180, 140, 0.6);
+            font-size: 0.8em;
+            flex-shrink: 0;
+            margin-bottom: 5px;
+        }
+        
+        /* Unsichtbare Hilfselemente für die game.js */
+        #p1-name, #p2-name { display: none; }
+        
+        #chat-container {
+		    margin-top: auto;
+		    background: rgba(0, 0, 0, 0.5);
+		    border: 1px solid #d2b48c;
+		    border-radius: 5px;
+		    height: 200px;
+		    display: flex;
+		    flex-direction: column;
+		    flex-shrink: 0;
+		    margin-bottom: 5px;
+		    overflow: hidden;
+		}
+		
+		#chat-messages {
+		    flex-grow: 1;
+		    overflow-y: auto;
+		    padding: 8px;
+		    color: #f1f1f1;
+		    font-size: 0.85em;
+		    scrollbar-width: thin;
+		    scrollbar-color: #d2b48c transparent;
+		}
+		
+		#chat-input-area {
+		    display: flex;
+		    border-top: 1px solid rgba(210, 180, 140, 0.3);
+		    background: rgba(0, 0, 0, 0.3);
+		}
+		
+		#chatInput {
+		    flex-grow: 1;
+		    background: transparent;
+		    border: none;
+		    color: white;
+		    padding: 8px;
+		    font-size: 0.85em;
+		    outline: none;
+		}
+		
+		#chat-input-area button {
+		    background: #d2b48c;
+		    color: #2c3e50;
+		    border: none;
+		    padding: 0 15px;
+		    cursor: pointer;
+		    font-weight: bold;
+		    margin: 0 !important;
+		    font-size: 0.8em !important;
+		    height: 100%;
+		}
+
+        /* Stile für die Footer-Links in der Sidebar */
+        .sidebar-footer-links {
+            margin-top: 10px;
+            text-align: center;
+            border-top: 1px solid rgba(210, 180, 140, 0.3);
+            padding-top: 10px;
+            flex-shrink: 0;
+        }
+        .sidebar-footer-links a {
+            color: #ffffff;
+            text-decoration: none;
+            margin: 0 5px;
+            font-size: 0.75em;
+            opacity: 0.7;
+        }
+        .sidebar-footer-links a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+        
+                /* Verhindert Panning-Gesten auf dem Spielfeld für bessere Performance */
+        #game-container canvas {
+            touch-action: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <span id="p1-name"></span>
+    <span id="p2-name"></span>
+
+    <div id="game-container"></div>
+
+    <div id="sidebar">
+        <h1 style="color: #d2b48c; text-align: center; margin: 0 0 10px 0; font-size: 1.8em; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+            Mahjong-Treff multi
+        </h1>
+        <div class="stat-row">
+            <span class="stat-label">Layout:</span>
+            <span id="layoutNameDisplay" class="stat-value">-</span>
+        </div>
+
+		<div id="opponent-view">
+		    <div class="opponent-label">Live-Ansicht</div>
+		    <div id="grace-overlay-sidebar" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(192, 57, 43, 0.2); z-index:20; flex-direction:column; justify-content:center; align-items:center; color:white; font-weight:bold;">
+<!--		        <div style="font-size: 0.8em; text-transform: uppercase;">Gegner fertig!</div>-->
+		        <div id="grace-timer-sidebar" style="font-size: 2.5em; line-height: 1;">30</div>
+<!--		        <div style="font-size: 0.7em;">Sekunden verbleiben</div>-->
+		    </div>
+		</div>
+
+        <h2 id="opponent-name-tag">Gegner: <span id="opponent-name">-</span></h2>
+
+        <div class="info-panel">
+            <h2>Statistik</h2>
+            <div class="stat-row">
+                <span class="stat-label">Steine:</span>
+                <span id="tiles-count" class="stat-value">0</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Mögliche Paare:</span>
+                <span id="pairs-count" class="stat-value">0</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Deine Punkte:</span>
+                <span id="player-points" class="stat-value">0</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Zeit:</span>
+                <span id="timer" class="stat-value">00:00</span>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <h2>Einstellungen</h2>
+            <div class="stat-row">
+                <span class="stat-label">Lautstärke:</span>
+                <span id="volValue" class="stat-value">50%</span>
+            </div>
+            <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" style="width: 100%;">
+            
+            <div style="margin-top: 15px;" class="stat-row">
+                <span class="stat-label">Zoom:</span>
+            </div>
+            <input type="range" id="zoomSlider" min="10" max="25" step="0.1" value="18" style="width: 100%;">
+
+            <button onclick="leaveGame()" style="background-color: #c0392b; color: white; border: 1px solid #d2b48c; margin-top: 20px;">
+                Spiel verlassen
+            </button>
+        </div>
+        
+			<div id="chat-container">
+			    <div id="chat-messages"></div>
+			    <div id="chat-input-area">
+			        <input type="text" id="chatInput" placeholder="Nachricht..." autocomplete="off">
+			        <button onclick="sendMessage()">Senden</button>
+			    </div>
+			</div>
+
+        <div class="sidebar-footer-links">
+            <a href="../impressum.html" target="_blank">Impressum</a> | 
+            <a href="../datenschutz.html" target="_blank">Datenschutz</a> | 
+            <a href="../nutzung.html" target="_blank">Nutzungsbedingungen</a>
+            <div style="font-size: 0.65em; opacity: 0.5; margin-top: 5px; line-height: 1.2;">
+		        Das Öffnen dieser Links kann das Spiel unterbrechen.
+		      </div>
+        </div>
+    </div>
+
+    <div id="game-end-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(0px); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; color: #d2b48c; font-family: sans-serif;">
+        <div style="background: #2c3e50; padding: 40px; border: 3px solid #d2b48c; border-radius: 15px; text-align: center; min-width: 300px;">
+            <h2 id="end-status-title" style="margin-top: 0; color: #fff;">Spiel beendet</h2>
+            <p id="end-status-reason" style="font-size: 1.2em; margin-bottom: 20px;"></p>
+            
+            <div id="final-scoreboard" style="display: none; border-top: 1px solid #d2b48c; padding-top: 20px; margin-top: 20px;">
+                <h3 style="color: #fff;">Endergebnis:</h3>
+                <p id="winner-line" style="font-weight: bold; font-size: 1.3em; color: #f1c40f;"></p>
+                <p id="second-line" style="font-size: 1.1em;"></p>
+            </div>
+    
+            <div id="grace-period-timer" style="display: none; color: #e74c3c; font-weight: bold; margin: 15px 0;">
+                Der Gegner hat noch <span id="grace-seconds">30</span> Sekunden...
+            </div>
+    
+            <button id="back-to-lobby-btn" onclick="window.location.href='lobby-auswahl.html'" style="display: none; margin-top: 20px; background: #d2b48c; color: #2c3e50; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; border-radius: 5px;">
+                Zurück zur Auswahl
+            </button>
+        </div>
+    </div>
+
+		    <script src="/socket.io/socket.io.js"></script>
+		<script src="chat-auswahl.js"></script> <script src="game.js"></script>
+
+		<script>
+		document.addEventListener('DOMContentLoaded', () => {
+		    // ... (deine Zoom/Volume Initialisierungen) ...
+		
+		    const checkSocket = setInterval(() => {
+		        if (typeof socket !== 'undefined' && socket.connected) {
+		            initChat(socket);
+		            clearInterval(checkSocket);
+		        }
+		    }, 100);
+		});
+		</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+Lizenzen und Quellenangaben
+Dieses Projekt ist Open Source und unter der GNU General Public License (GPL) veröffentlicht.
+
+Grafiken & Design:
+
+Steinsymbole (Tileset) & Layouts: Basierend auf dem "KMahjongg"-Projekt (KDE Games), lizenziert unter der GNU GPL.
+
+Hintergrundbild: "Chinese Landscape" © 2006 Eugene Trounev eugene.trounev@gmail.com. Veröffentlicht unter der GNU General Public License, Version 2 oder neuer.
+
+Software & Bibliotheken:
+* 3D-Engine: Dieses Spiel nutzt Three.js (MIT Lizenz).
+
+Backend & Tools: Die Funktionalität basiert auf Node.js sowie den Bibliotheken Express, Socket.io, Axios, Bcrypt, Helmet, MySQL2 und Nodemailer (jeweils lizenziert unter der MIT-Lizenz oder vergleichbaren Open-Source-Lizenzen).
+
+Entwicklung: Die Softwarearchitektur, einschließlich der Spiellogik für den Einzelspielermodus sowie der vernetzten Mehrspieler-Funktionalität, wurde als Open-Source-Projekt unter der GNU GPL entwickelt.
+
+Ein herzlicher Dank geht an Eugene Trounev für die atmosphärische Grafik und an die KDE-Community für die Bereitstellung der Ressourcen, die dieses Spiel ermöglichen.
+
+

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Mahjong-Treff - Singleplayer</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="../shared/bilder/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="../shared/bilder/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../shared/bilder/favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../shared/bilder/favicon/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../shared/bilder/favicon/android-icon-192x192.png">
+    <link rel="shortcut icon" href="../shared/bilder/favicon/favicon-32x32.ico">
+    <link rel="stylesheet" href="single.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0; top: 0; width: 100%; height: 100%; 
+            background-color: rgba(0,0,0,0.85); 
+        }
+        .modal-content {
+            background-color: #2c3e50;
+            margin: 5% auto;
+            padding: 25px;
+            border: 2px solid #d2b48c;
+            width: 450px;
+            border-radius: 15px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            /* Scroll-Logik */
+            max-height: calc(100vh - 120px); /* Bildschirmhöhe minus Puffer oben/unten */
+            overflow-y: auto; /* Scrollbalken erscheint nur bei Bedarf */
+            position: relative;
+        }
+        #highscoreTablePopup {
+            width: 100%;
+            margin-top: 15px;
+            border-collapse: collapse;
+        }
+        #highscoreTablePopup th {
+            color: #d2b48c;
+            border-bottom: 2px solid #d2b48c;
+            padding: 10px;
+        }
+        #highscoreTablePopup td {
+            padding: 10px;
+            border-bottom: 1px solid rgba(210, 180, 140, 0.3);
+        }
+        .highscore-input {
+            background: #1a252f;
+            border: 1px solid #d2b48c;
+            color: white;
+            padding: 5px;
+            width: 90%;
+            border-radius: 4px;
+            text-align: center;
+        }
+        #overlay {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9); 
+            border: 2px solid #d2b48c; 
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column; 
+            gap: 20px;
+            z-index: 100;
+            min-width: 250px;
+        }
+        #endMessage {
+            color: white;
+            font-size: 3em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        #overlay #overlayBtn {
+            width: auto;
+            padding: 10px 30px;
+            font-size: 1em;
+            background: #d2b48c;
+            color: #2c3e50;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Stile für die Footer-Links in der Sidebar */
+        .sidebar-footer-links {
+            margin-top: 20px;
+            text-align: center;
+            border-top: 1px solid rgba(210, 180, 140, 0.3);
+            padding-top: 15px;
+        }
+        .sidebar-footer-links a {
+            color: #ffffff;
+            text-decoration: none;
+            margin: 0 5px;
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+        .sidebar-footer-links a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="overlay">
+            <h1 id="endMessage">Sieg!</h1>
+            <button id="overlayBtn" onclick="togglePause()">Weiter spielen</button>
+        </div>
+    </div>
+
+    <div id="highscoreModal" class="modal" onclick="schliesseHighscore(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h2 style="color: #d2b48c; margin-bottom: 10px;">Bestenliste</h2>
+            <table id="highscoreTablePopup">
+                <thead><tr><th>Platz</th><th>Name</th><th>Zeit</th><th>Punkte</th></tr></thead>
+                <tbody id="highscoreBodyPopup"></tbody>
+            </table>
+            <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 15px;">
+                <button id="saveHighscoreBtn" style="background: #27ae60; height: 40px; color: white; display: none; font-size: 1.2em;" onclick="finalisiereHighscoreSpeichern()">Speichern</button>
+                <button style="background: #769091; height: 40px; color: white; font-size: 1.2em;" onclick="schliesseHighscore(event)">Schließen</button>
+                <button style="background: #c0392b; height: 40px; color: white; font-size: 1.2em;" onclick="leereBestenliste(event)">Liste leeren</button>
+            </div>
+        </div>
+    </div>
+
+<div id="sidebar">
+        <h1 style="color: #d2b48c; text-align: center; margin: 0 0 10px 0; font-size: 1.8em; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+            Mahjong-Treff single
+        </h1>
+
+        <div class="info-panel">
+            <h2>Statistik</h2>
+            <div class="stat-row"><span class="stat-label">Layout:</span><span id="layoutName" class="stat-value">-</span></div>
+            <div class="stat-row"><span class="stat-label">Steine übrig:</span><span id="count" class="stat-value">Lade...</span></div>
+            <div class="stat-row"><span class="stat-label">Mögliche Paare:</span><span id="possiblePairs" class="stat-value">0</span></div>
+            <div class="stat-row"><span class="stat-label">Zeit:</span><span id="timer" class="stat-value">00:00</span></div>
+            <div class="stat-row" style="margin-top: 10px; border-top: 1px solid #d2b48c; padding-top: 10px;">
+                <span class="stat-label">Punkte:</span><span id="score" class="stat-value">0</span>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <h2>Einstellungen</h2>
+            <div class="stat-row"><span class="stat-label">Layout wählen:</span></div>
+<select id="layoutSelect" onchange="wechsleLayout(this.value)" style="width: 100%; padding: 6px; font-size: 1em;"></select>
+            
+            <button onclick="rueckgaengig()" style="background-color: #2c3e50; color: #d2b48c; border: 1px solid #d2b48c; font-size: 1em; margin-top: 10px;">Zug zurück</button>
+            <button onclick="zeigeHinweis()" style="background-color: #2c3e50; color: #d2b48c; border: 1px solid #d2b48c; font-size: 1em; margin-top: 10px;">Hinweis</button>
+            <button id="pauseBtn" onclick="togglePause()" style="background-color: #2c3e50; color: #d2b48c; border: 1px solid #d2b48c; font-size: 1em; margin-top: 10px;">Pause</button>
+            <button id="restartBtn" onclick="gleichesBrettErneutSpielen()" style="background-color: #2c3e50; color: #d2b48c; font-size: 1em; border: 1px solid #d2b48c; margin-top: 10px;">Erneut spielen</button>
+            <button id="newGameBtn" onclick="neuesSpielStarten()" style="background-color: #2c3e50; color: #d2b48c; font-size: 1em; border: 1px solid #d2b48c; margin-top: 10px;">Neues Spiel</button>
+            <button id="showHighscoreBtn" onclick="oeffneHighscore()" style="background-color: #2c3e50; color: #d2b48c; font-size: 1em; border: 1px solid #d2b48c; margin-top: 10px;">Bestenliste anzeigen</button>
+            <button onclick="window.location.href='../lobby.html'" style="background-color: #2c3e50; color: #d2b48c; font-size: 1em; border: 1px solid #d2b48c; margin-top: 10px;">Lobby</button>            
+            
+            <div style="margin-top: 20px;">
+                <div class="stat-row"><span class="stat-label">Lautstärke:</span><span id="volValue" class="stat-value">50%</span></div>
+                <input type="range" min="0" max="1" step="0.01" value="0.5" oninput="updateVolume(this.value)" style="width: 100%;">
+            </div>
+            
+            <div style="margin-top: 15px;">
+                <div class="stat-row"><span class="stat-label">Kamera-Zoom</span></div>
+                <input type="range" id="zoomSlider" min="10" max="25" step="0.5" value="18" oninput="updateZoom(this.value)" style="width: 100%;">
+            </div>            
+        </div>
+        
+        <div class="sidebar-footer-links">
+            <a href="../impressum.html">Impressum</a> | 
+            <a href="../datenschutz.html">Datenschutz</a> | 
+            <a href="../nutzung.html">Nutzung</a>
+            <div style="font-size: 0.65em; opacity: 0.5; margin-top: 5px; line-height: 1.2;">
+		        Das Öffnen dieser Links kann das Spiel unterbrechen.
+		      </div>
+        </div>
+    </div> <script src="game.js"></script>
+</body>
+</html>
