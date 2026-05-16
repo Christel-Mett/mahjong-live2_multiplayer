@@ -1,11 +1,29 @@
-# Mahjong-Live Multiplayer
+# Mahjong-Live Multiplayer 2.0
 
-Online-Solitair-Mahjong Spiel (Node.js), Multiplayer.  
-**Live-Demo:** [mahjong-treff.de](https://mahjong-treff.de)
+Online-Solitär-Mahjong Spiel (Node.js), Multiplayer.  
+**Live-Demo:** [mahjong-treff.de](https://mahjong-treff.de)  
 **Hauptsprache:** Deutsch (English via auto-translation).
 
 ## Über dieses Projekt
-Dieses Projekt ist ein browserbasiertes Solitär-Mahjong-Spiel mit Einzel- und Mehrspielermodus. Es basiert technisch auf Node.js und nutzt Three.js für die Darstellung.
+Dieses Projekt ist ein browserbasiertes Solitär-Mahjong-Spiel mit Einzel- und Mehrspielermodus. Es basiert technisch auf Node.js und nutzt Three.js für die 3D-Darstellung der Spielsteine sowie Socket.io für die Echtzeit-Synchronisation zwischen den Spielern.
+
+## Version 2.0 – Modulare Architektur
+Version 1.0 dieses Projekts war als monolithische Anwendung konzipiert: nahezu die gesamte Logik – Authentifizierung, Matchmaking, Spielverwaltung, Lobby und Datenbankzugriffe – war in einer einzigen `server.js` mit rund 850 Zeilen untergebracht.
+
+Version 2.0 wurde von Grund auf neu strukturiert. Die `server.js` dient nun ausschließlich als schlanker Orchestrator, der die einzelnen Module lädt und verbindet. Die Logik ist auf spezialisierte Module aufgeteilt:
+
+| Modul | Aufgabe |
+|---|---|
+| `authController.js` | Login, Registrierung, E-Mail-Verifizierung, Passwort-Reset |
+| `dbInterface.js` | Alle Datenbankzugriffe zentral an einer Stelle |
+| `userManager.js` | Verwaltung aktiver User, Socket-Mapping, Standortverfolgung |
+| `lobbyController.js` | Lobby-Join, Chat, Userliste, Bestenliste |
+| `matchmakingCore.js` | Zufalls- und Layout-Matchmaking mit Mehrstufenlogik |
+| `gameController.js` | Spielraumverwaltung, Punkte, Grace-Period, Leichen-Check |
+| `captcha.js` | Captcha-Verifikation |
+| `auth.js` | Session-Schutz als Middleware |
+
+Diese Struktur macht den Code wartbarer, testbarer und erweiterbar – ohne die Spiellogik oder das Frontend anzufassen.
 
 ## Entwicklung & Methodik
 Dieses Projekt wurde unter Anwendung von **Vibecoding** realisiert.
@@ -24,11 +42,8 @@ Dieses Projekt ist Open Source und unter der **GNU General Public License (GPL) 
 
 Weitere Details findest du in der `CREDITS.txt`.
 
-## Installation
-Eine detaillierte Anleitung zur Installation und Konfiguration (Datenbank, Node.js, Umgebungsvariablen) befindet sich in der Datei `INSTALL.txt`.
-
-### Kurzübersicht:
-1.  Abhängigkeiten installieren: `npm install`
-2.  Datenbank aus `maria.sql` importieren.
-3.  `.env` Datei basierend auf den eigenen Zugangsdaten erstellen.
-4.  Server starten: `node server.js`
+## Kurzübersicht Installation
+1. Abhängigkeiten installieren: `npm install`
+2. Datenbank aus `maria.sql` importieren.
+3. `.env` Datei basierend auf den eigenen Zugangsdaten erstellen.
+4. Server starten: `node server.js`
