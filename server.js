@@ -36,6 +36,7 @@ const transporter = nodemailer.createTransport({
 });
 
 app.use(express.json());
+app.set('trust proxy', 1);
 app.use(cookieParser());
 
 app.use(helmet({
@@ -106,7 +107,7 @@ const sessionMiddleware = session({
     resave: false,
     saveUninitialized: false,
     cookie: { 
-        secure: false, // Da du Nginx als Proxy nutzt, bleibt das auf false
+        secure: true, // Nginx als Proxy, trust proxy ist gesetzt
         maxAge: 1000 * 60 * 60 * 24 // 1 Tag gültig
     }
 });
