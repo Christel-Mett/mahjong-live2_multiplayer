@@ -79,6 +79,11 @@ const loginLimiter = rateLimit({
     max: 20, // max. 20 Versuche pro IP
     message: { success: false, message: 'Zu viele Anfragen. Bitte warte 15 Minuten.' }
 });
+const pageLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 Minute
+    max: 60, // max. 60 Seitenaufrufe pro IP
+    message: { success: false, message: 'Zu viele Anfragen. Bitte kurz warten.' }
+});
 app.use('/set-session', loginLimiter);
 
 // MySQL Store Konfiguration
@@ -150,15 +155,15 @@ app.post('/set-session', doubleCsrfProtection, (req, res) => {
     }
 });
 
-app.get('/lobby', authMiddleware, (req, res) => res.sendFile(__dirname + '/lobby.html'));
-app.get('/lobby.html', authMiddleware, (req, res) => res.sendFile(__dirname + '/lobby.html'));
-app.get('/multi/', authMiddleware, (req, res) => res.sendFile(__dirname + '/multi/index.html'));
-app.get('/multi/index.html', authMiddleware, (req, res) => res.sendFile(__dirname + '/multi/index.html'));
-/*app.get('/single/', authMiddleware, (req, res) => res.sendFile(__dirname + '/single/index.html'));
-app.get('/single/index.html', authMiddleware, (req, res) => res.sendFile(__dirname + '/single/index.html'));*/
-app.get('/auswahl/lobby-auswahl.html', authMiddleware, (req, res) => res.sendFile(__dirname + '/auswahl/lobby-auswahl.html'));
-app.get('/auswahl/index.html', authMiddleware, (req, res) => res.sendFile(__dirname + '/auswahl/index.html'));
-app.get('/auswahl/', authMiddleware, (req, res) => res.sendFile(__dirname + '/auswahl/index.html'));
+app.get('/lobby', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/lobby.html'));
+app.get('/lobby.html', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/lobby.html'));
+app.get('/multi/', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/multi/index.html'));
+app.get('/multi/index.html', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/multi/index.html'));
+/*app.get('/single/', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/single/index.html'));
+app.get('/single/index.html', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/single/index.html'));*/
+app.get('/auswahl/lobby-auswahl.html', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/auswahl/lobby-auswahl.html'));
+app.get('/auswahl/index.html', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/auswahl/index.html'));
+app.get('/auswahl/', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/auswahl/index.html'));
 app.use(express.static(__dirname)); 
 
 // --- SOCKET EVENTS ---
