@@ -7,6 +7,7 @@ const dotenv = require('dotenv');
 const nodemailer = require('nodemailer'); 
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const { doubleCsrf } = require('csrf-csrf');
 
 // Eigene Module laden
 const dbInterface = require('./dbInterface');
@@ -106,6 +107,21 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 io.engine.use(sessionMiddleware);
 
+const { generateToken, doubleCsrfProtection } = doubleCsrf({
+    getSecret: () => process.env.SESSION_SECRET || 'mahjong_secret',
+    cookieName: 'csrf-token',
+    cookieOptions: {
+        httpOnly: true,
+        sameSite: 'strict',
+        secure: false, // false weil Nginx den HTTPS-Teil übernimmt
+        path: '/'
+    }
+});
+
+app.get('/csrf-token', (req, res) => {
+    res.json({ token: generateToken(req, res) });
+});
+
 // --- HTTP ROUTEN ---
 app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
 app.get('/verify', authController.handleVerify);
@@ -116,7 +132,7 @@ app.get('/logout', (req, res) => {
     });
 });
 
-app.post('/set-session', (req, res) => {
+app.post('/set-session', doubleCsrfProtection, (req, res) => {
     const username = req.body.username;
     const userId = req.body.userId || req.body.id || req.session.userId;
 

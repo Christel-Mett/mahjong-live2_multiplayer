@@ -337,34 +337,41 @@
             socket.emit('login_attempt', { username: name, password: pass });
         }
 
-			socket.on('login_response', (response) => {
-			    if (response.success) {
-			        // Wir speichern den Namen wie gewohnt
-			        localStorage.setItem('mahjongPlayerName', response.username);
-			        
-			        // NEU: Die Brücke zum Express-Server schlagen
-			        fetch('/set-session', {
-			            method: 'POST',
-			            headers: { 'Content-Type': 'application/json' },
-			            body: JSON.stringify({ username: response.username })
-			        })
-			        .then(res => res.json())
-			        .then(sessionData => {
-			            if (sessionData.success) {
-			                // Erst wenn der Server "Ok" sagt, leiten wir weiter
-			                window.location.href = 'lobby.html';
-			            } else {
-			                alert('Sitzungsfehler: Der Server konnte die Anmeldung nicht bestätigen.');
-			            }
-			        })
-			        .catch(err => {
-			            console.error('Session-Error:', err);
-			            alert('Verbindungsfehler beim Erstellen der Sitzung.');
-			        });
-			    } else {
-			        alert('Fehler: ' + response.message);
-			    }
-			});
+				socket.on('login_response', (response) => {
+				    if (response.success) {
+				        // Wir speichern den Namen wie gewohnt
+				        localStorage.setItem('mahjongPlayerName', response.username);
+				        
+				        // NEU: Die Brücke zum Express-Server schlagen
+				        fetch('/csrf-token')
+				            .then(res => res.json())
+				            .then(csrfData => {
+				                return fetch('/set-session', {
+				                    method: 'POST',
+				                    headers: { 
+				                        'Content-Type': 'application/json',
+				                        'x-csrf-token': csrfData.token
+				                    },
+				                    body: JSON.stringify({ username: response.username })
+				                });
+				            })
+				            .then(res => res.json())
+				            .then(sessionData => {
+				                if (sessionData.success) {
+				                    // Erst wenn der Server "Ok" sagt, leiten wir weiter
+				                    window.location.href = 'lobby.html';
+				                } else {
+				                    alert('Sitzungsfehler: Der Server konnte die Anmeldung nicht bestätigen.');
+				                }
+				            })
+				            .catch(err => {
+				                console.error('Session-Error:', err);
+				                alert('Verbindungsfehler beim Erstellen der Sitzung.');
+				            });
+				    } else {
+				        alert('Fehler: ' + response.message);
+				    }
+				});
 
 			function attemptRegister() {
 			    const name = document.getElementById('regName').value.trim();
