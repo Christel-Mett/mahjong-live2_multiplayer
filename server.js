@@ -176,6 +176,7 @@ app.use('/multi', express.static(__dirname + '/multi'));
 app.use('/single', express.static(__dirname + '/single'));
 app.use('/shared', express.static(__dirname + '/shared'));
 app.use('/style.css', express.static(__dirname + '/style.css'));
+app.use('/chat-module.js', express.static(__dirname + '/chat-module.js'));
 
 // --- SOCKET EVENTS ---
 io.on('connection', (socket) => {

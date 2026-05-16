@@ -50,9 +50,16 @@ function renderEmojiPicker() {
     const container = document.getElementById('emoji-container');
     if (!container) return;
 
-    container.innerHTML = emojiList.map(e => 
-        `<span onclick="addEmoji('${e}')" style="margin-right: 12px; font-size: 1.4em; cursor: pointer; user-select: none;">${e}</span>`
+    container.innerHTML = emojiList.map((e, i) => 
+        `<span data-idx="${i}" style="margin-right: 12px; font-size: 1.4em; cursor: pointer; user-select: none;">${e}</span>`
     ).join('');
+
+    container.addEventListener('click', (e) => {
+        const idx = e.target.dataset.idx;
+        if (idx !== undefined) {
+            addEmoji(emojiList[parseInt(idx)]);
+        }
+    });
 }
 // ---------------------------
 function initChat(socket) {
