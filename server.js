@@ -128,10 +128,10 @@ app.get('/csrf-token', (req, res) => {
 });
 
 // --- HTTP ROUTEN ---
-app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
-app.get('/verify', authController.handleVerify);
-app.get('/reset-password', (req, res) => res.sendFile(__dirname + '/reset-password.html'));
-app.get('/logout', (req, res) => {
+app.get('/', pageLimiter, (req, res) => res.sendFile(__dirname + '/index.html'));
+app.get('/verify', pageLimiter, authController.handleVerify);
+app.get('/reset-password', pageLimiter, (req, res) => res.sendFile(__dirname + '/reset-password.html'));
+app.get('/logout', pageLimiter, (req, res) => {
     req.session.destroy(() => {
         res.redirect('/');
     });
