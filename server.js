@@ -7,7 +7,8 @@ const dotenv = require('dotenv');
 const nodemailer = require('nodemailer'); 
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-const { doubleCsrf } = require('csrf-csrf');
+const crypto = require('crypto');
+const cookieParser = require('cookie-parser');
 
 // Eigene Module laden
 const dbInterface = require('./dbInterface');
@@ -35,6 +36,7 @@ const transporter = nodemailer.createTransport({
 });
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.use(helmet({
     contentSecurityPolicy: {
@@ -112,20 +114,19 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 io.engine.use(sessionMiddleware);
 
-const { generateToken, doubleCsrfProtection } = doubleCsrf({
-    getSecret: () => process.env.SESSION_SECRET || 'mahjong_secret',
-    cookieName: 'csrf-token',
-    cookieOptions: {
-        httpOnly: true,
-        sameSite: 'strict',
-        secure: false, // false weil Nginx den HTTPS-Teil übernimmt
-        path: '/'
-    }
+app.get('/csrf-token', (req, res) => {
+    const token = crypto.randomBytes(32).toString('hex');
+    req.session.csrfToken = token;
+    res.json({ token });
 });
 
-app.get('/csrf-token', (req, res) => {
-    res.json({ token: generateToken(req, res) });
-});
+function csrfProtection(req, res, next) {
+    const token = req.headers['x-csrf-token'];
+    if (!token || token !== req.session.csrfToken) {
+        return res.status(403).json({ success: false, message: 'CSRF-Token ungültig.' });
+    }
+    next();
+}
 
 // --- HTTP ROUTEN ---
 app.get('/', pageLimiter, (req, res) => res.sendFile(__dirname + '/index.html'));
@@ -137,7 +138,7 @@ app.get('/logout', pageLimiter, (req, res) => {
     });
 });
 
-app.post('/set-session', doubleCsrfProtection, (req, res) => {
+app.post('/set-session', csrfProtection, (req, res) => {
     const username = req.body.username;
     const userId = req.body.userId || req.body.id || req.session.userId;
 
@@ -164,7 +165,12 @@ app.get('/single/index.html', pageLimiter, authMiddleware, (req, res) => res.sen
 app.get('/auswahl/lobby-auswahl.html', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/auswahl/lobby-auswahl.html'));
 app.get('/auswahl/index.html', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/auswahl/index.html'));
 app.get('/auswahl/', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/auswahl/index.html'));
-app.use(express.static(__dirname)); 
+//app.use(express.static(__dirname)); 
+app.use('/auswahl', express.static(__dirname + '/auswahl'));
+app.use('/multi', express.static(__dirname + '/multi'));
+app.use('/single', express.static(__dirname + '/single'));
+app.use('/shared', express.static(__dirname + '/shared'));
+app.use('/style.css', express.static(__dirname + '/style.css'));
 
 // --- SOCKET EVENTS ---
 io.on('connection', (socket) => {
