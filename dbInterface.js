@@ -68,6 +68,12 @@ module.exports = {
         const sql = "SELECT username, mp_points, (SELECT COUNT(*) + 1 FROM users u2 WHERE u2.mp_points > u1.mp_points) AS rang FROM users u1 ORDER BY mp_points DESC";
         db.query(sql, callback);
     },
+    
+    // Höchsten Rang ermitteln (für Matchmaking-Priorität)
+	 getMaxRang: (callback) => {
+	     const sql = "SELECT COUNT(*) + 1 AS max_rang FROM users WHERE mp_points > (SELECT MIN(mp_points) FROM users)";
+	     db.query(sql, callback);
+	 },
 
     // Punkte-Update nach Spielende (aus beendeRaumEndgültig)
     updateUserPoints: (username, points, callback) => {

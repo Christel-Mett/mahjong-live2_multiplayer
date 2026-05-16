@@ -425,5 +425,21 @@ setInterval(() => {
     }
 }, 2000);
 
+// Einmaliger Aufruf beim Start
+dbInterface.getMaxRang((err, results) => {
+    if (!err && results && results.length > 0) {
+        matchmaking.setGlobalMaxRang(results[0].max_rang);
+    }
+});
+
+// Danach jede Minute wiederholen
+setInterval(() => {
+    dbInterface.getMaxRang((err, results) => {
+        if (!err && results && results.length > 0) {
+            matchmaking.setGlobalMaxRang(results[0].max_rang);
+        }
+    });
+}, 60000);
+
 const PORT = process.env.PORT || 3020;
 server.listen(PORT, () => console.log(`Server läuft auf Port ${PORT}`));

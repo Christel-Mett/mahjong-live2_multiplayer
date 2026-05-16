@@ -5,6 +5,11 @@
 
 let waitingQueue = [];
 let layoutQueue = [];
+let globalMaxRang = 100; // Standardwert bis zur ersten DB-Abfrage
+
+function setGlobalMaxRang(value) {
+    if (value && value > 0) globalMaxRang = value;
+}
 const MAX_RANK_DIFF = 20;
 
 const meineLayouts = [
@@ -51,8 +56,7 @@ function getRandomLayout() {
 function findMatchInWaitingQueue() {
     if (waitingQueue.length < 2) return null;
 
-    const maxRankVal = Math.max(...waitingQueue.map(p => p.rank));
-    const lowRankLimit = maxRankVal * 0.9;
+    const lowRankLimit = globalMaxRang * 0.9;
     const jetzt = Date.now();
 
     for (let i = 0; i < waitingQueue.length; i++) {
@@ -89,8 +93,7 @@ function findMatchInLayoutQueue() {
     if (layoutQueue.length < 2) return null;
     
     // Dynamische Ermittlung des "Tabellenendes" in dieser Queue
-    const maxRankInQueue = Math.max(...layoutQueue.map(p => p.rank));
-    const lowRankLimit = maxRankInQueue * 0.9;
+    const lowRankLimit = globalMaxRang * 0.9;
 
     const jetzt = Date.now();
 
@@ -175,5 +178,6 @@ module.exports = {
     findCrossQueueMatch,
     getWaitingQueue: () => waitingQueue,
     getLayoutQueue: () => layoutQueue,
+    setGlobalMaxRang,
     MAX_RANK_DIFF
 };
