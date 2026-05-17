@@ -255,7 +255,9 @@
 			socket.on('update_user_list', (users) => {
 			    const list = document.getElementById('user-list');
 			    list.innerHTML = '';
-			    
+			    users.sort((a, b) => a.rang - b.rang);
+			    document.querySelector('.user-area .area-label').textContent = `User online (${users.length})`;
+
 			    users.forEach(userData => {
 			        const div = document.createElement('div');
 			        div.className = 'user-entry';
