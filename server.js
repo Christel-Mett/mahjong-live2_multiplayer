@@ -171,8 +171,8 @@ app.get('/datenschutz.html', pageLimiter, (req, res) => res.sendFile(__dirname +
 app.get('/nutzung.html', pageLimiter, (req, res) => res.sendFile(__dirname + '/nutzung.html'));
 app.get('/anleitung.html', pageLimiter, (req, res) => res.sendFile(__dirname + '/anleitung.html'));
 app.get('/news.html', pageLimiter, (req, res) => res.sendFile(__dirname + '/news.html'));
-app.get('/google2a21e9ee42e18ac7.html', (req, res) => res.sendFile(__dirname + '/google2a21e9ee42e18ac7.html'));
-app.get('/sitemap.xml', (req, res) => res.sendFile(__dirname + '/sitemap.xml'));
+app.get('/google2a21e9ee42e18ac7.html', pageLimiter, (req, res) => res.sendFile(__dirname + '/google2a21e9ee42e18ac7.html'));
+app.get('/sitemap.xml', pageLimiter, (req, res) => res.sendFile(__dirname + '/sitemap.xml'));
 app.use('/auswahl', express.static(__dirname + '/auswahl'));
 app.use('/multi', express.static(__dirname + '/multi'));
 app.use('/single', express.static(__dirname + '/single'));
