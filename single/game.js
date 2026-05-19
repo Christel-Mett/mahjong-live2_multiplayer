@@ -36,7 +36,7 @@ const layoutUebersetzungen = {
 
 const rotateZ = 1.5, shiftX = 10, shiftY = 10;
 const steinB = 3.0, steinH = 4.0, steinT = 1.5, kantenRadius = 0.12;
-const farbeOben = 0xe5e3cc, farbeSeite = 0xba9563, farbeBodenSchicht = 0x0a1a12, farbeHighlight = 0xfff0ad;
+const farbeOben = 0xe5e3cc, farbeSeite = 0xba9563, farbeBodenSchicht = 0x9b5e22, farbeHighlight = 0xfff0ad;
 
 let aktuellerSeed = 0;
 let initialerSeedFuerDiesesBrett = 0;
@@ -125,7 +125,8 @@ const matSide = new THREE.MeshPhongMaterial({ color: farbeSeite });
 matSide.onBeforeCompile = (shader) => {
     shader.uniforms.uColorBottom = { value: new THREE.Color(farbeBodenSchicht) };
     shader.vertexShader = `varying vec3 vLocalPos;\n${shader.vertexShader}`.replace(`#include <begin_vertex>`, `#include <begin_vertex>\nvLocalPos = position;`);
-    shader.fragmentShader = `uniform vec3 uColorBottom; varying vec3 vLocalPos;\n${shader.fragmentShader}`.replace(`#include <map_fragment>`, `#include <map_fragment>\nif(vLocalPos.z < 0.35) { diffuseColor.rgb = uColorBottom; }`);
+//    shader.fragmentShader = `uniform vec3 uColorBottom; varying vec3 vLocalPos;\n${shader.fragmentShader}`.replace(`#include <map_fragment>`, `#include <map_fragment>\nif(vLocalPos.z < 0.9) { diffuseColor.rgb = uColorBottom; }`);
+shader.fragmentShader = `uniform vec3 uColorBottom; varying vec3 vLocalPos;\n${shader.fragmentShader}`.replace(`#include <map_fragment>`, `#include <map_fragment>\nfloat t = smoothstep(0.7, 1.4, vLocalPos.z); diffuseColor.rgb = mix(uColorBottom, diffuseColor.rgb, t);`);
 };
 
 function getSymbolGruppe(symbolName) {
@@ -297,7 +298,7 @@ async function init(seed = null) {
         const geom = new THREE.ExtrudeGeometry(shape, { depth: steinT, bevelEnabled: true, bevelSegments: 5, bevelSize: r_, bevelThickness: r_ });
         
         mainGroup.children.forEach(g => {
-            const mesh = new THREE.Mesh(geom, [new THREE.MeshPhongMaterial({ color: farbeOben }), matSide.clone()]);
+            const mesh = new THREE.Mesh(geom, [new THREE.MeshPhongMaterial({ color: farbeOben }), matSide]);
             mesh.castShadow = true; 
             mesh.receiveShadow = true; 
             g.add(mesh);
