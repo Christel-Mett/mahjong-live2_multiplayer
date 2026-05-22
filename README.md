@@ -8,7 +8,7 @@ Online-Solitär-Mahjong Spiel (Node.js), Multiplayer.
 Dieses Projekt ist ein browserbasiertes Solitär-Mahjong-Spiel mit Einzel- und Mehrspielermodus. Es basiert technisch auf Node.js und nutzt Three.js für die 3D-Darstellung der Spielsteine sowie Socket.io für die Echtzeit-Synchronisation zwischen den Spielern.
 
 ## Version 2.0 – Modulare Architektur
-Version 1.0 dieses Projekts war als monolithische Anwendung konzipiert: nahezu die gesamte Logik – Authentifizierung, Matchmaking, Spielverwaltung, Lobby und Datenbankzugriffe – war in einer einzigen `server.js` mit rund 850 Zeilen untergebracht.
+Version 1.0 dieses Projekts ([mahjong-live_multiplayer](https://github.com/Christel-Mett/mahjong-live_multiplayer/blob/main/README.md?plain=1))war als monolithische Anwendung konzipiert: nahezu die gesamte Logik – Authentifizierung, Matchmaking, Spielverwaltung, Lobby und Datenbankzugriffe – war in einer einzigen `server.js` mit rund 850 Zeilen untergebracht.
 
 Version 2.0 wurde von Grund auf neu strukturiert. Die `server.js` dient nun ausschließlich als schlanker Orchestrator, der die einzelnen Module lädt und verbindet. Die Logik ist auf spezialisierte Module aufgeteilt:
 
