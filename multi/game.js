@@ -76,6 +76,7 @@ window.updateVolume = function(val) {
 
 let kameraZoom = parseFloat(localStorage.getItem('mahjongZoom') || 18);
 let ersterStein = null, letztesSymbolMatch = null, timerInterval = null, sekunden = 0, spielBeendet = false;
+let graceAudio = null;
 let aktuellePunkte = 0;
 
 // --- THREE.JS SETUP ---
@@ -221,8 +222,13 @@ function beendeSpiel(grund) {
     const graceSeconds = document.getElementById('grace-seconds');
     if (graceTimer) graceTimer.style.display = 'block';
     
-	const leaveBtn = document.getElementById('leave-game-btn');
-	if (leaveBtn) leaveBtn.disabled = true;
+    const graceFiles = ['30_1.mp3', '30_2.mp3', '30_3.mp3', '30_4.mp3'];
+	 const randomFile = graceFiles[Math.floor(Math.random() * graceFiles.length)];
+	 graceAudio = new Audio(`../shared/sound/30/${randomFile}`);
+	 graceAudio.volume = parseFloat(localStorage.getItem('mahjongVolume') || 0.5);
+	 graceAudio.play().catch(() => {});
+	 const leaveBtn = document.getElementById('leave-game-btn');
+	 if (leaveBtn) leaveBtn.disabled = true;
 	
 	let timeLeft = 30;
 	const localGraceInterval = setInterval(() => {
@@ -231,6 +237,8 @@ function beendeSpiel(grund) {
 	    if (timeLeft <= 0 || document.getElementById('final-scoreboard').style.display !== 'none') {
 	        clearInterval(localGraceInterval);
 	        if (leaveBtn) leaveBtn.disabled = false;
+	        if (graceAudio) { graceAudio.pause(); graceAudio.currentTime = 0; graceAudio = null; }
+
 	    }
 	}, 1000);
 
@@ -549,6 +557,7 @@ socket.on('gracePeriodStarted', () => {
 socket.on('finalScoreboard', (data) => {
     spielBeendet = true;
     if (timerInterval) clearInterval(timerInterval);
+    if (graceAudio) { graceAudio.pause(); graceAudio.currentTime = 0; graceAudio = null; }
 
     zeigeEndOverlay('Spiel beendet');
 
