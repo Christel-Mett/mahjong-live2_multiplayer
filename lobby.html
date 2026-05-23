@@ -246,7 +246,7 @@
         // Identifizierung beim Server
         if (meinName) {
             document.getElementById('display-name-footer').textContent = meinName;
-            socket.emit('re-identify', meinName);
+            socket.emit('join_lobby');
         } else {
             window.location.href = 'index.html';
         }

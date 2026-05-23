@@ -51,11 +51,6 @@ handleGameFinished: (io, socket, data) => {
 
     if (gameRooms[room]) gameRooms[room].delete(socket.id);
 
-    const username = userManager.getUsernameBySocketId(socket.id) || data.name || data.user;
-    if (username) {
-        userManager.updateLocation(username, 'lobby');
-    }
-
     socket.to(room).emit('gracePeriodStarted');
 
     // Server-Timer: nach 31s Scoreboard senden falls Spieler B nicht fertig wird
@@ -88,10 +83,6 @@ if (!activeGames[room].graceTimeout) {
 io.to(room).emit('finalScoreboard', {
             scores: playersInRoom.map(p => ({ name: p.name, points: p.points }))
         });
-        playersInRoom.forEach(player => {
-            if (player.name) userManager.updateLocation(player.name, 'lobby');
-        });
-        lobbyController.broadcastUserList(io);
         delete activeGames[room];
     }, 31000);
 }
