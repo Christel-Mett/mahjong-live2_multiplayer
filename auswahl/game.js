@@ -579,6 +579,7 @@ window.leaveGame = function() {
     if (!spielBeendet) {
         beendeSpiel('aufgabe');
     } else {
+        socket.emit('leave_room', { room: roomID, name: meinName });        
         window.location.href = 'lobby-auswahl.html';
     }
 };

@@ -49,6 +49,22 @@ function initChat(socket) {
         chatMessages.appendChild(msgDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
+    
+    function appendSystemMessage(text) {
+	    if (!chatMessages) return;
+	    const msgDiv = document.createElement('div');
+	    msgDiv.style.marginBottom = '8px';
+	    msgDiv.style.fontSize = '0.95em';
+	    msgDiv.style.color = '#e74c3c';
+	    msgDiv.style.fontStyle = 'italic';
+	    msgDiv.textContent = text;
+	    chatMessages.appendChild(msgDiv);
+	    chatMessages.scrollTop = chatMessages.scrollHeight;
+	}
+
+socket.on('room_system_message', (text) => {
+    appendSystemMessage(text);
+});
 
     if (chatInput) {
         chatInput.addEventListener('keypress', (e) => {
