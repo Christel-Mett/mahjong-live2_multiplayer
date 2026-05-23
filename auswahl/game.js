@@ -221,19 +221,23 @@ function beendeSpiel(grund) {
     const graceSeconds = document.getElementById('grace-seconds');
     if (graceTimer) graceTimer.style.display = 'block';
     
-    let timeLeft = 30;
-    const localGraceInterval = setInterval(() => {
-        timeLeft--;
-        if (graceSeconds) graceSeconds.textContent = timeLeft;
-        
-        // NEU: Update Sidebar falls vorhanden
-	    const sidebarSeconds = document.getElementById('grace-timer-sidebar');
-	    if (sidebarSeconds) sidebarSeconds.textContent = timeLeft;
-        
-        if (timeLeft <= 0 || document.getElementById('final-scoreboard').style.display !== 'none') {
-            clearInterval(localGraceInterval);
-        }
-    }, 1000);
+const leaveBtn = document.getElementById('leave-game-btn');
+if (leaveBtn) leaveBtn.disabled = true;
+
+let timeLeft = 30;
+const localGraceInterval = setInterval(() => {
+    timeLeft--;
+    if (graceSeconds) graceSeconds.textContent = timeLeft;
+    
+    // NEU: Update Sidebar falls vorhanden
+    const sidebarSeconds = document.getElementById('grace-timer-sidebar');
+    if (sidebarSeconds) sidebarSeconds.textContent = timeLeft;
+    
+    if (timeLeft <= 0 || document.getElementById('final-scoreboard').style.display !== 'none') {
+        clearInterval(localGraceInterval);
+        if (leaveBtn) leaveBtn.disabled = false;
+    }
+}, 1000);
 
     socket.emit('gameFinished', { 
         room: roomID, 
