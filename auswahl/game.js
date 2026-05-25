@@ -225,7 +225,7 @@ function beendeSpiel(grund) {
 const graceFiles = ['30_1.mp3', '30_2.mp3', '30_3.mp3', '30_4.mp3'];
 const randomFile = graceFiles[Math.floor(Math.random() * graceFiles.length)];
 graceAudio = new Audio(`../shared/sound/30/${randomFile}`);
-graceAudio.volume = parseFloat(localStorage.getItem('mahjongVolume') || 0.5);
+graceAudio.volume = parseFloat(localStorage.getItem('mahjongVolume') || 0.5) * 0.2;
 graceAudio.play().catch(() => {});
     
 const leaveBtn = document.getElementById('leave-game-btn');

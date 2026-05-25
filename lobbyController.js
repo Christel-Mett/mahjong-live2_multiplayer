@@ -58,7 +58,8 @@ module.exports = {
                     username: u.username,
                     rang: dbData ? dbData.rang : 'Gast',
                     // Korrekte Zuweisung für dein Frontend (lobby.html)[cite: 6]
-                    ingame: u.location === 'ingame'
+                    ingame: u.location === 'ingame',
+                    searching: u.location === 'searching'
                 };
             });
 

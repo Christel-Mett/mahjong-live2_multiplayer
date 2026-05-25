@@ -255,49 +255,53 @@ io.on('connection', (socket) => {
     });
 });
 	 
-    socket.on('join_queue', () => {
-        const username = session.username;
-        if (!username) return;
-
-        dbInterface.getUsersByNames([username], (err, results) => {
-            if (err || !results || results.length === 0) return;
-            
-            const userData = results[0];
-            matchmaking.addToWaitingQueue({ 
-                socket, 
-                name: username, 
-                rank: userData.rang, 
-                points: userData.mp_points 
-            });
-            console.log(`${username} wartet auf Zufallsspiel.`);
-        });
-    });
-
-    socket.on('join_layout_queue', ({layoutId}) => {
-        const username = session.username;
-        if (!username) return;
-
-        dbInterface.getUsersByNames([username], (err, results) => {
-            if (err || !results || results.length === 0) return;
-            
-            const userData = results[0];
-            matchmaking.addToLayoutQueue({ 
-                socket, 
-                name: username, 
-                rank: userData.rang, 
-                points: userData.mp_points, 
-                layoutId 
-            });
-            console.log(`${username} wartet auf Layout: ${layoutId}`);
-        });
-    });
- 
+	socket.on('join_queue', () => {
+	    const username = session.username;
+	    if (!username) return;
+	    dbInterface.getUsersByNames([username], (err, results) => {
+	        if (err || !results || results.length === 0) return;
+	        
+	        const userData = results[0];
+	        matchmaking.addToWaitingQueue({ 
+	            socket, 
+	            name: username, 
+	            rank: userData.rang, 
+	            points: userData.mp_points 
+	        });
+	        userManager.updateLocation(username, 'searching');
+	        lobbyController.broadcastUserList(io);
+	        console.log(`${username} wartet auf Zufallsspiel.`);
+	    });
+	});
+	socket.on('join_layout_queue', ({layoutId}) => {
+	    const username = session.username;
+	    if (!username) return;
+	    dbInterface.getUsersByNames([username], (err, results) => {
+	        if (err || !results || results.length === 0) return;
+	        
+	        const userData = results[0];
+	        matchmaking.addToLayoutQueue({ 
+	            socket, 
+	            name: username, 
+	            rank: userData.rang, 
+	            points: userData.mp_points, 
+	            layoutId 
+	        });
+	        userManager.updateLocation(username, 'searching');
+	        lobbyController.broadcastUserList(io);
+	        console.log(`${username} wartet auf Layout: ${layoutId}`);
+	    });
+	});
+	
 	socket.on('cancel_queue', () => {
 	    matchmaking.removeFromQueues(socket.id);
+	    userManager.updateLocation(session.username, 'lobby');
+	    lobbyController.broadcastUserList(io);
 	});
-
-    socket.on('cancel_layout_queue', () => {
+	socket.on('cancel_layout_queue', () => {
 	    matchmaking.removeFromQueues(socket.id);
+	    userManager.updateLocation(session.username, 'lobby');
+	    lobbyController.broadcastUserList(io);
 	    broadcastLayoutStats();
 	});
     
