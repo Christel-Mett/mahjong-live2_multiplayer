@@ -252,7 +252,8 @@ const localGraceInterval = setInterval(() => {
         room: roomID, 
         user: meinName, 
         reason: grund,
-        finalPoints: aktuellePunkte 
+        finalPoints: aktuellePunkte,
+        finalTime: sekunden
     });
 }
 
@@ -574,7 +575,7 @@ socket.on('finalScoreboard', (data) => {
     if (graceTimer) graceTimer.style.display = 'none';
 
     if (data.scores) {
-        data.scores.sort((a, b) => b.points - a.points);
+        data.scores.sort((a, b) => b.points - a.points) || a.time - b.time);
         if (winnerLine) winnerLine.textContent = `1. Platz: ${data.scores[0].name} (${data.scores[0].points} Pkt.)`;
         if (secondLine && data.scores[1]) {
             secondLine.textContent = `2. Platz: ${data.scores[1].name} (${data.scores[1].points} Pkt.)`;
