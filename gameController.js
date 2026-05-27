@@ -5,6 +5,24 @@ const lobbyController = require('./lobbyController');
 const activeGames = {}; 
 const gameRooms = {};
 const roomPoints = {};
+const absentTimeouts = {}; // Speichert laufende Abwesend-Timer pro Spieler
+
+function scheduleAbsent(io, names) {
+    names.forEach(name => {
+        // Alten Timer canceln falls noch einer läuft
+        if (absentTimeouts[name]) {
+            clearTimeout(absentTimeouts[name]);
+        }
+        absentTimeouts[name] = setTimeout(() => {
+            delete absentTimeouts[name];
+            const user = userManager.getUser(name);
+            if (user && user.location === 'ingame') {
+                userManager.updateLocation(name, 'absent');
+                lobbyController.broadcastUserList(io);
+            }
+        }, 5 * 60 * 1000);
+    });
+}
 
 module.exports = {
 	handleJoinRoom: (socket, data) => {
@@ -16,6 +34,11 @@ module.exports = {
 	        
 	        const username = data.name || userManager.getUsernameBySocketId(socket.id);
 	        if (username) {
+	            // Abwesend-Timer canceln falls ein neues Spiel beginnt
+	            if (absentTimeouts[username]) {
+	                clearTimeout(absentTimeouts[username]);
+	                delete absentTimeouts[username];
+	            }
 	            userManager.addUser(username, socket.id, 'ingame');
 	        }
 	        console.log(`Spieler ${data.name} ist Raum ${data.room} beigetreten.`);
@@ -54,48 +77,39 @@ handleGameFinished: (io, socket, data) => {
     socket.to(room).emit('gracePeriodStarted');
 
     // Server-Timer: nach 31s Scoreboard senden falls Spieler B nicht fertig wird
-if (!activeGames[room].graceTimeout) {
-    activeGames[room].graceTimeout = setTimeout(() => {
-        if (!activeGames[room]) return;
-        const playersInRoom = Object.values(activeGames[room].players);
+    if (!activeGames[room].graceTimeout) {
+        activeGames[room].graceTimeout = setTimeout(() => {
+            if (!activeGames[room]) return;
+            const playersInRoom = Object.values(activeGames[room].players);
 
-        // Unfertige Spieler mit 0 Punkten ergänzen
-	if (gameRooms[room]) {
-	    for (const sid of gameRooms[room]) {
-	        const name = userManager.getUsernameBySocketId(sid);
-	        if (name && !playersInRoom.find(p => p.name === name)) {
-	            const points = (roomPoints[room] && roomPoints[room][name]) ? roomPoints[room][name] : 0;
-	            playersInRoom.push({ name, points });
-	        }
-	    }
-	    delete gameRooms[room];
-	}
-	if (roomPoints[room]) delete roomPoints[room];
-
-        playersInRoom.forEach(player => {
-            if (player.name && player.points > 0) {
-                dbInterface.updateUserPoints(player.name, player.points, (err) => {
-                    if (err) console.error(`Fehler beim Speichern der Punkte für ${player.name}:`, err);
-                    else console.log(`${player.points} Punkte für ${player.name} gespeichert (Timer).`);
-                });
+            // Unfertige Spieler mit 0 Punkten ergänzen
+            if (gameRooms[room]) {
+                for (const sid of gameRooms[room]) {
+                    const name = userManager.getUsernameBySocketId(sid);
+                    if (name && !playersInRoom.find(p => p.name === name)) {
+                        const points = (roomPoints[room] && roomPoints[room][name]) ? roomPoints[room][name] : 0;
+                        playersInRoom.push({ name, points });
+                    }
+                }
+                delete gameRooms[room];
             }
-        });
-io.to(room).emit('finalScoreboard', {
-            scores: playersInRoom.map(p => ({ name: p.name, points: p.points }))
-        });
-        const absentNamesTimer = playersInRoom.map(p => p.name).filter(Boolean);
-        setTimeout(() => {
-            absentNamesTimer.forEach(name => {
-                const user = userManager.getUser(name);
-                if (user && user.location === 'ingame') {
-                    userManager.updateLocation(name, 'absent');
+            if (roomPoints[room]) delete roomPoints[room];
+
+            playersInRoom.forEach(player => {
+                if (player.name && player.points > 0) {
+                    dbInterface.updateUserPoints(player.name, player.points, (err) => {
+                        if (err) console.error(`Fehler beim Speichern der Punkte für ${player.name}:`, err);
+                        else console.log(`${player.points} Punkte für ${player.name} gespeichert (Timer).`);
+                    });
                 }
             });
-            lobbyController.broadcastUserList(io);
-        }, 5 * 60 * 1000);
-        delete activeGames[room];
-    }, 31000);
-}
+            io.to(room).emit('finalScoreboard', {
+                scores: playersInRoom.map(p => ({ name: p.name, points: p.points }))
+            });
+            scheduleAbsent(io, playersInRoom.map(p => p.name).filter(Boolean));
+            delete activeGames[room];
+        }, 31000);
+    }
 
     const playersInRoom = Object.values(activeGames[room].players);
     const verbliebeneSpieler = gameRooms[room] ? gameRooms[room].size : 0;
@@ -112,16 +126,7 @@ io.to(room).emit('finalScoreboard', {
         io.to(room).emit('finalScoreboard', {
             scores: playersInRoom.map(p => ({ name: p.name, points: p.points }))
         });
-        const absentNames = playersInRoom.map(p => p.name).filter(Boolean);
-        setTimeout(() => {
-            absentNames.forEach(name => {
-                const user = userManager.getUser(name);
-                if (user && user.location === 'ingame') {
-                    userManager.updateLocation(name, 'absent');
-                }
-            });
-            lobbyController.broadcastUserList(io);
-        }, 5 * 60 * 1000);
+        scheduleAbsent(io, playersInRoom.map(p => p.name).filter(Boolean));
         delete activeGames[room];
     }
 },
