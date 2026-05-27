@@ -21,7 +21,7 @@ module.exports = {
         module.exports.broadcastUserList(socket.server);
     },
 
-    // Verarbeitet eingehende Chat-Nachrichten[cite: 6]
+    // Verarbeitet eingehende Chat-Nachrichten
     handleChatMessage: (io, socket, text) => {
         const username = userManager.getUsernameBySocketId(socket.id);
         if (!username) return;
@@ -41,9 +41,9 @@ module.exports = {
 			io.to('lobby').emit('receive_chat_message', messageData);
     },
 
-    // Sendet die aktuelle Liste der Online-User inkl. Status an alle[cite: 6]
+    // Sendet die aktuelle Liste der Online-User inkl. Status an alle
     broadcastUserList: (io) => {
-        // 1. Alle User (Lobby & Ingame) aus dem userManager holen[cite: 6]
+        // 1. Alle User (Lobby & Ingame) aus dem userManager holen
         const users = userManager.getAllForDisplay(); 
         const usernames = users.map(u => u.username);
 
@@ -57,9 +57,10 @@ module.exports = {
                 return {
                     username: u.username,
                     rang: dbData ? dbData.rang : 'Gast',
-                    // Korrekte Zuweisung für dein Frontend (lobby.html)[cite: 6]
+                    // Korrekte Zuweisung für dein Frontend (lobby.html)
                     ingame: u.location === 'ingame',
-                    searching: u.location === 'searching'
+                    searching: u.location === 'searching',
+                    absent: u.location === 'absent'
                 };
             });
 

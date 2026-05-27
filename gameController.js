@@ -83,6 +83,16 @@ if (!activeGames[room].graceTimeout) {
 io.to(room).emit('finalScoreboard', {
             scores: playersInRoom.map(p => ({ name: p.name, points: p.points }))
         });
+        const absentNamesTimer = playersInRoom.map(p => p.name).filter(Boolean);
+        setTimeout(() => {
+            absentNamesTimer.forEach(name => {
+                const user = userManager.getUser(name);
+                if (user && user.location === 'ingame') {
+                    userManager.updateLocation(name, 'absent');
+                }
+            });
+            lobbyController.broadcastUserList(io);
+        }, 5 * 60 * 1000);
         delete activeGames[room];
     }, 31000);
 }
@@ -102,6 +112,16 @@ io.to(room).emit('finalScoreboard', {
         io.to(room).emit('finalScoreboard', {
             scores: playersInRoom.map(p => ({ name: p.name, points: p.points }))
         });
+        const absentNames = playersInRoom.map(p => p.name).filter(Boolean);
+        setTimeout(() => {
+            absentNames.forEach(name => {
+                const user = userManager.getUser(name);
+                if (user && user.location === 'ingame') {
+                    userManager.updateLocation(name, 'absent');
+                }
+            });
+            lobbyController.broadcastUserList(io);
+        }, 5 * 60 * 1000);
         delete activeGames[room];
     }
 },

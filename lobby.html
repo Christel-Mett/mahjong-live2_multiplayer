@@ -302,6 +302,10 @@
 			            // Spieler ist im Spiel -> gelb
 			            div.style.color = '#ede027'; 
 			            div.textContent += " (im Spiel)";
+			        } else if (userData.absent) {
+			            // Spieler ist abwesend -> grau
+			            div.style.color = '#7f8c8d'; 
+			            div.textContent += " (abwesend)";
 			        } else if (userData.username.toLowerCase() === meinName.toLowerCase()) {
 			            // Ich selbst (und nicht im Spiel) -> Grün
 			            div.style.color = '#2ecc71';
