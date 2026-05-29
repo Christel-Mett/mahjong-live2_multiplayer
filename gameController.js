@@ -41,7 +41,7 @@ module.exports = {
 	            }
 	            userManager.addUser(username, socket.id, 'ingame');
 	        }
-	        console.log(`Spieler ${data.name} ist Raum ${data.room} beigetreten.`);
+	        console.log(`${data.name} ist Raum ${data.room} beigetreten.`);
 	    }
 	},
 
@@ -68,7 +68,8 @@ handleGameFinished: (io, socket, data) => {
 
     activeGames[room].players[socket.id] = { 
         name: data.name || data.user || "Spieler", 
-        points: finalPoints, 
+        points: finalPoints,
+        time: data.finalTime || 0,
         finished: true 
     };
 
@@ -104,7 +105,7 @@ handleGameFinished: (io, socket, data) => {
                 }
             });
             io.to(room).emit('finalScoreboard', {
-                scores: playersInRoom.map(p => ({ name: p.name, points: p.points }))
+                scores: playersInRoom.map(p => ({ name: p.name, points: p.points, time: p.time || 0 }))
             });
             scheduleAbsent(io, playersInRoom.map(p => p.name).filter(Boolean));
             delete activeGames[room];
@@ -124,7 +125,7 @@ handleGameFinished: (io, socket, data) => {
             }
         });
         io.to(room).emit('finalScoreboard', {
-            scores: playersInRoom.map(p => ({ name: p.name, points: p.points }))
+            scores: playersInRoom.map(p => ({ name: p.name, points: p.points, time: p.time || 0 }))
         });
         scheduleAbsent(io, playersInRoom.map(p => p.name).filter(Boolean));
         delete activeGames[room];

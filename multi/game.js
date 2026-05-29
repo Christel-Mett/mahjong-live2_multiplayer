@@ -546,11 +546,21 @@ socket.on('gracePeriodStarted', () => {
             }
 
             // Stopp-Bedingungen
-            if (timeLeft <= 0 || spielBeendet) {
-                clearInterval(graceInterval);
-                if (graceTimer) graceTimer.style.display = 'none';
-                if (sidebarGraceOverlay) sidebarGraceOverlay.style.display = 'none';
-            }
+				if (timeLeft <= 0 || spielBeendet) {
+				    clearInterval(graceInterval);
+				    if (graceTimer) graceTimer.style.display = 'none';
+				    if (sidebarGraceOverlay) sidebarGraceOverlay.style.display = 'none';
+				    if (!spielBeendet) {
+				        socket.emit('gameFinished', {
+				            room: roomID,
+				            user: meinName,
+				            reason: 'grace_timeout',
+				            finalPoints: aktuellePunkte,
+				            finalTime: sekunden
+				        });
+				        spielBeendet = true;
+				    }
+				}
         }, 1000);
     }
 });
@@ -572,10 +582,11 @@ socket.on('finalScoreboard', (data) => {
 
     if (data.scores) {
         data.scores.sort((a, b) => b.points - a.points || a.time - b.time);
-        if (winnerLine) winnerLine.textContent = `1. Platz: ${data.scores[0].name} (${data.scores[0].points} Pkt.)`;
-        if (secondLine && data.scores[1]) {
-            secondLine.textContent = `2. Platz: ${data.scores[1].name} (${data.scores[1].points} Pkt.)`;
-        }
+		  const formatTime = s => `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
+		  if (winnerLine) winnerLine.textContent = `1. Platz: ${data.scores[0].name} (${data.scores[0].points} Pkt. ⏱ ${formatTime(data.scores[0].time)})`;
+		  if (secondLine && data.scores[1]) {
+			    secondLine.textContent = `2. Platz: ${data.scores[1].name} (${data.scores[1].points} Pkt. ⏱ ${formatTime(data.scores[1].time)})`;
+		  }
     }
 
     if (scoreboard) scoreboard.style.display = 'block';
