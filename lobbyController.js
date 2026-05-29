@@ -13,6 +13,7 @@ module.exports = {
         
         // 2. Lobby-Raum beitreten
 	     socket.join('lobby');
+	     console.log(`${username} hat die Lobby betreten.`);
 
         // 3. Chat-Verlauf an den neuen User senden
         socket.emit('chat_history', chatHistory);

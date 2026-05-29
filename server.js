@@ -149,7 +149,6 @@ app.post('/set-session', csrfProtection, (req, res) => {
 
         req.session.save((err) => {
             if (err) return res.status(500).json({ success: false });
-            console.log(`Session fixiert für: ${username} (ID: ${userId})`);
             res.json({ success: true });
         });
     } else {
@@ -184,7 +183,6 @@ app.use('/chat-module.js', express.static(__dirname + '/chat-module.js'));
 io.on('connection', (socket) => {
 	 broadcastLayoutStats();
     const session = socket.request.session;
-    console.log('Ein Client hat sich verbunden. ID:', socket.id);
 
     socket.on('register_attempt', (data) => authController.handleRegister(socket, data, transporter));
     socket.on('login_attempt', (data) => authController.handleLogin(socket, data, session));
@@ -223,7 +221,6 @@ io.on('connection', (socket) => {
     
 	socket.on('re-identify', (username) => {
 	    if (!username) return;
-	    console.log(`re-identify: ${username} (Socket: ${socket.id})`);
 	    
 	    const currentUser = userManager.getUser(username);
 	    if (currentUser && currentUser.location === 'ingame') {
@@ -289,7 +286,7 @@ io.on('connection', (socket) => {
 	        });
 	        userManager.updateLocation(username, 'searching');
 	        lobbyController.broadcastUserList(io);
-	        console.log(`${username} wartet auf Layout: ${layoutId}`);
+	        console.log(`${username} wartet auf Layout: ${layoutId}.`);
 	    });
 	});
 	
@@ -318,7 +315,6 @@ io.on('connection', (socket) => {
 	});
 
     socket.on('joinRoom', (data) => {
-    	  console.log('joinRoom empfangen:', data); // ← NEU
         gameController.handleJoinRoom(socket, data);
         lobbyController.broadcastUserList(io); // Aktualisiert die Lobby-Anzeige bei Spielstart
     });
@@ -333,6 +329,7 @@ io.on('connection', (socket) => {
     socket.on('leave_room', (data) => {
 	    if (data.room && data.name) {
 	        io.to(data.room).emit('room_system_message', `${data.name} hat den Raum verlassen.`);
+	        console.log(`${data.name} hat den Spielraum verlassen und ist in die Lobby zurückgegangen.`);
 	    }
 	});
 
@@ -347,7 +344,7 @@ io.on('connection', (socket) => {
                 if (currentUser && currentUser.socketId === socket.id) {
                     userManager.removeUser(username);
                     lobbyController.broadcastUserList(io);
-                    console.log(`${username} endgültig entfernt.`);
+                    console.log(`${username} wurde abgemeldet.`);
                 }
             }, 5000);
         }
@@ -420,11 +417,10 @@ function startMultiplayerGame(p1, p2, layout) {
         startTime: startTime
     });
 
-    console.log(`Match gefunden: ${p1.name} vs ${p2.name} in Raum ${roomId}`);
-    
-    // ✅ NEU: Diese zwei Zeilen hinzufügen
     userManager.updateLocation(p1.name, 'ingame');
-    userManager.updateLocation(p2.name, 'ingame');    
+    userManager.updateLocation(p2.name, 'ingame');
+    console.log(`Match gefunden: ${p1.name} vs ${p2.name} auf Layoutspiel: ${layout}.`);
+
     
     // Manuelles Update der Userliste für alle, da sich der Status geändert hat
     lobbyController.broadcastUserList(io);

@@ -14,6 +14,7 @@ handleRegister: (socket, data, transporter) => {
         if (err) return socket.emit('register_response', { success: false, message: 'Datenbankfehler.' });
         if (results.length > 0) {
             return socket.emit('register_response', { success: false, message: 'Nutzername oder E-Mail existiert bereits.' });
+            
         }
 
         const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -26,7 +27,8 @@ handleRegister: (socket, data, transporter) => {
                 success: true, 
                 message: 'Registrierung erfolgreich! Bitte prüfe in Kürze dein E-Mail-Postfach zur Verifizierung.' 
             });
-
+                console.log(`Neue Registrierung: ${username} (${email}).`);
+                
             // --- MAIL-VERSAND LÄUFT JETZT IM HINTERGRUND ---
             const verifyLink = `https://2.staging.mahjong-treff.de/verify?token=${token}`;
             const mailOptions = {
@@ -63,6 +65,7 @@ handleRegister: (socket, data, transporter) => {
 
             bcrypt.compare(password, user.password, (err, isMatch) => {
                 if (err || !isMatch) {
+                	  console.log(`Fehlgeschlagener Login für: ${username}.`);
                     return socket.emit('login_response', { success: false, message: 'Falscher Nutzername oder Passwort.' });
                 }
 
@@ -82,6 +85,7 @@ handleRegister: (socket, data, transporter) => {
                     }
 
                     userManager.addUser(user.username, socket.id, 'lobby');
+                    console.log(`Benutzer ${user.username} eingeloggt.`);
 
                     dbInterface.updateLoginTimestamp(user.id, () => {
                         socket.emit('login_response', { success: true, username: user.username });
