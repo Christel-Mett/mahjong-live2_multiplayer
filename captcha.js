@@ -1,17 +1,23 @@
-const axios = require('axios');
+const { verifySolution } = require('altcha-lib');
 
-async function verifyCaptcha(token) {
-    if (!token) return false;
+const ALTCHA_SECRET = process.env.CAPTCHA_SECRET;
+
+async function verifyCaptcha(payload) {
+    if (!payload) {
+        console.log("Altcha: Kein Payload empfangen – Registrierung abgelehnt.");
+        return false;
+    }
 
     try {
-        const response = await axios.post(
-            `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET}&response=${token}`
-        );
-        console.log("Google Antwort:", response.data); // Temporär zum Debuggen
-        // Bei v3 prüfen wir auf success und optional auf einen Mindest-Score (z.B. 0.5)
-        return response.data.success && response.data.score >= 0.4;
+        const ok = await verifySolution(payload, ALTCHA_SECRET);
+        if (ok) {
+            console.log("Altcha: Prüfung erfolgreich.");
+        } else {
+            console.log("Altcha: Prüfung fehlgeschlagen – ungültiger Payload.");
+        }
+        return ok;
     } catch (error) {
-        console.error("ReCaptcha Fehler:", error);
+        console.error("Altcha Fehler:", error);
         return false;
     }
 }

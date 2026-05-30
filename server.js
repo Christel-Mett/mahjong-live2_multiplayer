@@ -9,6 +9,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const crypto = require('crypto');
 const cookieParser = require('cookie-parser');
+const { createChallenge } = require('altcha-lib');
 
 // Eigene Module laden
 const dbInterface = require('./dbInterface');
@@ -18,6 +19,8 @@ const lobbyController = require('./lobbyController');
 const authMiddleware = require('./auth');
 const matchmaking = require('./matchmakingCore');
 const gameController = require('./gameController');
+const { verifyCaptcha } = require('./captcha');
+
 
 dotenv.config();
 const app = express();
@@ -47,12 +50,9 @@ app.use(helmet({
                 "'self'", 
                 "'unsafe-inline'", 
                 "'unsafe-eval'", 
-                "https://www.google.com", 
-                "https://www.gstatic.com",
                 "https://cdnjs.cloudflare.com" 
             ],
             "script-src-attr": ["'unsafe-inline'"],
-            "frame-src": ["'self'", "https://www.google.com"],
             "connect-src": ["'self'", "wss:", "ws:", "https:", "http:"],
             "img-src": ["'self'", "data:", "https:", "blob:"], 
             "style-src": ["'self'", "'unsafe-inline'"],
@@ -154,6 +154,14 @@ app.get('/logout', pageLimiter, (req, res) => {
     });
 });
 
+app.get('/altcha-challenge', pageLimiter, async (req, res) => {
+    const challenge = await createChallenge({
+        hmacKey: process.env.CAPTCHA_SECRET,
+        maxNumber: 50000
+    });
+    res.json(challenge);
+});
+
 app.post('/set-session', csrfProtection, (req, res) => {
     const username = req.body.username;
     const userId = req.body.userId || req.body.id || req.session.userId;
@@ -199,7 +207,11 @@ io.on('connection', (socket) => {
 	 broadcastLayoutStats();
     const session = socket.request.session;
 
-    socket.on('register_attempt', (data) => authController.handleRegister(socket, data, transporter));
+    socket.on('register_attempt', async (data) => {
+	    const ok = await verifyCaptcha(data.captchaPayload);
+	    if (!ok) return socket.emit('register_response', { success: false, message: 'Captcha-Prüfung fehlgeschlagen.' });
+	    authController.handleRegister(socket, data, transporter);
+	});
     socket.on('login_attempt', (data) => authController.handleLogin(socket, data, session));
 
     socket.on('forgot_password_attempt', (email) => authController.handleForgotPassword(socket, email, transporter));

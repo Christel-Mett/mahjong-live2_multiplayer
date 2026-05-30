@@ -165,7 +165,7 @@
 			}
     </style>
     
-<script src="https://www.google.com/recaptcha/api.js?render=6Lf74JQsAAAAAKrolQf2ldBBwaCLwSxhj0bhhJAO"></script>    
+<script src="/shared/altcha.min.js" type="module"></script>
     
 </head>
 <body onclick="showOverlay()">
@@ -244,6 +244,8 @@
                         Datenschutzbestimmungen und die Nutzungsbedingungen gelesen
                     </label>
                 </div>
+   
+<altcha-widget id="altcha-widget" challengeurl="/altcha-challenge"></altcha-widget>   
                 
                 <button id="registerBtn" onclick="attemptRegister()" class="menu-btn" disabled style="opacity: 0.5; cursor: not-allowed;">
                     Konto erstellen
@@ -259,9 +261,7 @@
                     <a href="datenschutz.html">Datenschutz</a> | 
                     <a href="nutzung.html">Nutzungsbedingungen</a>
                <p style="font-size: 0.7em; opacity: 0.6; margin-top: 10px;">
-					    Diese Seite ist durch reCAPTCHA geschützt. Es gelten die 
-					    <a href="https://policies.google.com/privacy" target="_blank">Datenschutzbestimmungen</a> und 
-					    <a href="https://policies.google.com/terms" target="_blank">Nutzungsbedingungen</a> von Google.
+					    Diese Seite ist durch Altcha geschützt.
 					</p>
                 </div>
             </div>
@@ -384,25 +384,25 @@
 			        alert('Bitte alle Felder ausfüllen!');
 			        return;
 			    }
-			    if (email !== emailConf) {
-			        // Button sollte eigentlich disabled sein, aber Sicherheitshalber:
-			        return;
-			    }
+			    if (email !== emailConf) return;
 			    if (pass !== passConf) {
 			        alert('Die Passwörter stimmen nicht überein!');
 			        return;
 			    }
 			
-			    // NEU: ReCaptcha v3 Token generieren
-			    grecaptcha.ready(function() {
-			        grecaptcha.execute('6Lf74JQsAAAAAKrolQf2ldBBwaCLwSxhj0bhhJAO', {action: 'submit'}).then(function(token) {
-			            socket.emit('register_attempt', { 
-			                username: name, 
-			                email: email, 
-			                password: pass, 
-			                captchaToken: token // Das Token wird hier mitgeschickt
-			            });
-			        });
+			    const altcha = document.getElementById('altcha-widget');
+				 const hiddenInput = altcha ? altcha.querySelector('input[name="altcha"]') : null;
+				 const payload = hiddenInput ? hiddenInput.value : null;
+			    if (!payload) {
+			        alert('Bitte warte kurz, die Sicherheitsprüfung läuft noch.');
+			        return;
+			    }
+			
+			    socket.emit('register_attempt', { 
+			        username: name, 
+			        email: email, 
+			        password: pass, 
+			        captchaPayload: payload
 			    });
 			}
 
