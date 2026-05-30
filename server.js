@@ -321,12 +321,14 @@ io.on('connection', (socket) => {
 	    matchmaking.removeFromQueues(socket.id);
 	    userManager.updateLocation(session.username, 'lobby');
 	    lobbyController.broadcastUserList(io);
+	    console.log(`${session.username} hat die Gegnersuche abgebrochen.`);
 	});
 	socket.on('cancel_layout_queue', () => {
 	    matchmaking.removeFromQueues(socket.id);
 	    userManager.updateLocation(session.username, 'lobby');
 	    lobbyController.broadcastUserList(io);
 	    broadcastLayoutStats();
+	    console.log(`${session.username} hat die Layout-Suche abgebrochen.`);
 	});
     
     socket.on('join_layout_room', (layoutId) => {
