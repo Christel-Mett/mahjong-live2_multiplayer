@@ -16,7 +16,7 @@
 
 ### Was ist Mahjong-Live Multiplayer 2.0?
 
-Mahjong-Live Multiplayer 2.0 ist ein **browserbasiertes Solitär-Mahjong-Spiel** mit Multiplayer-Funktion, entwickelt mit modernen Web-Technologien. Das Spiel kombiniert klassisches Mahjong-Gameplay mit Online-Mehrspielerfunktionalität.
+Mahjong-Live Multiplayer 2.0 ist ein **browserbasiertes Solitär-Mahjong-Spiel** mit Multiplayer-Funktion, entwickelt mit modernen Web-Technologien. Das Spiel kombiniert klassisches Mahjong-Gameplay mit Echtzeit-Multiplayer über Socket.IO.
 
 **Live-Demo:** [mahjong-treff.de](https://mahjong-treff.de)
 
@@ -28,6 +28,7 @@ Mahjong-Live Multiplayer 2.0 ist ein **browserbasiertes Solitär-Mahjong-Spiel**
 - ✅ **3D-Grafiken**: Three.js-basierte Visualisierung der Spielsteine
 - ✅ **Responsive Design**: Spielbar auf Desktop und mobilen Geräten
 - ✅ **Deutsche Sprache**: Mit automatischer Übersetzung für Englisch
+- ✅ **Bot-Schutz**: Altcha-basierte CAPTCHA-Verifizierung
 
 ### Technologie-Stack
 
@@ -40,6 +41,7 @@ Mahjong-Live Multiplayer 2.0 ist ein **browserbasiertes Solitär-Mahjong-Spiel**
 | **Datenbank** | MySQL / MariaDB |
 | **Session-Management** | Express-Session (MySQL Store) |
 | **Sicherheit** | Helmet, CSRF-Protection, bcrypt, Rate Limiting |
+| **Bot-Schutz** | Altcha (CAPTCHA-Alternative) |
 | **E-Mail** | Nodemailer |
 | **Sprache** | JavaScript (Node.js & Frontend) |
 
@@ -66,7 +68,7 @@ server.js (Orchestrator)
 ├── lobbyController.js      → Lobby-Logik
 ├── matchmakingCore.js      → Gegner-Matchmaking
 ├── gameController.js       → Spielverwaltung
-├── captcha.js              → CAPTCHA-Verifizierung
+├── captcha.js              → Altcha-Verifizierung
 └── auth.js                 → Session-Middleware
 ```
 
@@ -118,10 +120,12 @@ Die installierten Pakete sind in `package.json` definiert:
 | **helmet** | ^8.1.0 | HTTP-Security-Header |
 | **express-rate-limit** | ^8.5.1 | Request-Rate-Limiting |
 | **express-session** | ^1.19.0 | Session-Management |
+| **express-mysql-session** | ^3.0.3 | MySQL-basierter Session-Store |
 | **cookie-parser** | ^1.4.7 | Cookie-Parsing |
 | **csrf-csrf** | ^2.3.0 | CSRF-Schutz |
 | **dotenv** | ^17.4.2 | Umgebungsvariablen |
 | **axios** | ^1.15.2 | HTTP-Client |
+| **altcha-lib** | ^1.4.1 | CAPTCHA-Lösung (Bot-Schutz) |
 
 ### Schritt 3: Datenbank einrichten
 
@@ -165,8 +169,8 @@ MAIL_PORT=465
 MAIL_USER=noreply@example.com
 MAIL_PASS=dein_mail_passwort
 
-# CAPTCHA (optional)
-CAPTCHA_SECRET=dein_captcha_secret
+# Altcha CAPTCHA
+ALTCHA_SECRET=dein_altcha_secret_hier
 ```
 
 ### Schritt 5: Server starten
@@ -202,12 +206,14 @@ Behandelt alle Authentifizierungs-Vorgänge über Socket.IO-Events:
 - ✓ Rate-Limiting (max. 20 Login-Versuche in 15 Min.)
 - ✓ Session-Management
 - ✓ Token-basierter Passwort-Reset
+- ✓ Altcha-CAPTCHA-Verifizierung
 
 **Beispiel-Flow (Registrierung):**
 ```
 User → register_attempt
        ↓
        authController.handleRegister()
+       ├─ Altcha-Token validieren
        ├─ E-Mail-Validierung
        ├─ Duplikat-Check
        ├─ Passwort hashen (bcrypt)
@@ -372,13 +378,25 @@ app.get('/lobby', authMiddleware, (req, res) => {
 
 **Bei Fehler:** Redirect zu Login
 
-### 8. **captcha.js** – CAPTCHA-Verifizierung
+### 8. **captcha.js** – Altcha-Verifizierung
 
-Schützt vor automatisierter Registrierung & Bot-Angriffen.
+Schützt vor automatisierter Registrierung & Bot-Angriffen durch die moderne CAPTCHA-Alternative **Altcha**.
+
+**Warum Altcha statt Google reCaptcha?**
+- 🔒 Datenschutzfreundlich: Keine externen Google-Server
+- 🚀 Schneller: Lokal verarbeitete Challenge-Response
+- 💡 Benutzerfreundlich: Weniger störend als traditionelle CAPTCHAs
+- 🌍 Open Source: Transparente Lösung
 
 **Verwendung:**
 - Bei Registrierung
 - Bei Passwort-Reset (optional)
+
+**Server-seitige Validierung:**
+```javascript
+const { verifySignature } = require('altcha-lib');
+const isValid = verifySignature(payload, secret);
+```
 
 ---
 
@@ -445,7 +463,7 @@ Dieses Projekt wurde mit **Vibecoding** entwickelt – ein moderner Ansatz, der:
 - ⚡ Schnelle Iterationen ermöglicht
 - 🚀 Technische Hürden überbrückt
 
-**Hinweis des Autors:** Der Entwickler hat Grundkenntnisse in Scripting (Python, Bash, PHP), ist aber kein professioneller Full-Stack-Entwickler. Trotzdem wurde ein komplexes, produktives System gebaut!
+**Hinweis des Autors:** Der Entwickler hat Grundkenntnisse in Scripting (Python, Bash, PHP), ist aber kein professioneller Full-Stack-Entwickler. Trotzdem wurde ein komplexes, produktives System durch eine Kombination aus Grundfähigkeiten und KI-Unterstützung realisiert.
 
 ### Projekt-Struktur
 
@@ -463,7 +481,7 @@ mahjong-live2_multiplayer/
 │   ├── matchmakingCore.js       # Matchmaking
 │   ├── userManager.js           # Online-Benutzerliste
 │   ├── dbInterface.js           # Datenbank-API
-│   ├── captcha.js               # CAPTCHA
+│   ├── captcha.js               # Altcha CAPTCHA
 │   └── auth.js                  # Session-Middleware
 │
 ├── Frontend:
@@ -599,9 +617,11 @@ db.query('SELECT * FROM users WHERE username = ?', [username])
 db.query('SELECT * FROM users WHERE username = ' + username)
 ```
 
-#### 7. **CAPTCHA-Verifizierung**
+#### 7. **Altcha-CAPTCHA-Verifizierung**
 - Bei Registrierung
 - Schützt vor automatisierten Bot-Attacken
+- Datenschutzfreundlich (keine externen Google-Server)
+- Challenge-Response-Protokoll lokal verifiziert
 
 #### 8. **E-Mail-Verifizierung**
 ```
@@ -618,6 +638,7 @@ Account aktiviert
 
 - [ ] `.env`-Datei wird nicht in Git committed
 - [ ] `SESSION_SECRET` ist ein starker, zufälliger String
+- [ ] `ALTCHA_SECRET` ist korrekt konfiguriert
 - [ ] HTTPS/TLS ist aktiviert (Nginx/Apache als Reverse Proxy)
 - [ ] Datenbank-Backups sind konfiguriert
 - [ ] E-Mail-Versand mit TLS/SSL
@@ -641,6 +662,7 @@ Dieses Projekt ist unter der **GNU General Public License (GPL) v3** veröffentl
 | **3D-Engine** | Three.js | MIT |
 | **Web-Framework** | Express.js | MIT |
 | **Socket.IO** | Socket.IO Team | MIT |
+| **CAPTCHA-Lösung** | Altcha | MIT |
 
 **Siehe auch:** `CREDITS.txt` im Repository
 
@@ -648,6 +670,7 @@ Dieses Projekt ist unter der **GNU General Public License (GPL) v3** veröffentl
 
 - **KDE Games Team** für das KMahjongg-Projekt
 - **Three.js Community** für die großartige 3D-Bibliothek
+- **Altcha Team** für die moderne CAPTCHA-Lösung
 - **OpenAI Claude** für AI-Assisted Development
 - Alle Contributors und Tester
 
@@ -661,10 +684,11 @@ Dieses Projekt ist unter der **GNU General Public License (GPL) v3** veröffentl
 - **Express Docs:** [expressjs.com](https://expressjs.com)
 - **Socket.IO Docs:** [socket.io](https://socket.io)
 - **Three.js Docs:** [threejs.org](https://threejs.org)
+- **Altcha Docs:** [altcha.com](https://altcha.com)
 
 ---
 
 **Dokumentation erstellt:** Mai 2026  
+**Letzte Aktualisierung:** Mai 2026  
 **Version:** 2.0 (Modulare Architektur)  
 **Autor:** Christel-Mett
-
