@@ -121,6 +121,21 @@ app.get('/csrf-token', (req, res) => {
     res.json({ token });
 });
 
+// --- ADMIN: Aktive User ---
+app.get('/admin/users', (req, res) => {
+    const adminToken = req.headers['x-admin-token'];
+    if (!adminToken || adminToken !== process.env.ADMIN_TOKEN) {
+        return res.status(401).json({ success: false, message: 'Nicht autorisiert.' });
+    }
+    const users = userManager.getAllForDisplay();
+    res.json({
+        success: true,
+        count: users.length,
+        timestamp: new Date().toISOString(),
+        users: users
+    });
+});
+
 function csrfProtection(req, res, next) {
     const token = req.headers['x-csrf-token'];
     if (!token || token !== req.session.csrfToken) {
