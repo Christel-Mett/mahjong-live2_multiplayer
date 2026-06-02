@@ -294,7 +294,7 @@ io.on('connection', (socket) => {
 	        });
 	        userManager.updateLocation(username, 'searching');
 	        lobbyController.broadcastUserList(io);
-	        console.log(`${username} wartet auf Zufallsspiel.`);
+	        console.log(`${username} wartet auf Gegner.`);
 	    });
 	});
 	socket.on('join_layout_queue', ({layoutId}) => {
@@ -313,7 +313,7 @@ io.on('connection', (socket) => {
 	        });
 	        userManager.updateLocation(username, 'searching');
 	        lobbyController.broadcastUserList(io);
-	        console.log(`${username} wartet auf Layout: ${layoutId}.`);
+	        console.log(`${username} wartet auf Layoutgegner: ${layoutId}.`);
 	    });
 	});
 	
@@ -328,7 +328,7 @@ io.on('connection', (socket) => {
 	    userManager.updateLocation(session.username, 'lobby');
 	    lobbyController.broadcastUserList(io);
 	    broadcastLayoutStats();
-	    console.log(`${session.username} hat die Layout-Suche abgebrochen.`);
+	    console.log(`${session.username} hat die Layoutgegnersuche abgebrochen.`);
 	});
     
     socket.on('join_layout_room', (layoutId) => {
