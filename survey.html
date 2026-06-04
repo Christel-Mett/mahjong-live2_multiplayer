@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mahjong-Treff - Umfrage</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="shared/bilder/favicon/favicon-32x32.png">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #1a2533;
+            font-family: inherit;
+            padding: 20px;
+        }
+
+        .survey-wrapper {
+            width: 100%;
+            max-width: 640px;
+        }
+
+        .survey-card {
+            background-color: #2c3e50;
+            border: 2px solid #d2b48c;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            color: #d2b48c;
+        }
+
+        .survey-card h1 {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 24px;
+            color: #ffffff;
+            letter-spacing: 0.03em;
+        }
+
+        .survey-text {
+            font-size: 1.05em;
+            line-height: 1.7;
+            /*color: #c8b89a;*/
+            color: #e5dbc8;
+            margin-bottom: 28px;
+        }
+
+        .survey-text p + p {
+            margin-top: 12px;
+        }
+
+        .survey-question {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 18px;
+        }
+
+        .survey-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .survey-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: rgba(210, 180, 140, 0.06);
+            border: 1px solid rgba(210, 180, 140, 0.25);
+            border-radius: 10px;
+            padding: 14px 18px;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+            user-select: none;
+        }
+
+        .survey-option:hover {
+            background: rgba(210, 180, 140, 0.12);
+            border-color: rgba(210, 180, 140, 0.5);
+        }
+
+        .survey-option.selected {
+            background: rgba(210, 180, 140, 0.18);
+            border-color: #d2b48c;
+        }
+
+        .survey-option input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            min-width: 18px;
+            border: 2px solid #d2b48c;
+            border-radius: 50%;
+            margin-top: 2px;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.15s;
+        }
+
+        .survey-option input[type="radio"]:checked {
+            background: #d2b48c;
+            box-shadow: inset 0 0 0 3px #2c3e50;
+        }
+
+        .survey-option label {
+            font-size: 1.05em;
+            color: #e5dbc8;
+            cursor: pointer;
+            line-height: 1.5;
+        }
+
+        .survey-option.selected label {
+            color: #ffffff;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #d2b48c;
+            color: #1a2533;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s, opacity 0.2s;
+            letter-spacing: 0.04em;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            background-color: #e8cfa8;
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Danke-Nachricht */
+        .thank-you {
+            display: none;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .thank-you .checkmark {
+            font-size: 3em;
+            margin-bottom: 16px;
+        }
+
+        .thank-you h2 {
+            color: #ffffff;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .thank-you p {
+            color: #c8b89a;
+            font-size: 0.95em;
+            margin-bottom: 24px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 12px 28px;
+            background: transparent;
+            color: #d2b48c;
+            border: 2px solid #d2b48c;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #d2b48c;
+            color: #1a2533;
+        }
+
+        /* Bereits abgestimmt */
+        .already-voted {
+            display: none;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .already-voted .icon {
+            font-size: 2.5em;
+            margin-bottom: 14px;
+        }
+
+        .already-voted h2 {
+            color: #ffffff;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .already-voted p {
+            color: #c8b89a;
+            font-size: 0.9em;
+            margin-bottom: 24px;
+        }
+
+        /* Fehlermeldung */
+        .error-msg {
+            display: none;
+            color: #e74c3c;
+            font-size: 0.88em;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="survey-wrapper">
+    <div class="survey-card">
+
+        <!-- Umfrage-Formular -->
+        <div id="survey-form">
+            <h1 id="survey-title">Kurze Frage an dich</h1>
+
+            <div class="survey-text">
+                <p>Damit Anfänger nicht direkt gegen Top-Spieler antreten müssen wird bei der Gegnersuche derzeit zuerst nach Gegnern mit ähnlichem Rang gesucht, erst nach 30 Sekunden wird die Suche ausgeweitet.</p>
+                <p>Das macht Sinn ab einer gewissen Anzahl Spieler, die wir aber (leider noch) nicht erreichen. Somit finden Spieler auf den unteren Plätzen oft keinen passenden Spielpartner oder müssen sehr lange warten.</p>
+                <p>Ich überlege deshalb diese Stufenregelung auszusetzen. Punkte gibt's ja eh für beide. Sollte sich die Spieleranzahl erhöhen kann ich sie wieder aktivieren.</p>
+            </div>
+
+            <div class="survey-question">Wie siehst du das?</div>
+
+            <div class="survey-options">
+                <div class="survey-option" id="option-yes">
+                    <input type="radio" name="vote" id="vote-yes" value="yes">
+                    <label>Ja, schalte die Stufen ab – Hauptsache schnell spielen!</label>
+                </div>
+                <div class="survey-option" id="option-no">
+                    <input type="radio" name="vote" id="vote-no" value="no">
+                    <label>Nein, ich warte lieber länger auf einen gleichwertigen Gegner.</label>
+                </div>
+            </div>
+
+            <button class="submit-btn" id="submit-btn" disabled onclick="submitVote()">Abstimmen</button>
+            <div class="error-msg" id="error-msg">Es ist ein Fehler aufgetreten. Bitte versuche es erneut.</div>
+            <a href="/lobby" class="back-btn" style="display:block; text-align:center; margin-top:12px;">Abbrechen</a>
+        </div>
+
+        <!-- Danke-Nachricht nach Abstimmung -->
+        <div class="thank-you" id="thank-you">
+            <div class="checkmark">✓</div>
+            <h2>Danke für deine Stimme!</h2>
+            <p>Deine Meinung hilft dabei, das Spiel besser zu machen.</p>
+            <a href="/lobby" class="back-btn">Zurück zur Lobby</a>
+        </div>
+
+        <!-- Bereits abgestimmt -->
+        <div class="already-voted" id="already-voted">
+            <div class="icon">🀄</div>
+            <h2>Du hast bereits abgestimmt.</h2>
+            <p>Jeder kann nur einmal teilnehmen – danke für deine Meinung!</p>
+            <a href="/lobby" class="back-btn">Zurück zur Lobby</a>
+        </div>
+
+    </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    let selectedValue = null;
+
+    // Beim Laden prüfen ob User bereits abgestimmt hat
+    socket.emit('check_survey_status');
+
+    socket.on('survey_status', (data) => {
+        if (data.username) {
+            document.getElementById('survey-title').textContent = 'Kurze Frage an dich, ' + data.username + ':';
+        }
+        if (data.hasVoted) {
+            showAlreadyVoted();
+        }
+    });
+
+    socket.on('survey_submit_response', (data) => {
+        if (data.success) {
+            showThankYou();
+        } else {
+            const errMsg = document.getElementById('error-msg');
+            errMsg.style.display = 'block';
+            errMsg.textContent = data.message || 'Es ist ein Fehler aufgetreten.';
+            document.getElementById('submit-btn').disabled = false;
+        }
+    });
+
+    function setupOptions() {
+        [['option-yes', 'yes'], ['option-no', 'no']].forEach(([id, value]) => {
+            document.getElementById(id).addEventListener('click', function(e) {
+                if (e.target.tagName === 'INPUT') return; // Radio-Event ignorieren, Div-Klick reicht
+                if (selectedValue === value) {
+                    this.classList.remove('selected');
+                    this.querySelector('input[type="radio"]').checked = false;
+                    selectedValue = null;
+                    document.getElementById('submit-btn').disabled = true;
+                } else {
+                    document.querySelectorAll('.survey-option').forEach(o => {
+                        o.classList.remove('selected');
+                        o.querySelector('input[type="radio"]').checked = false;
+                    });
+                    this.classList.add('selected');
+                    this.querySelector('input[type="radio"]').checked = true;
+                    selectedValue = value;
+                    document.getElementById('submit-btn').disabled = false;
+                }
+            });
+        });
+    }
+    setupOptions();
+
+    function submitVote() {
+        if (!selectedValue) return;
+        document.getElementById('submit-btn').disabled = true;
+        document.getElementById('error-msg').style.display = 'none';
+        socket.emit('submit_survey', { vote: selectedValue });
+    }
+
+    function showThankYou() {
+        document.getElementById('survey-form').style.display = 'none';
+        document.getElementById('thank-you').style.display = 'block';
+    }
+
+    function showAlreadyVoted() {
+        document.getElementById('survey-form').style.display = 'none';
+        document.getElementById('already-voted').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
