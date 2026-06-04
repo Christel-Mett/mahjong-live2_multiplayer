@@ -202,7 +202,7 @@ function beendeSpiel(grund) {
     spielBeendet = true;
     
     if (timerInterval) clearInterval(timerInterval);
-
+        
     if (grund === 'sieg') {
         aktuellePunkte += 50; 
         const zeitLimit = 210;
@@ -616,7 +616,7 @@ if (window.performance && window.performance.navigation.type === window.performa
 
 document.addEventListener('DOMContentLoaded', () => { 
     initGame(); 
-    animate(); 
+    animate();     
     const vSlider = document.getElementById('volumeSlider');
     if (vSlider) vSlider.addEventListener('input', (e) => updateVolume(e.target.value));
     const zSlider = document.getElementById('zoomSlider');

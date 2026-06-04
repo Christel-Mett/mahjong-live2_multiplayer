@@ -104,6 +104,24 @@
             opacity: 1;
             text-decoration: underline;
         }
+
+        .survey-link {
+            color: #ede027 !important;
+            font-size: 1.1em !important;
+            font-weight: bold;
+            margin-left: 10px;
+            animation: survey-blink 1.2s ease-in-out infinite;
+        }
+
+        .survey-link:hover {
+            text-decoration: underline !important;
+            animation: none;
+        }
+
+        @keyframes survey-blink {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.15; }
+        }
         
 			/* Container für die gesamte Emoji-Zeile inkl. Pfeile */
 			.emoji-wrapper {
@@ -264,6 +282,7 @@
 					 <a href="news.html" class="info-pop-link">
     <img src="shared/bilder/link/news.png" alt="News" style="height: 40px; vertical-align: middle; margin: 0 5px;">
 </a>
+                <a href="/survey" class="survey-link" id="survey-link" style="display:none;">Umfrage bis 7.6.</a>
             </span>
         </div>
     </div>
@@ -279,6 +298,14 @@
         if (meinName) {
             document.getElementById('display-name-footer').textContent = meinName;
             socket.emit('join_lobby');
+
+        // Umfrage-Link nur anzeigen wenn User noch nicht abgestimmt hat
+        socket.emit('check_survey_status');
+        socket.on('survey_status', (data) => {
+            if (!data.hasVoted) {
+                document.getElementById('survey-link').style.display = 'inline';
+            }
+        });
         } else {
             window.location.href = 'index.html';
         }

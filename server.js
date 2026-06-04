@@ -21,7 +21,6 @@ const matchmaking = require('./matchmakingCore');
 const gameController = require('./gameController');
 const { verifyCaptcha } = require('./captcha');
 
-
 dotenv.config();
 const app = express();
 const server = http.createServer(app);
@@ -201,6 +200,7 @@ app.use('/single', express.static(__dirname + '/single'));
 app.use('/shared', express.static(__dirname + '/shared'));
 app.use('/style.css', express.static(__dirname + '/style.css'));
 app.use('/chat-module.js', express.static(__dirname + '/chat-module.js'));
+app.get('/survey', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/survey.html'));
 
 // --- SOCKET EVENTS ---
 io.on('connection', (socket) => {
@@ -295,6 +295,8 @@ io.on('connection', (socket) => {
 	        userManager.updateLocation(username, 'searching');
 	        lobbyController.broadcastUserList(io);
 	        console.log(`${username} wartet auf Gegner.`);
+	            
+	        
 	    });
 	});
 	socket.on('join_layout_queue', ({layoutId}) => {
@@ -379,6 +381,7 @@ io.on('connection', (socket) => {
         }
         broadcastLayoutStats();
     });
+    require('./survey').handleSocket(socket);
 });
 
 const alleLayouts = [
