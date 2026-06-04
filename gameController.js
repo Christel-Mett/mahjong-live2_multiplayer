@@ -25,25 +25,31 @@ function scheduleAbsent(io, names) {
 }
 
 module.exports = {
-	handleJoinRoom: (socket, data) => {
-	    if (data.room) {
-	        socket.join(data.room);
-	        
-	        if (!gameRooms[data.room]) gameRooms[data.room] = new Set();
-	        gameRooms[data.room].add(socket.id);
-	        
-	        const username = data.name || userManager.getUsernameBySocketId(socket.id);
-	        if (username) {
-	            // Abwesend-Timer canceln falls ein neues Spiel beginnt
-	            if (absentTimeouts[username]) {
-	                clearTimeout(absentTimeouts[username]);
-	                delete absentTimeouts[username];
-	            }
-	            userManager.addUser(username, socket.id, 'ingame');
-	        }
-	        console.log(`${data.name} ist Raum ${data.room} beigetreten.`);
-	    }
-	},
+    handleJoinRoom: (socket, data) => {
+        if (data.room) {
+
+            // Authentifizierungsprüfung: Nur bekannte User dürfen beitreten
+            const username = userManager.getUsernameBySocketId(socket.id);
+            if (!username) {
+                console.log(`Unbekannter Socket ${socket.id} versucht Raum ${data.room} beizutreten – abgewiesen.`);
+                return;
+            }
+
+            socket.join(data.room);
+
+            if (!gameRooms[data.room]) gameRooms[data.room] = new Set();
+            gameRooms[data.room].add(socket.id);
+
+            // Abwesend-Timer canceln falls ein neues Spiel beginnt
+            if (absentTimeouts[username]) {
+                clearTimeout(absentTimeouts[username]);
+                delete absentTimeouts[username];
+            }
+            userManager.addUser(username, socket.id, 'ingame');
+
+            console.log(`${username} ist Raum ${data.room} beigetreten.`);
+        }
+    },
 
 handlePlayerMove: (socket, data) => {
     if (!data.room) return;
