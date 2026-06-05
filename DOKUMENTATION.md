@@ -420,7 +420,7 @@ const isValid = verifySignature(payload, secret);
    ├─ Beide Spieler sehen 3D-Steine
    ├─ Spieler nehmen Steine (playerMove)
    ├─ Client berechnet Score
-   └─ Erster, der alle Steine hat, gewinnt
+   └─ Spieler mit den meisten Punkten gewinnt
 
 4. ERGEBNIS-PHASE
    ├─ Punkte in DB speichern
@@ -439,7 +439,6 @@ Das Spiel bietet **17 verschiedene Stein-Anordnungen**:
 ```
 
 Jedes Layout hat unterschiedliche:
-- Steineanzahl
 - Schwierigkeitsgrad
 - Visuelles Design
 
@@ -463,7 +462,7 @@ Dieses Projekt wurde mit **Vibecoding** entwickelt – ein moderner Ansatz, der:
 - ⚡ Schnelle Iterationen ermöglicht
 - 🚀 Technische Hürden überbrückt
 
-**Hinweis des Autors:** Der Entwickler hat Grundkenntnisse in Scripting (Python, Bash, PHP), ist aber kein professioneller Full-Stack-Entwickler. Trotzdem wurde ein komplexes, produktives System durch eine Kombination aus Grundfähigkeiten und KI-Unterstützung realisiert.
+**Hinweis des Autors:** Der Entwickler hat Grundkenntnisse in Scripting (Python, Bash, PHP), ist aber kein professioneller Entwickler. Trotzdem wurde ein komplexes, produktives System durch eine Kombination aus Grundfähigkeiten und KI-Unterstützung realisiert.
 
 ### Projekt-Struktur
 
@@ -689,6 +688,6 @@ Dieses Projekt ist unter der **GNU General Public License (GPL) v3** veröffentl
 ---
 
 **Dokumentation erstellt:** Mai 2026  
-**Letzte Aktualisierung:** Mai 2026  
+**Letzte Aktualisierung:** Juni 2026  
 **Version:** 2.0 (Modulare Architektur)  
 **Autor:** Christel-Mett
