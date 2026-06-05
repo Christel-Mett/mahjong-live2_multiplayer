@@ -65,8 +65,12 @@ handlePlayerMove: (socket, data) => {
 },
 
 handleGameFinished: (io, socket, data) => {
-    const { room, finalPoints } = data;
+    const { room } = data;
     if (!room) return;
+    const MAX_POINTS = 400;
+    const finalPoints = (typeof data.finalPoints === 'number' && data.finalPoints <= MAX_POINTS) 
+        ? data.finalPoints 
+        : 0;
 
     if (!activeGames[room]) {
         activeGames[room] = { players: {} };
