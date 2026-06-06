@@ -11,6 +11,6 @@ nutzung.html
 news.html
 survey_votes.txt
 MahjongTreff2*.md
-copylobby.sh
+copyandrestart.sh
 # Zip-Dateien
 *.zip
