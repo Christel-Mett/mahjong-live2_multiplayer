@@ -6,7 +6,7 @@ Online-Solitär-Mahjong Spiel (Node.js), Multiplayer.
 
 ## Titelbild
 
-[![Mahjong-Treff Title](shared/gitpics/mahjong2-treff.png)](shared/gitpics/mahjong2-treff.png)
+[![Mahjong-Treff Title](https://raw.githubusercontent.com/Christel-Mett/mahjong-live2_multiplayer/main/shared/gitpics/mahjong2-treff.png)](https://raw.githubusercontent.com/Christel-Mett/mahjong-live2_multiplayer/main/shared/gitpics/mahjong2-treff.png)
 
 ## Über dieses Projekt
 Dieses Projekt ist ein browserbasiertes Solitär-Mahjong-Spiel mit Einzel- und Mehrspielermodus. Es basiert technisch auf Node.js und nutzt Three.js für die 3D-Darstellung der Spielsteine sowie Socket.io für die Echtzeit-Kommunikation zwischen Client und Server.
@@ -14,17 +14,17 @@ Dieses Projekt ist ein browserbasiertes Solitär-Mahjong-Spiel mit Einzel- und M
 ## Spielfeatures
 
 ### Lobby & Chat
-[![Mahjong-Treff Lobby](shared/gitpics/mahjong2-lobby.png)](shared/gitpics/mahjong2-lobby.png)
+[![Mahjong-Treff Lobby](https://raw.githubusercontent.com/Christel-Mett/mahjong-live2_multiplayer/main/shared/gitpics/mahjong2-lobby.png)](https://raw.githubusercontent.com/Christel-Mett/mahjong-live2_multiplayer/main/shared/gitpics/mahjong2-lobby.png)
 
 In der Lobby kannst du dich mit anderen Spielern unterhalten, Online-Nutzer sehen und aus verschiedenen Spielmodi wählen.
 
 ### Spielablauf
-[![Mahjong Spielfeld](shared/gitpics/mahjong2-spielfeld.png)](shared/gitpics/mahjong2-spielfeld.png)
+[![Mahjong Spielfeld](https://raw.githubusercontent.com/Christel-Mett/mahjong-live2_multiplayer/main/shared/gitpics/mahjong2-spielfeld.png)](https://raw.githubusercontent.com/Christel-Mett/mahjong-live2_multiplayer/main/shared/gitpics/mahjong2-spielfeld.png)
 
 Das Kernspiel im Mehrspielermodus mit interaktiven Steinen und Live-Statistiken.
 
 ### Spielergebnis
-[![Mahjong Ergebnis](shared/gitpics/mahjong2-ergebnis.png)](shared/gitpics/mahjong2-ergebnis.png)
+[![Mahjong Ergebnis](https://raw.githubusercontent.com/Christel-Mett/mahjong-live2_multiplayer/main/shared/gitpics/mahjong2-ergebnis.png)](https://raw.githubusercontent.com/Christel-Mett/mahjong-live2_multiplayer/main/shared/gitpics/mahjong2-ergebnis.png)
 
 Detaillierte Endergebnisse mit Platzierungen und Punktestand nach jeder Runde.
 
