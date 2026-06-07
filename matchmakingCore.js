@@ -10,6 +10,13 @@ let globalMaxRang = 100; // Standardwert bis zur ersten DB-Abfrage
 function setGlobalMaxRang(value) {
     if (value && value > 0) globalMaxRang = value;
 }
+
+let bypassMatchmaking = true; // true = stufenloses Matching aktiv
+
+function setBypassMatchmaking(value) {
+    bypassMatchmaking = value;
+}
+
 const MAX_RANK_DIFF = 20;
 
 const meineLayouts = [
@@ -69,6 +76,13 @@ function findMatchInWaitingQueue() {
                 return findMatchInWaitingQueue();
             }
 
+				if (bypassMatchmaking) {
+				    const pair = [waitingQueue[i], waitingQueue[j]];
+				    waitingQueue.splice(j, 1);
+				    waitingQueue.splice(i, 1);
+				    return pair;
+				}
+
             const diff = Math.abs(p1.rank - p2.rank);
             const wartedauerP1 = jetzt - p1.startTime;
             const wartedauerP2 = jetzt - p2.startTime;
@@ -106,7 +120,11 @@ function findMatchInLayoutQueue() {
                 layoutQueue.splice(i, 1);
                 return findMatchInLayoutQueue();
             }
-
+            
+            if (bypassMatchmaking) {
+				    return extractPairFromLayoutQueue(i, j);
+				}
+				
             const wartedauerP1 = jetzt - p1.startTime;
             const wartedauerP2 = jetzt - p2.startTime;
             const maxWartezeit = Math.max(wartedauerP1, wartedauerP2);
@@ -143,9 +161,15 @@ function findCrossQueueMatch() {
     if (layoutQueue.length === 0 || waitingQueue.length === 0) return null;
     const jetzt = Date.now();
 
-    for (let i = 0; i < layoutQueue.length; i++) {
-        const p1 = layoutQueue[i];
-        if (jetzt - p1.startTime <= 60000) continue;
+		for (let i = 0; i < layoutQueue.length; i++) {
+		    const p1 = layoutQueue[i];
+		    
+		    // NEU
+		    const wartezeit = bypassMatchmaking ? 15000 : 60000;
+		    if (jetzt - p1.startTime <= wartezeit) continue;
+		
+		    // original (diese Zeile löschen bzw. ersetzen):
+		    // if (jetzt - p1.startTime <= 60000) continue;
 
         let targetIdx = waitingQueue.findIndex(wp =>
             wp.name !== p1.name && Math.abs(p1.rank - wp.rank) <= MAX_RANK_DIFF
@@ -179,5 +203,6 @@ module.exports = {
     getWaitingQueue: () => waitingQueue,
     getLayoutQueue: () => layoutQueue,
     setGlobalMaxRang,
+    setBypassMatchmaking,
     MAX_RANK_DIFF
 };
