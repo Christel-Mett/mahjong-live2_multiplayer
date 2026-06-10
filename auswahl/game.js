@@ -551,9 +551,9 @@ socket.on('gracePeriodStarted', () => {
             }
 
 				if (timeLeft <= 0 || spielBeendet) {
-				    clearInterval(graceInterval);
+				    clearInterval(interval);
 				    if (graceTimer) graceTimer.style.display = 'none';
-				    if (sidebarGraceOverlay) sidebarGraceOverlay.style.display = 'none';
+				    if (sidebarOverlay) sidebarOverlay.style.display = 'none';
 				    if (!spielBeendet) {
 				        socket.emit('gameFinished', {
 				            room: roomID,
