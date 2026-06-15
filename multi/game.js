@@ -222,7 +222,7 @@ function beendeSpiel(grund) {
     const graceSeconds = document.getElementById('grace-seconds');
     if (graceTimer) graceTimer.style.display = 'block';
     
-    const graceFiles = ['30_1.mp3', '30_2.mp3', '30_3.mp3', '30_4.mp3', '30_5.mp3'];
+    const graceFiles = ['30_1.mp3', '30_2.mp3', '30_3.mp3', '30_4.mp3', '30_5.mp3', '30_6.mp3', '30_7.mp3'];
 	 const randomFile = graceFiles[Math.floor(Math.random() * graceFiles.length)];
 	 graceAudio = new Audio(`../shared/sound/30/${randomFile}`);
 	 graceAudio.volume = parseFloat(localStorage.getItem('mahjongVolume') || 0.5) * 0.25;
