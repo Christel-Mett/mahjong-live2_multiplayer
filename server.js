@@ -29,7 +29,8 @@ const io = new Server(server);
 // Nodemailer Konfiguration
 const transporter = nodemailer.createTransport({
     host: process.env.MAIL_HOST,
-    port: process.env.MAIL_PORT,
+    //port: process.env.MAIL_PORT,
+    port: parseInt(process.env.MAIL_PORT, 10),
     secure: true, 
     auth: {
         user: process.env.MAIL_USER,
