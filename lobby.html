@@ -191,6 +191,51 @@
 			    0%   { opacity: 1;    }
 			    100% { opacity: 0.15; }
 			}
+			
+		  .perf-toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 22px;
+        }
+
+        .perf-toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .perf-toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #555;
+            transition: 0.2s;
+            border-radius: 22px;
+        }
+
+        .perf-toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 25px;
+            bottom: 3px;
+            background-color: #ecf0f1;
+            transition: 0.2s;
+            border-radius: 50%;
+        }
+
+        .perf-toggle-switch input:checked + .perf-toggle-slider {
+            background-color: #555;
+        }
+
+        .perf-toggle-switch input:checked + .perf-toggle-slider:before {
+            transform: translateX(-20px);
+        }
     </style>
 </head>
 <body>
@@ -234,7 +279,18 @@
     </div>
 
     <div class="lobby-container-flex">
-        <h1 class="top-title">Mahjong-Treff Lobby</h1>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1 class="top-title">Mahjong-Treff Lobby</h1>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span>Leistung</span>
+                <span>⚡</span>
+                <label class="perf-toggle-switch">
+                    <input type="checkbox" id="perf-mode-toggle" onchange="setPerfMode(this.checked)">
+                    <span class="perf-toggle-slider"></span>
+                </label>
+                <span>⚡⚡⚡</span>
+            </div>
+        </div>
         
         <div class="lobby-content-row">
 				<div class="chat-area">
@@ -296,6 +352,21 @@
         const meinName = localStorage.getItem('mahjongPlayerName');
         
         let searchStartTime = 0;
+        
+        const PERF_COOKIE_NAME = 'mahjongPerfMode';
+        const PERF_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
+
+        function getCookie(name) {
+            const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+            return match ? decodeURIComponent(match[2]) : null;
+        }
+
+        function setPerfMode(enabled) {
+            document.cookie = `${PERF_COOKIE_NAME}=${enabled ? 'low' : 'high'}; max-age=${PERF_COOKIE_MAX_AGE}; path=/; SameSite=Lax`;
+        }
+
+        const perfToggle = document.getElementById('perf-mode-toggle');
+        if (perfToggle) perfToggle.checked = (getCookie(PERF_COOKIE_NAME) === 'low');
 
         // Identifizierung beim Server
         if (meinName) {

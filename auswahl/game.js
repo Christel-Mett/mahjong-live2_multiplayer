@@ -79,9 +79,17 @@ let ersterStein = null, letztesSymbolMatch = null, timerInterval = null, sekunde
 let graceAudio = null;
 let aktuellePunkte = 0;
 
+// --- Performance-Modus (Cookie-Auslese) ---
+function getCookie(name) {
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? decodeURIComponent(match[2]) : null;
+}
+const performanceModus = (getCookie('mahjongPerfMode') === 'low');
+
 // --- THREE.JS SETUP ---
 const scene = new THREE.Scene();
 const camera = new THREE.OrthographicCamera();
+//const renderer = new THREE.WebGLRenderer({ antialias: !performanceModus, alpha: true });
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 const container = document.getElementById('game-container');
 if(container) {
@@ -95,6 +103,7 @@ scene.add(mainGroup);
 
 const oppScene = new THREE.Scene();
 const oppCamera = new THREE.OrthographicCamera();
+//const oppRenderer = new THREE.WebGLRenderer({ antialias: !performanceModus, alpha: true });
 const oppRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 const oppContainer = document.getElementById('opponent-view');
 if(oppContainer) {
@@ -519,8 +528,22 @@ function startTimer() {
     }, 1000);
 }
 
-function animate() {
+/*function animate() {
     requestAnimationFrame(animate);
+    renderer.render(scene, camera);
+    oppRenderer.render(oppScene, oppCamera);
+}*/
+
+const zielFPS = performanceModus ? 30 : 62;
+const zielFrameZeit = 1000 / zielFPS;
+let letzterFrameZeitpunkt = 0;
+
+function animate(jetzt) {
+    requestAnimationFrame(animate);
+
+    if (jetzt - letzterFrameZeitpunkt < zielFrameZeit) return;
+    letzterFrameZeitpunkt = jetzt;
+
     renderer.render(scene, camera);
     oppRenderer.render(oppScene, oppCamera);
 }
