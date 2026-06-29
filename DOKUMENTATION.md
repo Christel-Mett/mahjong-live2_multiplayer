@@ -27,7 +27,6 @@ Mahjong-Live Multiplayer 2.0 ist ein **browserbasiertes Solitär-Mahjong-Spiel**
 - ✅ **Matchmaking**: Automatische Gegner-Suche mit verschiedenen Layout-Optionen
 - ✅ **3D-Grafiken**: Three.js-basierte Visualisierung der Spielsteine
 - ✅ **Responsive Design**: Spielbar auf Desktop und mobilen Geräten
-- ✅ **Deutsche Sprache**: Mit automatischer Übersetzung für Englisch
 - ✅ **Bot-Schutz**: Altcha-basierte CAPTCHA-Verifizierung
 
 ### Technologie-Stack
@@ -494,10 +493,10 @@ mahjong-live2_multiplayer/
 │   │   └── lobby-auswahl.html   # Layout-Lobby
 │   │
 │   ├── /multi/
-│   │   └── index.html           # Multiplayer-Spiel (Three.js)
+│   │   └── index.html           # Multiplayer-Spiel
 │   │
 │   ├── /single/
-│   │   └── index.html           # Singleplayer (deaktiviert)
+│   │   └── index.html           # Singleplayer (ohne Login aufrufbar)
 │   │
 │   └── /shared/
 │       └── [Gemeinsame Assets]
@@ -665,12 +664,11 @@ Dieses Projekt ist unter der **GNU General Public License (GPL) v3** veröffentl
 
 **Siehe auch:** `CREDITS.txt` im Repository
 
-### Dankstattungen
+### Danksagungen
 
 - **KDE Games Team** für das KMahjongg-Projekt
 - **Three.js Community** für die großartige 3D-Bibliothek
 - **Altcha Team** für die moderne CAPTCHA-Lösung
-- **OpenAI Claude** für AI-Assisted Development
 - Alle Contributors und Tester
 
 ---
