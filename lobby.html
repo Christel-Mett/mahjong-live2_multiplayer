@@ -206,16 +206,18 @@
         }
 
         .perf-toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #555;
-            transition: 0.2s;
-            border-radius: 22px;
-        }
+			    position: absolute;
+			    cursor: pointer;
+			    top: 0;
+			    left: 0;
+			    right: 0;
+			    bottom: 0;
+			    background-color: #555;
+			    border: 1px solid #999;
+			    transition: 0.2s;
+			    border-radius: 22px;
+			    box-sizing: border-box;
+			}
 
         .perf-toggle-slider:before {
             position: absolute;
@@ -227,6 +229,7 @@
             background-color: #ecf0f1;
             transition: 0.2s;
             border-radius: 50%;
+            background-image: radial-gradient(circle, #e74c3c 6px, transparent 6px);
         }
 
         .perf-toggle-switch input:checked + .perf-toggle-slider {
