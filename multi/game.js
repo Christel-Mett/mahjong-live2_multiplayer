@@ -61,7 +61,8 @@ const sounds = {
     klick: new Audio('../shared/sound/klick.mp3'),
     swoosh: new Audio('../shared/sound/swoosh.mp3'),
     bing: new Audio('../shared/sound/bing.mp3'),
-    blip: new Audio('../shared/sound/blip.mp3')
+    blip: new Audio('../shared/sound/blip.mp3'),
+    start: new Audio('../shared/sound/start.mp3')
 };
 
 window.updateVolume = function(val) {
@@ -270,6 +271,7 @@ function zeigeEndOverlay(grund) {
 }
 
 async function initGame() {
+	 sounds.start.play().catch(() => {});
     const layoutPath = `../shared/layout/${festesLayout}.layout`;
     const layoutNameDisplay = document.getElementById('layoutNameDisplay');
     if (layoutNameDisplay) {
