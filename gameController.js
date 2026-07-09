@@ -2,6 +2,7 @@
 const userManager = require('./userManager');
 const dbInterface = require('./dbInterface');
 const lobbyController = require('./lobbyController');
+const millionChecker = require('./millionChecker');
 const activeGames = {}; 
 const gameRooms = {};
 const roomPoints = {};
@@ -102,40 +103,89 @@ handleGameFinished: (io, socket, data) => {
             }
             if (roomPoints[room]) delete roomPoints[room];
 
-            playersInRoom.forEach(player => {
-                if (player.name && player.points > 0) {
-                    dbInterface.updateUserPoints(player.name, player.points, (err) => {
-                        if (err) console.error(`Fehler beim Speichern der Punkte für ${player.name}:`, err);
-                        else console.log(`${player.points} Punkte für ${player.name} gespeichert (Timer).`);
+
+            
+const millionFlags = {};
+            const spielerZumSpeichern = playersInRoom.filter(p => p.name && p.points > 0);
+            let ausstehend = spielerZumSpeichern.length;
+
+            const sendeScoreboard = () => {
+                io.to(room).emit('finalScoreboard', {
+                    scores: playersInRoom.map(p => ({
+                        name: p.name,
+                        points: p.points,
+                        time: p.time || 0,
+                        millionCracked: millionFlags[p.name] || false
+                    }))
+                });
+            };
+
+            if (ausstehend === 0) {
+                sendeScoreboard();
+            } else {
+                spielerZumSpeichern.forEach(player => {
+                    millionChecker.saveGameResult(player.name, player.points, (err, result) => {
+                        if (err) {
+                            console.error(`Fehler beim Speichern der Punkte für ${player.name}:`, err);
+                        } else {
+                            console.log(`${player.points} Punkte für ${player.name} gespeichert (Timer).`);
+                            if (result && result.millionCracked) millionFlags[player.name] = true;
+                        }
+                        ausstehend--;
+                        if (ausstehend === 0) sendeScoreboard();
                     });
-                }
-            });
-            io.to(room).emit('finalScoreboard', {
-                scores: playersInRoom.map(p => ({ name: p.name, points: p.points, time: p.time || 0 }))
-            });
+                });
+            }            
+            
+
             scheduleAbsent(io, playersInRoom.map(p => p.name).filter(Boolean));
             delete activeGames[room];
         }, 31000);
     }
 
-    const playersInRoom = Object.values(activeGames[room].players);
+
+    
+const playersInRoom = Object.values(activeGames[room].players);
     const verbliebeneSpieler = gameRooms[room] ? gameRooms[room].size : 0;
     if (playersInRoom.length >= 2 || verbliebeneSpieler === 0) {
         if (activeGames[room].graceTimeout) clearTimeout(activeGames[room].graceTimeout);
-        playersInRoom.forEach(player => {
-            if (player.name && player.points > 0) {
-                dbInterface.updateUserPoints(player.name, player.points, (err) => {
-                    if (err) console.error(`Fehler beim Speichern der Punkte für ${player.name}:`, err);
-                    else console.log(`${player.points} Punkte für ${player.name} gespeichert.`);
+
+        const millionFlags = {};
+        const spielerZumSpeichern = playersInRoom.filter(p => p.name && p.points > 0);
+        let ausstehend = spielerZumSpeichern.length;
+
+        const sendeScoreboard = () => {
+            io.to(room).emit('finalScoreboard', {
+                scores: playersInRoom.map(p => ({
+                    name: p.name,
+                    points: p.points,
+                    time: p.time || 0,
+                    millionCracked: millionFlags[p.name] || false
+                }))
+            });
+        };
+
+        if (ausstehend === 0) {
+            sendeScoreboard();
+        } else {
+            spielerZumSpeichern.forEach(player => {
+                millionChecker.saveGameResult(player.name, player.points, (err, result) => {
+                    if (err) {
+                        console.error(`Fehler beim Speichern der Punkte für ${player.name}:`, err);
+                    } else {
+                        console.log(`${player.points} Punkte für ${player.name} gespeichert.`);
+                        if (result && result.millionCracked) millionFlags[player.name] = true;
+                    }
+                    ausstehend--;
+                    if (ausstehend === 0) sendeScoreboard();
                 });
-            }
-        });
-        io.to(room).emit('finalScoreboard', {
-            scores: playersInRoom.map(p => ({ name: p.name, points: p.points, time: p.time || 0 }))
-        });
+            });
+        }
+
         scheduleAbsent(io, playersInRoom.map(p => p.name).filter(Boolean));
         delete activeGames[room];
-    }
+    }    
+    
 },
 
 cleanupPlayerGame: (io, socketId) => {

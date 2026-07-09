@@ -270,6 +270,120 @@ function zeigeEndOverlay(grund) {
     }
 }
 
+
+function zeigeMillionenGag() {
+    const silvesterAudio = new Audio('../shared/sound/feuerwerk.mp3');
+    silvesterAudio.volume = parseFloat(localStorage.getItem('mahjongVolume') || 0.5);
+    silvesterAudio.play().catch(() => {});
+
+    const overlay = document.getElementById('game-end-overlay');
+    if (!overlay) return;
+
+    const konfettiContainer = document.createElement('div');
+    konfettiContainer.style.position = 'absolute';
+    konfettiContainer.style.top = '0';
+    konfettiContainer.style.left = '0';
+    konfettiContainer.style.width = '100%';
+    konfettiContainer.style.height = '100%';
+    konfettiContainer.style.overflow = 'hidden';
+    konfettiContainer.style.pointerEvents = 'none';
+    konfettiContainer.style.zIndex = '9999';
+    overlay.appendChild(konfettiContainer);
+    
+    // Gebogener Wunderkerzen-Schriftzug "1 Million"
+    const schriftSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    schriftSvg.setAttribute('viewBox', '0 0 400 120');
+    schriftSvg.style.position = 'absolute';
+    schriftSvg.style.top = '5%';
+    schriftSvg.style.left = '50%';
+    schriftSvg.style.transform = 'translateX(-50%)';
+    schriftSvg.style.width = '80%';
+    schriftSvg.style.maxWidth = '1000px';
+    schriftSvg.style.pointerEvents = 'none';
+    schriftSvg.style.zIndex = '10000';
+
+    const pfad = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    pfad.setAttribute('id', 'wunderkerzenPfad');
+    pfad.setAttribute('d', 'M 20,100 Q 200,10 380,100');
+    pfad.setAttribute('fill', 'none');
+    schriftSvg.appendChild(pfad);
+
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('font-size', '38');
+    text.setAttribute('font-family', 'Brush Script MT, cursive');
+    text.setAttribute('fill', '#fff6d5');
+    text.style.filter = 'drop-shadow(0 0 6px #ffd700) drop-shadow(0 0 14px #ff9d00)';
+    text.style.animation = 'wunderkerzeFlackern 0.15s infinite';
+
+    const textPath = document.createElementNS('http://www.w3.org/2000/svg', 'textPath');
+    textPath.setAttribute('href', '#wunderkerzenPfad');
+    textPath.setAttribute('startOffset', '50%');
+    textPath.setAttribute('text-anchor', 'middle');
+    textPath.textContent = '1 Million';
+    text.appendChild(textPath);
+    schriftSvg.appendChild(text);
+
+    overlay.appendChild(schriftSvg);
+
+    // Flacker-Animation nur einmal global registrieren
+    if (!document.getElementById('wunderkerzeStyle')) {
+        const style = document.createElement('style');
+        style.id = 'wunderkerzeStyle';
+        style.textContent = `
+            @keyframes wunderkerzeFlackern {
+                0%   { opacity: 1;    filter: drop-shadow(0 0 6px #ffd700) drop-shadow(0 0 14px #ff9d00); }
+                25%  { opacity: 0.75; filter: drop-shadow(0 0 3px #ffd700) drop-shadow(0 0 8px #ff9d00); }
+                50%  { opacity: 1;    filter: drop-shadow(0 0 9px #fff2a8) drop-shadow(0 0 18px #ffb700); }
+                75%  { opacity: 0.85; filter: drop-shadow(0 0 4px #ffd700) drop-shadow(0 0 10px #ff9d00); }
+                100% { opacity: 1;    filter: drop-shadow(0 0 6px #ffd700) drop-shadow(0 0 14px #ff9d00); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    const farben = ['#ff595e', '#ffca3a', '#8ac926', '#1982c4', '#6a4c93'];
+
+    function spawnKonfettiTeil() {
+        const stueck = document.createElement('div');
+        stueck.style.position = 'absolute';
+        stueck.style.width = '8px';
+        stueck.style.height = '14px';
+        stueck.style.backgroundColor = farben[Math.floor(Math.random() * farben.length)];
+        stueck.style.left = Math.random() * 100 + '%';
+        stueck.style.top = '-20px';
+        stueck.style.opacity = '0.9';
+        stueck.style.transform = `rotate(${Math.random() * 360}deg)`;
+        stueck.style.transition = `top ${2 + Math.random() * 2}s linear, transform ${2 + Math.random() * 2}s linear`;
+        konfettiContainer.appendChild(stueck);
+
+        setTimeout(() => {
+            stueck.style.top = '110%';
+            stueck.style.transform = `rotate(${Math.random() * 720}deg)`;
+        }, 10);
+
+        setTimeout(() => {
+            stueck.remove();
+        }, 4500);
+    }
+
+
+// Über 5 Sekunden verteilt alle 60ms mehrere neue Konfetti-Teile spawnen
+    const spawnIntervall = setInterval(() => {
+        for (let i = 0; i < 5; i++) {
+            spawnKonfettiTeil();
+        }
+    }, 60);
+
+    setTimeout(() => {
+        clearInterval(spawnIntervall);
+    }, 5000);
+
+    // Container erst entfernen, wenn auch das letzte Teil fertig gefallen ist
+    setTimeout(() => {
+        konfettiContainer.remove();
+    }, 5000 + 4500);
+}
+
 async function initGame() {
 	 sounds.start.play().catch(() => {});
     const layoutPath = `../shared/layout/${festesLayout}.layout`;
@@ -594,17 +708,13 @@ socket.on('finalScoreboard', (data) => {
     spielBeendet = true;
     if (timerInterval) clearInterval(timerInterval);
     if (graceAudio) { graceAudio.pause(); graceAudio.currentTime = 0; graceAudio = null; }
-
     zeigeEndOverlay('Spiel beendet');
-
     const scoreboard = document.getElementById('final-scoreboard');
     const winnerLine = document.getElementById('winner-line');
     const secondLine = document.getElementById('second-line');
     const lobbyBtn = document.getElementById('back-to-lobby-btn');
     const graceTimer = document.getElementById('grace-period-timer');
-
     if (graceTimer) graceTimer.style.display = 'none';
-
     if (data.scores) {
         data.scores.sort((a, b) => b.points - a.points || a.time - b.time);
 		  const formatTime = s => `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
@@ -612,8 +722,11 @@ socket.on('finalScoreboard', (data) => {
 		  if (secondLine && data.scores[1]) {
 			    secondLine.textContent = `2. Platz: ${data.scores[1].name} (${data.scores[1].points} Pkt. ⏱ ${formatTime(data.scores[1].time)})`;
 		  }
+        const meinEintrag = data.scores.find(s => s.name === meinName);
+        if (meinEintrag && meinEintrag.millionCracked) {
+            zeigeMillionenGag();
+        }
     }
-
     if (scoreboard) scoreboard.style.display = 'block';
     if (lobbyBtn) lobbyBtn.style.display = 'inline-block';
 });
