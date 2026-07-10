@@ -16,7 +16,7 @@
 
 ### Was ist Mahjong-Live Multiplayer 2.0?
 
-Mahjong-Live Multiplayer 2.0 ist ein **browserbasiertes Solitär-Mahjong-Spiel** mit Multiplayer-Funktion, entwickelt mit modernen Web-Technologien. Das Spiel kombiniert klassisches Mahjong-Gameplay mit Echtzeit-Multiplayer über Socket.IO.
+Mahjong-Live Multiplayer 2.0 ist ein **browserbasiertes Solitär-Mahjong-Spiel** mit Multiplayer-Funktion, entwickelt mit modernen Web-Technologien. Das Spiel kombiniert klassisches Mahjong-Gameplay mit Echtzeit-Mehrspielerfunktionen.
 
 **Live-Demo:** [mahjong-treff.de](https://mahjong-treff.de)
 
@@ -28,6 +28,9 @@ Mahjong-Live Multiplayer 2.0 ist ein **browserbasiertes Solitär-Mahjong-Spiel**
 - ✅ **3D-Grafiken**: Three.js-basierte Visualisierung der Spielsteine
 - ✅ **Responsive Design**: Spielbar auf Desktop und mobilen Geräten
 - ✅ **Bot-Schutz**: Altcha-basierte CAPTCHA-Verifizierung
+- ✅ **Umfrage (Survey)**: Eine optionale Umfrage-Funktion wurde hinzugefügt; der Link befindet sich in der Lobby (z. Z. auskommentiert, da derzeit keine Umfrage läuft).
+- ✅ **Leistungsbegrenzung (30 FPS)**: Optional zuschaltbare Begrenzung der Framerate für ältere/schwächere Rechner. Schalter befindet sich in der Lobby.
+- ✅ **Kleiner Belohnungs-Gag**: Ein Modul prüft nach Überschreiten von 1.000.000 Gesamtpunkten und zeigt dem Spieler einmalig eine Konfetti-Animation mit Sound als Belohnung.
 
 ### Technologie-Stack
 
@@ -68,7 +71,9 @@ server.js (Orchestrator)
 ├── matchmakingCore.js      → Gegner-Matchmaking
 ├── gameController.js       → Spielverwaltung
 ├── captcha.js              → Altcha-Verifizierung
-└── auth.js                 → Session-Middleware
+├── auth.js                 → Session-Middleware
+├── millionChecker.js       → Kleiner Belohnungs-Gag (Konfetti + Sound bei 1 Mio.)
+└── ...
 ```
 
 ### Abhängigkeitsdiagramm
@@ -90,7 +95,7 @@ Socket.IO ← Express.js Server (server.js)
 ## Installation & Konfiguration
 
 ### Systemanforderungen
-- **Node.js** 16+ 
+- **Node.js** 16+
 - **MySQL/MariaDB** 5.7+
 - **npm** oder yarn
 
@@ -287,6 +292,7 @@ Verwaltet die zentrale Lobby, wo Spieler sich treffen, chatten und auf Matchmaki
 - Globaler Chat mit Zeitstempel
 - Ranglisten-Display
 - Spielerstatistiken abrufen
+- UI-Schalter (Lobby) für Umfrage-Link und Leistungsbegrenzung (30 FPS)
 
 **Chat-Datenstruktur:**
 ```javascript
@@ -337,8 +343,7 @@ Verwaltung aktiver Spielpartien:
 
 **Funktionen:**
 - Spielraum-Verwaltung (`room_<socket1>_<socket2>`)
-- Punkte-Berechnung
-- **Grace-Period**: 5 Sekunden zum Wiederverbinden bei Disconnect
+- Grace-Period: 5 Sekunden zum Wiederverbinden bei Disconnect
 - "Leichen-Check": Erkennt inaktive Spieler
 - Spielergebnis speichern
 
@@ -349,15 +354,6 @@ Spieler disconnected
 Grace-Period (5 Sekunden)
     ├─ Spieler reconnected → Weiterspielen ✓
     └─ Timeout → Spieler verliert ✗
-```
-
-**Punkte-System:**
-```javascript
-{
-    zeit: 120,              // Spielzeit in Sekunden
-    steine_genommen: 144,   // Anzahl Steine genommen
-    points: 2400            // Berechnete Punkte
-}
 ```
 
 ### 7. **auth.js** – Session-Middleware
@@ -396,6 +392,10 @@ Schützt vor automatisierter Registrierung & Bot-Angriffen durch die moderne CAP
 const { verifySignature } = require('altcha-lib');
 const isValid = verifySignature(payload, secret);
 ```
+
+### 9. **millionChecker.js** – Kleiner Belohnungs-Gag
+
+Dieses Modul prüft nach einem Spiel, ob ein Spieler mit seiner Gesamtpunktzahl die 1.000.000-Grenze überschritten hat. Wenn ja, bekommt der Spieler einmalig auf dem "Spiel beendet"-Bildschirm eine Konfetti-Animation und einen kurzen Silvestersound als Belohnung.
 
 ---
 
@@ -461,7 +461,7 @@ Dieses Projekt wurde mit **Vibecoding** entwickelt – ein moderner Ansatz, der:
 - ⚡ Schnelle Iterationen ermöglicht
 - 🚀 Technische Hürden überbrückt
 
-**Hinweis des Autors:** Der Entwickler hat Grundkenntnisse in Scripting (Python, Bash, PHP), ist aber kein professioneller Entwickler. Trotzdem wurde ein komplexes, produktives System durch eine Kombination aus Grundfähigkeiten und KI-Unterstützung realisiert.
+**Hinweis des Autors:** Der Entwickler hat Grundkenntnisse in Scripting (Python, Bash, PHP), ist aber kein professioneller Entwickler. Trotzdem wurde ein komplexes, produktives System durch eine pragmatische Herangehensweise realisiert.
 
 ### Projekt-Struktur
 
@@ -480,13 +480,17 @@ mahjong-live2_multiplayer/
 │   ├── userManager.js           # Online-Benutzerliste
 │   ├── dbInterface.js           # Datenbank-API
 │   ├── captcha.js               # Altcha CAPTCHA
-│   └── auth.js                  # Session-Middleware
+│   ├── auth.js                  # Session-Middleware
+│   └── millionChecker.js        # Belohnungs-Check (Konfetti + Sound)
 │
 ├── Frontend:
 │   ├── index.html               # Login/Registrierung
 │   ├── reset-password.html      # Passwort-Reset
-│   ├── lobby.html               # Lobby-Interface
+│   ├── lobby.html               # Lobby-Interface (enthält Schalter für Umfrage & Leistungsbegrenzung)
 │   ├── style.css                # Global-Styles
+│   │
+│   ├── survey.html              # (Neu) Umfrage-Seite (Link in Lobby; aktuell auskommentiert)
+│   ├── survey.js                # (Neu) Client-Logic für Umfrage
 │   │
 │   ├── /auswahl/
 │   │   ├── index.html           # Layout-Auswahl
