@@ -273,14 +273,6 @@
         </div>
     </div>
 
-<div id="idle-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 4000; justify-content: center; align-items: center; flex-direction: column; color: #d2b48c;">
-        <div class="loader-box">
-            <h2 id="idle-title" style="margin-top: 0;">Inaktivität</h2>
-            <p id="idle-text">Du bist seit längerer Zeit inaktiv. Willst du noch spielen?<br>Bestätige mit OK, andernfalls wirst du in <span id="idle-timer" style="font-weight: bold; font-size: 1.2em;">5:00</span> Minuten automatisch ausgeloggt.</p>
-            <button id="idle-ok-btn" class="nav-btn" style="background-color: #2ecc71; color: white; padding: 10px 40px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;" onclick="stayActive()">OK</button>
-        </div>
-    </div>
-
     <div class="lobby-container-flex">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h1 class="top-title">Mahjong-Treff Lobby</h1>
@@ -512,102 +504,22 @@
 		    window.location.href = '/logout'; 
 		}
 
-        // ******************************
-        // Die alte sendMessage Funktion wurde entfernt.
-        // ******************************
-        
-        // --- Inaktivitäts-Management ---
-			let idleTimer;
-			let countdownInterval;
-			const IDLE_LIMIT = 30 * 60 * 1000; // 30 Minuten bis zur Warnung
-			const COUNTDOWN_LIMIT = 5 * 60;    // 5 Minuten Countdown nach Erscheinen
-			
-			function resetIdleTimer() {
-			    // Falls wir bereits "Abgemeldet" sind, stoppen wir jegliche Aktivitätsprüfung
-			    const titleElement = document.getElementById('idle-title');
-			    if (titleElement && titleElement.textContent === "Abgemeldet") return;
-			
-			    clearTimeout(idleTimer);
-			    hideIdleOverlay();
-			    
-			    // Timer neu starten
-			    idleTimer = setTimeout(showIdleOverlay, IDLE_LIMIT);
-			}
-			
-			function showIdleOverlay() {
-			    const overlay = document.getElementById('idle-overlay');
-			    const timerDisplay = document.getElementById('idle-timer');
-			    if (!overlay || !timerDisplay) return;
-			
-			    overlay.style.display = 'flex';
-			    
-			    let timeLeft = COUNTDOWN_LIMIT;
-			
-			    clearInterval(countdownInterval);
-			    countdownInterval = setInterval(() => {
-			        timeLeft--;
-			        
-			        const mins = Math.floor(timeLeft / 60);
-			        const secs = timeLeft % 60;
-			        timerDisplay.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-			
-			        // Optische Warnung: In der letzten Minute wird der Timer rot
-			        if (timeLeft <= 60) {
-			            timerDisplay.style.color = "#c0392b";
-			        } else {
-			            timerDisplay.style.color = "#d2b48c";
-			        }
-			
-			        if (timeLeft <= 0) {
-			            performAutoLogout();
-			        }
-			    }, 1000);
-			}
-			
-			function stayActive() {
-			    hideIdleOverlay();
-			    resetIdleTimer();
-			}
-			
-			function hideIdleOverlay() {
-			    clearInterval(countdownInterval);
-			    const overlay = document.getElementById('idle-overlay');
-			    if (overlay) overlay.style.display = 'none';
-			}
-			
-			function performAutoLogout() {
-			    clearInterval(countdownInterval);
-			    
-			    // UI auf "Abgemeldet" umstellen
-			    const title = document.getElementById('idle-title');
-			    const text = document.getElementById('idle-text');
-			    const btn = document.getElementById('idle-ok-btn');
-			
-			    if (title) title.textContent = "Abgemeldet";
-			    if (text) text.innerHTML = "Du wurdest wegen längerer Inaktivität ausgeloggt.";
-			    if (btn) {
-			        btn.textContent = "Zum Login";
-			        btn.style.backgroundColor = "#7f8c8d";
-			        btn.onclick = () => { window.location.href = '/logout'; };
-			    }
-			    
-			    // Server informieren (zerstört die Session serverseitig)
-			    socket.emit('logout');
-			    
-			    // Nach 5 Sekunden automatisch umleiten, falls der User nicht klickt
-			    setTimeout(() => {
-			        window.location.href = '/logout';
-			    }, 5000);
-			}
-			
-			// Event-Listener für Interaktionen
-			// Jede dieser Aktionen setzt den 30-Minuten-Timer auf Null zurück
-			['mousedown', 'keydown', 'touchstart'].forEach(event => {
-			    window.addEventListener(event, resetIdleTimer);
-			});
-			
-			// Initialer Start beim Laden der Seite
-			resetIdleTimer();
+		// --- Lobby-Aktivität für Abwesend-Timer melden ---
+		let lastActivitySent = 0;
+		const ACTIVITY_THROTTLE = 15 * 1000; // Höchstens alle 15 Sekunden senden
+		
+		function reportLobbyActivity() {
+		    const now = Date.now();
+		    if (now - lastActivitySent >= ACTIVITY_THROTTLE) {
+		        lastActivitySent = now;
+		        socket.emit('lobby_activity');
+		    }
+		}
+		
+		['click', 'keydown'].forEach(event => {
+		    window.addEventListener(event, reportLobbyActivity);
+		});
+
     </script>
 
     <script src="chat-module.js"></script>

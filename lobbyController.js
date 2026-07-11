@@ -2,6 +2,32 @@
 const dbInterface = require('./dbInterface');
 const userManager = require('./userManager');
 
+// Speichert laufende Abwesend-Timer pro Lobby-User
+const lobbyAbsentTimeouts = {};
+
+function scheduleLobbyAbsent(io, username) {
+	
+   // Falls User aktuell als abwesend markiert ist, durch neue Aktivität zurücksetzen
+   const currentUser = userManager.getUser(username);
+   if (currentUser && currentUser.location === 'absent') {
+       userManager.updateLocation(username, 'lobby');
+       module.exports.broadcastUserList(io);
+   }	
+	
+    if (lobbyAbsentTimeouts[username]) {
+        clearTimeout(lobbyAbsentTimeouts[username]);
+    }
+    lobbyAbsentTimeouts[username] = setTimeout(() => {
+        delete lobbyAbsentTimeouts[username];
+        const user = userManager.getUser(username);
+        if (user && user.location === 'lobby') {
+            userManager.updateLocation(username, 'absent');
+            module.exports.broadcastUserList(io);
+        }
+    }, 5 * 60 * 1000);
+
+}
+
 // Speicher für die letzten 50 Nachrichten (Chat-History)
 let chatHistory = [];
 
@@ -15,6 +41,9 @@ module.exports = {
 	     socket.join('lobby');
 	     console.log(`${username} hat die Lobby betreten.`);
 
+        // Abwesend-Timer für die Lobby starten
+ 	     scheduleLobbyAbsent(socket.server, username);
+
         // 3. Chat-Verlauf an den neuen User senden
         socket.emit('chat_history', chatHistory);
 
@@ -26,6 +55,9 @@ module.exports = {
     handleChatMessage: (io, socket, text) => {
         const username = userManager.getUsernameBySocketId(socket.id);
         if (!username) return;
+        
+        // Chat zählt als Aktivität -> Abwesend-Timer zurücksetzen
+        scheduleLobbyAbsent(io, username);
 
         const time = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
         const messageData = {
@@ -40,6 +72,14 @@ module.exports = {
 
 			// Nachricht nur an Lobby senden
 			io.to('lobby').emit('receive_chat_message', messageData);
+    },
+    
+        // Wird bei Klick-/Tastatur-Aktivität in der Lobby aufgerufen
+    handleLobbyActivity: (io, socket) => {
+        const username = userManager.getUsernameBySocketId(socket.id);
+        if (username) {
+            scheduleLobbyAbsent(io, username);
+        }
     },
 
     // Sendet die aktuelle Liste der Online-User inkl. Status an alle

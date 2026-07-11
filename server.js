@@ -234,6 +234,10 @@ io.on('connection', (socket) => {
         lobbyController.handleChatMessage(io, socket, text);
     });
     
+    socket.on('lobby_activity', () => {
+        lobbyController.handleLobbyActivity(io, socket);
+    });    
+    
     socket.on('send_room_chat_message', (text) => {
     const username = userManager.getUsernameBySocketId(socket.id);
     if (!username) return;
