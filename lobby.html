@@ -516,9 +516,13 @@
 		    }
 		}
 		
-		['click', 'keydown'].forEach(event => {
-		    window.addEventListener(event, reportLobbyActivity);
-		});
+		window.addEventListener('click', (e) => {
+    if (e.target.closest('button, a, input, select, textarea, [onclick]')) {
+        reportLobbyActivity();
+    }
+    });
+
+      window.addEventListener('keydown', reportLobbyActivity);
 
     </script>
 

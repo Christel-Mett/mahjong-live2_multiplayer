@@ -152,6 +152,7 @@ function csrfProtection(req, res, next) {
 
 // --- HTTP ROUTEN ---
 app.get('/', pageLimiter, (req, res) => res.sendFile(__dirname + '/index.html'));
+app.get('/index.html', pageLimiter, (req, res) => res.sendFile(__dirname + '/index.html'));
 app.get('/verify', pageLimiter, authController.handleVerify);
 app.get('/reset-password', pageLimiter, (req, res) => res.sendFile(__dirname + '/reset-password.html'));
 app.get('/logout', pageLimiter, (req, res) => {
