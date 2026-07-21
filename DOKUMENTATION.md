@@ -128,7 +128,6 @@ Die installierten Pakete sind in `package.json` definiert:
 | **cookie-parser** | ^1.4.7 | Cookie-Parsing |
 | **csrf-csrf** | ^2.3.0 | CSRF-Schutz |
 | **dotenv** | ^17.4.2 | Umgebungsvariablen |
-| **axios** | ^1.15.2 | HTTP-Client |
 | **altcha-lib** | ^1.4.1 | CAPTCHA-Lösung (Bot-Schutz) |
 
 ### Schritt 3: Datenbank einrichten
