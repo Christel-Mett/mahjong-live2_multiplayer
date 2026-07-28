@@ -152,7 +152,8 @@ function csrfProtection(req, res, next) {
 
 // --- HTTP ROUTEN ---
 app.get('/', pageLimiter, (req, res) => res.sendFile(__dirname + '/index.html'));
-app.get('/index.html', pageLimiter, (req, res) => res.sendFile(__dirname + '/index.html'));
+app.get('/index.html', pageLimiter, (req, res) => res.redirect(301, '/'));
+//app.get('/index.html', pageLimiter, (req, res) => res.sendFile(__dirname + '/index.html'));
 app.get('/verify', pageLimiter, authController.handleVerify);
 app.get('/reset-password', pageLimiter, (req, res) => res.sendFile(__dirname + '/reset-password.html'));
 app.get('/logout', pageLimiter, (req, res) => {
@@ -190,8 +191,6 @@ app.get('/lobby', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirn
 app.get('/lobby.html', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/lobby.html'));
 app.get('/multi/', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/multi/index.html'));
 app.get('/multi/index.html', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/multi/index.html'));
-/*app.get('/single/', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/single/index.html'));
-app.get('/single/index.html', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/single/index.html'));*/
 app.get('/auswahl/lobby-auswahl.html', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/auswahl/lobby-auswahl.html'));
 app.get('/auswahl/index.html', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/auswahl/index.html'));
 app.get('/auswahl/', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/auswahl/index.html'));
