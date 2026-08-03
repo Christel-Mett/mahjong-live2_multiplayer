@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="style.css">
     <style>
         /* Overlay Styles */
-        #search-overlay, #leaderboard-overlay {
+        #search-overlay, #leaderboard-overlay, #settings-overlay {
             display: none;
             position: fixed;
             top: 0;
@@ -28,6 +28,10 @@
         }
 
         #leaderboard-overlay {
+            z-index: 3000;
+        }
+        
+        #settings-overlay {
             z-index: 3000;
         }
 
@@ -239,6 +243,20 @@
         .perf-toggle-switch input:checked + .perf-toggle-slider:before {
             transform: translateX(-20px);
         }
+        
+        #name-tooltip {
+            position: fixed;
+            display: none;
+            background-color: #2c3e50;
+            color: #d2b48c;
+            border: 1px solid #d2b48c;
+            border-radius: 5px;
+            padding: 4px 10px;
+            font-size: 0.85em;
+            white-space: nowrap;
+            z-index: 4000;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -272,19 +290,60 @@
             <button class="cancel-btn" style="background-color: #7f8c8d;" onclick="closeLeaderboard()">Schließen</button>
         </div>
     </div>
+    
+    <div id="settings-overlay">
+    <div class="loader-box" style="width: 80%; max-width: 400px;">
+	        <h2 style="margin-top: 0; margin-bottom: 0;">Einstellungen</h2>
+	        <p style="margin-top: 4px; opacity: 0.8;">für <span id="settings-username">-</span></p>
 
-    <div class="lobby-container-flex">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h1 class="top-title">Mahjong-Treff Lobby</h1>
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <span>Leistung</span>
-                <span>⚡</span>
+        <div style="margin: 16px 0; text-align: left;">
+            <label for="klarname-input" style="display: block; margin-bottom: 4px;">Klarname (optional, für alle angemeldeten User sichtbar.):</label>
+            <input type="text" id="klarname-input" maxlength="100" placeholder="z.B. Max Mustermann"
+                   style="width: 100%; box-sizing: border-box; padding: 6px 8px; border-radius: 4px; border: 1px solid #999;">
+            <button class="cancel-btn" style="background-color: #27ae60; margin-top: 8px; width: 100%;" onclick="saveKlarname()">Klarname speichern</button>
+        </div>
+
+        <p style="margin: 16px 0 0 0;">
+            Punkte: <strong id="settings-points">-</strong><br>
+            Platz: <strong id="settings-rang">-</strong>
+        </p>
+
+<!--        <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin: 20px 0;">
+	            <span>Leistungsbegrenzung<br>bei schwachen Rechnern oder schlechtem Netz<br></span>
+	            <span>Reduziert</span>
+	            <label class="perf-toggle-switch">
+	                <input type="checkbox" id="perf-mode-toggle" onchange="setPerfMode(this.checked)">
+	                <span class="perf-toggle-slider"></span>
+	            </label>
+	            <span>Normal</span>
+	        </div>-->
+	        
+	        
+	        <div style="margin: 20px 0;">
+            <div style="margin-bottom: 10px;">Leistungsbegrenzung<br>bei schwachen Rechnern oder schlechtem Netz</div>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <span>Reduziert</span>
                 <label class="perf-toggle-switch">
                     <input type="checkbox" id="perf-mode-toggle" onchange="setPerfMode(this.checked)">
                     <span class="perf-toggle-slider"></span>
                 </label>
-                <span>⚡⚡⚡</span>
+                <span>Normal</span>
             </div>
+        </div>
+	
+	        <button class="cancel-btn" style="background-color: #7f8c8d;" onclick="closeSettings()">Schließen</button>
+	    </div>
+    </div>
+    
+    <div id="name-tooltip"></div>
+
+    <div class="lobby-container-flex">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1 class="top-title">Mahjong-Treff Lobby</h1>
+            <span onclick="openSettings()" title="Einstellungen" style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+    Einstellungen
+           <span id="settings-gear-icon" style="font-size: 1.5em;">⚙️</span>
+           </span>
         </div>
         
         <div class="lobby-content-row">
@@ -366,6 +425,7 @@
         // Identifizierung beim Server
         if (meinName) {
             document.getElementById('display-name-footer').textContent = meinName;
+            document.getElementById('settings-username').textContent = meinName;
             socket.emit('join_lobby');
 
         // Umfrage-Link nur anzeigen wenn User noch nicht abgestimmt hat
@@ -408,17 +468,44 @@
 			            div.style.fontWeight = 'bold';
 			        }
 			        
-			        // Throbber für Spieler in der Suche
+                 // Throbber für Spieler in der Suche
 			        if (userData.searching) {
 			            const throbber = document.createElement('span');
 			            throbber.className = 'throbber';
 			            for (let i = 0; i < 8; i++) throbber.appendChild(document.createElement('span'));
 			            div.appendChild(throbber);
 			        }
-			
+
+			        // Tooltip mit Klarname bei Hover (Desktop) bzw. Tap (Touch)
+			        if (userData.klarname) {
+			            div.style.cursor = 'pointer';
+			            div.addEventListener('mouseenter', (e) => showNameTooltip(e.currentTarget, userData.klarname));
+			            div.addEventListener('mouseleave', hideNameTooltip);
+			            div.addEventListener('click', (e) => {
+			                showNameTooltip(e.currentTarget, userData.klarname);
+			                clearTimeout(nameTooltipTimeout);
+			                nameTooltipTimeout = setTimeout(hideNameTooltip, 2500);
+			            });
+			        }
+		
 			        list.appendChild(div);
 			    });
 			});
+
+			let nameTooltipTimeout = null;
+
+			function showNameTooltip(element, text) {
+			    const tooltip = document.getElementById('name-tooltip');
+			    tooltip.textContent = text;
+			    tooltip.style.display = 'block';
+			    const rect = element.getBoundingClientRect();
+			    tooltip.style.left = rect.left + 'px';
+			    tooltip.style.top = (rect.bottom + 4) + 'px';
+			}
+
+			function hideNameTooltip() {
+			    document.getElementById('name-tooltip').style.display = 'none';
+			}
 
         // Event wenn ein Match gefunden wurde
         socket.on('match_found', (data) => {
@@ -448,9 +535,40 @@
             document.getElementById('leaderboard-overlay').style.display = 'none';
         }
 
+		 function openSettings() {
+		     socket.emit('get_leaderboard');
+		     document.getElementById('settings-overlay').style.display = 'flex';
+		 }
+		
+		 function closeSettings() {
+		     document.getElementById('settings-overlay').style.display = 'none';
+		 }
+		 
+		 function saveKlarname() {
+		     const wert = document.getElementById('klarname-input').value;
+		     socket.emit('update_klarname', wert);
+		 }
+
+		 socket.on('klarname_response', (data) => {
+		     if (!data.success) {
+		         alert('Klarname konnte nicht gespeichert werden. Bitte versuch es erneut.');
+		     }
+		 })
+
+         socket.on('klarname_data', (data) => {
+		    const input = document.getElementById('klarname-input');
+		    if (input) input.value = data.klarname || '';
+		   });
+			
 			socket.on('leaderboard_data', (data) => {
             const tbody = document.getElementById('leaderboard-body');
-            tbody.innerHTML = ''; 
+            tbody.innerHTML = '';
+            
+            const eigenerEintrag = data.find(u => u.username === meinName);
+			    if (eigenerEintrag) {
+				        document.getElementById('settings-points').textContent = eigenerEintrag.mp_points;
+				        document.getElementById('settings-rang').textContent = eigenerEintrag.rang;
+				    }
 
             data.forEach((user) => {
                 const row = document.createElement('tr');
@@ -493,16 +611,23 @@
             document.getElementById('search-overlay').style.display = 'none';
         }
 
-       function logout() {
+        function logout() {
 		    // 1. Dem Server via Socket Bescheid geben (optional, aber sauber für die Userliste)
 		    socket.emit('logout'); 
 		    
-		    // 2. Den lokal gespeicherten Namen entfernen
+		    // 2. Verbindung aktiv trennen, damit der Server sofort merkt, dass wir weg sind
+		    //    (statt bis zu ~45 Sekunden auf den Ping-Timeout zu warten)
+		    socket.disconnect();
+		    
+		    // 3. Den lokal gespeicherten Namen entfernen
 		    localStorage.removeItem('mahjongPlayerName');
 		    
-		    // 3. Den HTTP-Logout aufrufen (zerstört die Session und leitet zur index.html um)
-		    window.location.href = '/logout'; 
-		}
+		    // 4. Den HTTP-Logout aufrufen (zerstört die Session und leitet zur index.html um)
+		    //    Kurze Verzögerung, damit das Disconnect-Signal sicher noch rausgeht, bevor die Seite wechselt
+		    setTimeout(() => {
+		        window.location.href = '/logout';
+		    }, 150);
+		 }
 
 		// --- Lobby-Aktivität für Abwesend-Timer melden ---
 		let lastActivitySent = 0;

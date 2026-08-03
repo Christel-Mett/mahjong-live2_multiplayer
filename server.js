@@ -257,6 +257,22 @@ io.on('connection', (socket) => {
         lobbyController.handleGetLeaderboard(socket);
     });
     
+    socket.on('update_klarname', (klarname) => {
+        const username = session.username;
+        if (!username) return;
+
+        dbInterface.updateKlarname(username, klarname, (err) => {
+            if (err) {
+                console.error('Fehler beim Speichern des Klarnamens:', err);
+                return socket.emit('klarname_response', { success: false });
+            }
+            const gespeicherterWert = klarname && klarname.trim() !== '' ? klarname.trim() : null;
+            socket.emit('klarname_response', { success: true, klarname: gespeicherterWert });
+            // Userliste neu an alle senden, damit der neue Klarname sofort im Tooltip verfügbar ist
+            lobbyController.broadcastUserList(io);
+        });
+    });
+    
 	socket.on('re-identify', (username) => {
 	    if (!username) return;
 	    

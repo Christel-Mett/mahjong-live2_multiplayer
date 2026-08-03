@@ -49,6 +49,13 @@ module.exports = {
 
         // 4. Aktuelle Userliste an ALLE senden (Nutzt die unten definierte Funktion)
         module.exports.broadcastUserList(socket.server);
+        
+        // 5. Eigenen Klarname laden und nur an diesen Socket senden
+        dbInterface.getKlarname(username, (err, results) => {
+            if (err) return console.error('Fehler beim Laden des Klarnamens:', err);
+            const klarname = (results && results.length > 0) ? results[0].klarname : null;
+            socket.emit('klarname_data', { klarname: klarname });
+        });
     },
 
     // Verarbeitet eingehende Chat-Nachrichten
@@ -98,6 +105,7 @@ module.exports = {
                 return {
                     username: u.username,
                     rang: dbData ? dbData.rang : 'Gast',
+                    klarname: dbData ? dbData.klarname : null,
                     // Korrekte Zuweisung für dein Frontend (lobby.html)
                     ingame: u.location === 'ingame',
                     searching: u.location === 'searching',

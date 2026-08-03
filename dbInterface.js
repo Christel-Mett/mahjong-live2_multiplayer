@@ -59,7 +59,7 @@ module.exports = {
         if (!usernames || usernames.length === 0) {
             return callback(null, []);
         }
-        const sql = "SELECT username, (SELECT COUNT(*) + 1 FROM users u2 WHERE u2.mp_points > u1.mp_points) AS rang FROM users u1 WHERE username IN (?) ORDER BY mp_points DESC";
+        const sql = "SELECT username, klarname, (SELECT COUNT(*) + 1 FROM users u2 WHERE u2.mp_points > u1.mp_points) AS rang FROM users u1 WHERE username IN (?) ORDER BY mp_points DESC";
         db.query(sql, [usernames], callback);
     },
 
@@ -93,5 +93,18 @@ module.exports = {
     },
     updatePasswordAndClearToken: (userId, hashedPassword, callback) => {
         db.query('UPDATE users SET password = ?, token = NULL WHERE id = ?', [hashedPassword, userId], callback);
+    },
+
+    // Klarname setzen/ändern/löschen (leerer String bzw. null = löschen)
+    updateKlarname: (username, klarname, callback) => {
+        const wert = klarname && klarname.trim() !== '' ? klarname.trim() : null;
+        const sql = 'UPDATE users SET klarname = ? WHERE username = ?';
+        db.query(sql, [wert, username], callback);
+    },
+
+    // Klarname eines einzelnen Users abfragen (z.B. zum Vorbefüllen des Eingabefelds)
+    getKlarname: (username, callback) => {
+        const sql = 'SELECT klarname FROM users WHERE username = ?';
+        db.query(sql, [username], callback);
     }
 };
