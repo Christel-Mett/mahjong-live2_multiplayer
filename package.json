@@ -12,6 +12,7 @@
     "helmet": "^8.1.0",
     "mysql2": "^3.22.2",
     "nodemailer": "^9.0.1",
-    "socket.io": "^4.8.3"
+    "socket.io": "^4.8.3",
+    "socket.io-parser": "4.2.7"
   }
 }

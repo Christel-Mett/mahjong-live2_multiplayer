@@ -14,24 +14,24 @@ const meineLayouts = [
 let aktuelleFigur = localStorage.getItem('mahjongLayout') || meineLayouts[0];
 
 const layoutUebersetzungen = {
-    '4_winds': '4 Winde', 'alien': 'Alien', 'altar': 'Altar', 'arena': 'Arena', 
-    'arrow': 'Pfeil', 'atlantis': 'Atlantis', 'aztec': 'Azteken', 'balance': 'Waage',
-    'bat': 'Fledermaus', 'bug': 'Käfer', 'castle2': 'Burg', 
-    'chains': 'Ketten', 'checkered': 'Karos', 'chip': 'Chip', 
-    'clubs': 'Clubs', 'columns': 'Säulen', 'cross': 'Kreuz', 
-    'eagle': 'Adler', 'enterprise': 'Enterprise',
-    'explosion': 'Explosion', 'flowers': 'Blumen', 'future': 'Zukunft', 'galaxy': 'Galaxie', 
-    'garden': 'Garten', 'girl': 'Mädchen', 'glade': 'Lichtung', 'grid': 'Gitter',
-    'helios': 'Helios', 'hole': 'Loch', 'inner_circle': 'Innerer Kreis', 'key': 'Schlüssel', 
-    'km': 'KM', 'labyrinth': 'Labyrinth', 'mask': 'Maske', 'maya': 'Maya',
-    'maze': 'Irrgarten', 'mesh': 'Netz', 'moth': 'Motte', 'order': 'Ordnung', 
-    'pattern': 'Muster', 'penta': 'Penta', 'pillars': 'Pfeiler', 'pirates': 'Piraten',
-    'rocket': 'Rakete', 'shield': 'Schild', 
-    'squares': 'Quadrate', 'squaring': 'Quadrierung', 'stadion': 'Stadion', 'stairs': 'Treppen', 
-    'star': 'Stern', 'star_ship': 'Sternenschiff', 'stax': 'Stapel', 'swirl': 'Wirbel', 
-    'temple': 'Tempel', 'theatre': 'Theater', 'the_door': 'Die Tür', 
-    'time_tunnel': 'Zeittunnel', 'tomb': 'Grabmal', 'totem': 'Totem', 
-    'up&down': 'Auf & Ab', 'well': 'Brunnen', 'X_shaped': 'X-Form'
+    '4_winds': '4 Winde (nur single)', 'alien': 'Alien (nur single)', 'altar': 'Altar (nur single)', 'arena': 'Arena (nur single)', 
+    'arrow': 'Pfeil (Single & Multi)', 'atlantis': 'Atlantis (nur single)', 'aztec': 'Azteken (nur single)', 'balance': 'Waage (Single & Multi)',
+    'bat': 'Fledermaus (nur single)', 'bug': 'Käfer Single & Multi)', 'castle2': 'Burg (nur single)', 
+    'chains': 'Ketten (nur single)', 'checkered': 'Karos (nur single)', 'chip': 'Chip (Single & Multi)', 
+    'clubs': 'Clubs (nur single)', 'columns': 'Säulen (nur single)', 'cross': 'Kreuz (nur single)', 
+    'eagle': 'Adler (Single & Multi)', 'enterprise': 'Enterprise (Single & Multi)',
+    'explosion': 'Explosion (nur single)', 'flowers': 'Blumen (Single & Multi)', 'future': 'Zukunft (Single & Multi)', 'galaxy': 'Galaxie (nur single)', 
+    'garden': 'Garten (Single & Multi)', 'girl': 'Mädchen (nur single)', 'glade': 'Lichtung (Single & Multi)', 'grid': 'Gitter (nur single)',
+    'helios': 'Helios (Single & Multi)', 'hole': 'Loch (nur single)', 'inner_circle': 'Innerer Kreis (Single & Multi)', 'key': 'Schlüssel (nur single)', 
+    'km': 'KM (Single & Multi)', 'labyrinth': 'Labyrinth (nur single)', 'mask': 'Maske (nur single)', 'maya': 'Maya (nur single)',
+    'maze': 'Irrgarten (nur single)', 'mesh': 'Netz (Single & Multi)', 'moth': 'Motte (nur single)', 'order': 'Ordnung (nur single)', 
+    'pattern': 'Muster (nur single)', 'penta': 'Penta (nur single)', 'pillars': 'Pfeiler (nur single)', 'pirates': 'Piraten (nur single)',
+    'rocket': 'Rakete (Single & Multi)', 'shield': 'Schild (nur single)', 
+    'squares': 'Quadrate (nur single)', 'squaring': 'Quadrierung (nur single)', 'stadion': 'Stadion (nur single)', 'stairs': 'Treppen (nur single)', 
+    'star': 'Stern (nur single)', 'star_ship': 'Sternenschiff (nur single)', 'stax': 'Stapel (nur single)', 'swirl': 'Wirbel (nur single)', 
+    'temple': 'Tempel (nur single)', 'theatre': 'Theater (nur single)', 'the_door': 'Die Tür (Single & Multi)', 
+    'time_tunnel': 'Zeittunnel (Single & Multi)', 'tomb': 'Grabmal (nur single)', 'totem': 'Totem (nur single)', 
+    'up&down': 'Auf & Ab (nur single)', 'well': 'Brunnen (nur single)', 'X_shaped': 'X-Form (nur single)'
 };
 
 const rotateZ = 1.5, shiftX = 10, shiftY = 10;
