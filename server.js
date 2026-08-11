@@ -207,6 +207,8 @@ app.use('/single', express.static(__dirname + '/single'));
 app.use('/shared', express.static(__dirname + '/shared'));
 app.use('/style.css', express.static(__dirname + '/style.css'));
 app.use('/chat-module.js', express.static(__dirname + '/chat-module.js'));
+app.use('/seasonalAnimations.js', express.static(__dirname + '/seasonalAnimations.js'));
+app.use('/seasonalSchedule.js', express.static(__dirname + '/seasonalSchedule.js'));
 app.get('/survey', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/survey.html'));
 
 // --- SOCKET EVENTS ---

@@ -367,7 +367,7 @@
 				    </div>
 				</div>
 
-            <div class="user-area">
+            <div class="user-area" id="user-area">
                 <div class="area-label">User online</div>
                 <div id="user-list"></div>
             </div>
@@ -650,7 +650,12 @@
       window.addEventListener('keydown', reportLobbyActivity);
 
     </script>
-
+    
+    <script src="seasonalAnimations.js"></script>
+    <script src="seasonalSchedule.js"></script>
+	 <script>
+	     initSeasonalAnimations();
+	 </script>
     <script src="chat-module.js"></script>
     <script>
         initChat(socket);
