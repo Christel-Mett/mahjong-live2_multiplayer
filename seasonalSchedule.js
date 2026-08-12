@@ -28,6 +28,11 @@ thirdAdventDate.setHours(0, 0, 0, 0); // Gültig ab 00:00:00 Uhr
 const christmasEnd = new Date(currentYear, 11, 26, 23, 59, 59);
 const snowEnd = new Date(currentYear + 1, 0, 6, 23, 59, 59);	
 
+// Variablen für den Herbstlaub-Zeitraum initialisieren
+const autumnStart = new Date(currentYear, 8, 21, 0, 0, 0);   // 8 = September, 21.9. ab 00:00:00 Uhr
+const autumnEnd = new Date(currentYear, 8, 24, 23, 59, 59);  // 24.9. bis 23:59:59 Uhr
+
+
 const SEASONAL_EVENTS = [
     {
         name: 'schneefall-weihnachten',
@@ -42,6 +47,13 @@ const SEASONAL_EVENTS = [
         endDate: christmasEnd,
         activate: () => window.startSantaSleighLoop('/shared/bilder/gifs/santa1.gif'),
         deactivate: () => window.stopSantaSleighLoop()
+    },
+    {
+        name: 'herbstlaub-herbstanfang',
+        startDate: autumnStart,
+        endDate: autumnEnd,
+        activate: () => window.initAutumnLeaves(),
+        deactivate: () => window.stopAutumnLeaves()
     }
     // Spätere Saisons (Ostern, Sommer, ...) kommen als weitere Objekte hier
     // dazu, gleiche Struktur: name, startDate, endDate, activate(), deactivate()

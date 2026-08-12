@@ -211,7 +211,7 @@ let sleighAudioStopTimeoutId = null;
 let sleighAudio = null;
 let hohohoAudio = null;
 
-window.startSantaSleighLoop = function(gifPath = '/shared/bilder/gifs/santa1.gif') {
+window.startSantaSleighLoop = function(gifPath = '/shared/bilder/animationen/xmas/santa1.gif') {
     window.stopSantaSleighLoop();
 
     const initialDelay = Math.random() * SLEIGH_CONFIG.initialDelayMax;
@@ -403,4 +403,284 @@ function runSleighFlight(gifPath) {
 
 // ============================================================================
 // ENDE SCHLITTENANIMATION
+// ============================================================================
+//
+// ============================================================================
+// BEGINN HERBSTLAUB-ANIMATION
+// ============================================================================
+
+// --- Herbstlaub-Konfiguration ---
+// Hier kannst du die Optik in Ruhe feintunen.
+const LEAF_CONFIG = {
+    leafPaths: [
+        '/shared/bilder/animationen/herbst/leaf1.svg',
+        '/shared/bilder/animationen/herbst/leaf2.svg',
+        '/shared/bilder/animationen/herbst/leaf3.svg',
+        '/shared/bilder/animationen/herbst/leaf4.svg',
+        '/shared/bilder/animationen/herbst/leaf5.svg',
+        '/shared/bilder/animationen/herbst/leaf6.svg'
+    ],
+    zIndex: 10000,            // Ganz oben, auch über den Overlays (die gehen bis 4000)
+
+    maxActiveLeaves: 7,      // Wie viele Blätter maximal gleichzeitig fallen dürfen
+    spawnIntervalMin: 350,    // Kürzester Abstand zwischen zwei neuen Blättern (ms)
+    spawnIntervalMax: 1100,   // Längster Abstand zwischen zwei neuen Blättern (ms)
+
+    sizeMin: 0.025,           // Kleinste Blattbreite, relativ zur Fensterbreite
+    sizeMax: 0.06,            // Größte Blattbreite, relativ zur Fensterbreite
+
+    fallSpeedMin: 0.5,        // Langsamste Sink-Geschwindigkeit (px pro Frame)
+    fallSpeedMax: 1.4,        // Schnellste Sink-Geschwindigkeit (px pro Frame)
+
+    swayAmplitudeMin: 25,     // Schwächster seitlicher Schaukel-Ausschlag (px)
+    swayAmplitudeMax: 55,     // Stärkster seitlicher Schaukel-Ausschlag (px)
+    swaySpeedMin: 0.01,       // Langsamste Schaukel-Frequenz
+    swaySpeedMax: 0.03,       // Schnellste Schaukel-Frequenz
+    wobbleAmplitudeMin: 15,   // Zusätzliches kleines "Zittern" oben drauf (px), schwächste Ausprägung
+    wobbleAmplitudeMax: 35,   // ... stärkste Ausprägung
+    wobbleSpeedMin: 0.03,     // Frequenz des Zitterns
+    wobbleSpeedMax: 0.07,
+
+    rotationSpeedMin: -0.6,   // Langsamste fortlaufende Drehung (Grad pro Frame, negativ = gegen Uhrzeigersinn)
+    rotationSpeedMax: 0.6,    // Schnellste fortlaufende Drehung
+    rockAmplitudeMin: 10,     // Zusätzliches Hin-und-Her-Kippen oben auf die Drehung (Grad), schwächste Ausprägung
+    rockAmplitudeMax: 25,     // ... stärkste Ausprägung
+    rockSpeedMin: 0.02,       // Frequenz des Kippens
+    rockSpeedMax: 0.05,
+
+    // Herbstliche Farbvarianten: Da die SVGs feste Grüntöne haben, wird die
+    // Färbung über CSS-Filter beim Zeichnen aufs Canvas verändert.
+    hueRotateOptions: [-15, -25, -35, -45, -55, -65],  // Grad, mehrere Varianten zur Auswahl
+    saturationMin: 0.9,
+    saturationMax: 1.4,
+    brightnessMin: 0.8,
+    brightnessMax: 1.05,
+
+    restingLeafSlots: 45,     // Max. Anzahl liegender Blätter am Boden (Pool, kein wachsender Haufen)
+    restingScatterY: 10,      // Zufällige Streuung der Ablage-Höhe am Boden (px), wirkt weniger "aufgereiht"
+    groundReferenceSelector: '.login-info' // Element, direkt unterhalb dessen die Blätter liegen bleiben sollen
+};
+
+let leafCanvas = null;
+let leafCtx = null;
+let leafImages = [];           // Vorgeladene Image-Objekte je SVG
+let leafImagesReady = false;
+let fallingLeaves = [];
+let restingLeaves = [];        // Ring-Puffer: älteste werden beim Überschreiten von restingLeafSlots entfernt
+let leafAnimationFrameId = null;
+let leafSpawnTimeoutId = null;
+let leafStopped = true;
+let leafGroundY = 0;
+
+function updateLeafGroundY() {
+    const ref = document.querySelector(LEAF_CONFIG.groundReferenceSelector);
+    leafGroundY = ref ? ref.getBoundingClientRect().bottom : window.innerHeight;
+}
+
+function preloadLeafImages(callback) {
+    leafImages = LEAF_CONFIG.leafPaths.map(() => ({ img: new Image(), ratio: 1, loaded: false }));
+    let loadedCount = 0;
+    LEAF_CONFIG.leafPaths.forEach((path, i) => {
+        const entry = leafImages[i];
+        entry.img.onload = () => {
+            entry.ratio = entry.img.naturalHeight / entry.img.naturalWidth || 1.8;
+            entry.loaded = true;
+            loadedCount++;
+            if (loadedCount === LEAF_CONFIG.leafPaths.length) callback();
+        };
+        entry.img.onerror = () => {
+            console.error("Herbstlaub: SVG konnte nicht geladen werden:", path);
+            loadedCount++;
+            if (loadedCount === LEAF_CONFIG.leafPaths.length) callback();
+        };
+        entry.img.src = path;
+    });
+}
+
+window.initAutumnLeaves = function() {
+    window.stopAutumnLeaves();
+    leafStopped = false;
+    updateLeafGroundY();
+
+    leafCanvas = document.createElement('canvas');
+    leafCanvas.style.position = 'fixed';
+    leafCanvas.style.top = '0';
+    leafCanvas.style.left = '0';
+    leafCanvas.style.width = '100vw';
+    leafCanvas.style.height = '100vh';
+    leafCanvas.style.pointerEvents = 'none';
+    leafCanvas.style.zIndex = String(LEAF_CONFIG.zIndex);
+    leafCanvas.width = window.innerWidth;
+    leafCanvas.height = window.innerHeight;
+    document.body.appendChild(leafCanvas);
+    leafCtx = leafCanvas.getContext('2d');
+
+    fallingLeaves = [];
+    restingLeaves = [];
+
+    if (leafImagesReady) {
+        scheduleNextLeafSpawn();
+        runLeafAnimation();
+    } else {
+        preloadLeafImages(() => {
+            leafImagesReady = true;
+            if (!leafStopped) {
+                scheduleNextLeafSpawn();
+                runLeafAnimation();
+            }
+        });
+    }
+};
+
+window.stopAutumnLeaves = function() {
+    leafStopped = true;
+    if (leafAnimationFrameId) {
+        cancelAnimationFrame(leafAnimationFrameId);
+        leafAnimationFrameId = null;
+    }
+    if (leafSpawnTimeoutId) {
+        clearTimeout(leafSpawnTimeoutId);
+        leafSpawnTimeoutId = null;
+    }
+    if (leafCanvas && leafCanvas.parentNode) {
+        leafCanvas.parentNode.removeChild(leafCanvas);
+    }
+    leafCanvas = null;
+    leafCtx = null;
+    fallingLeaves = [];
+    restingLeaves = [];
+};
+
+function randomBetween(min, max) {
+    return min + Math.random() * (max - min);
+}
+
+function getLeafRestOffset(leaf) {
+    // Halbe Höhe der gedrehten Bounding-Box, damit die tatsächliche (gedrehte)
+    // Blattspitze exakt auf der Boden-Linie landet, unabhängig vom Drehwinkel.
+    const rad = leaf.rotation * Math.PI / 180;
+    return Math.abs(Math.sin(rad)) * leaf.width / 2 + Math.abs(Math.cos(rad)) * leaf.height / 2;
+}
+
+function createFallingLeaf() {
+    const imgIndex = Math.floor(Math.random() * leafImages.length);
+    const entry = leafImages[imgIndex];
+    const width = leafCanvas.width * randomBetween(LEAF_CONFIG.sizeMin, LEAF_CONFIG.sizeMax);
+    const height = width * entry.ratio;
+
+    return {
+        imgIndex,
+        x: Math.random() * leafCanvas.width,
+        y: -height,
+        width,
+        height,
+        speed: randomBetween(LEAF_CONFIG.fallSpeedMin, LEAF_CONFIG.fallSpeedMax),
+
+        swayPhase: Math.random() * Math.PI * 2,
+        swaySpeed: randomBetween(LEAF_CONFIG.swaySpeedMin, LEAF_CONFIG.swaySpeedMax),
+        swayAmplitude: randomBetween(LEAF_CONFIG.swayAmplitudeMin, LEAF_CONFIG.swayAmplitudeMax),
+        wobblePhase: Math.random() * Math.PI * 2,
+        wobbleSpeed: randomBetween(LEAF_CONFIG.wobbleSpeedMin, LEAF_CONFIG.wobbleSpeedMax),
+        wobbleAmplitude: randomBetween(LEAF_CONFIG.wobbleAmplitudeMin, LEAF_CONFIG.wobbleAmplitudeMax),
+
+        rotation: Math.random() * 360,
+        rotationSpeed: randomBetween(LEAF_CONFIG.rotationSpeedMin, LEAF_CONFIG.rotationSpeedMax),
+        rockPhase: Math.random() * Math.PI * 2,
+        rockSpeed: randomBetween(LEAF_CONFIG.rockSpeedMin, LEAF_CONFIG.rockSpeedMax),
+        rockAmplitude: randomBetween(LEAF_CONFIG.rockAmplitudeMin, LEAF_CONFIG.rockAmplitudeMax),
+        restScatter: randomBetween(0, LEAF_CONFIG.restingScatterY),
+
+        hueRotate: LEAF_CONFIG.hueRotateOptions[Math.floor(Math.random() * LEAF_CONFIG.hueRotateOptions.length)],
+        saturation: randomBetween(LEAF_CONFIG.saturationMin, LEAF_CONFIG.saturationMax),
+        brightness: randomBetween(LEAF_CONFIG.brightnessMin, LEAF_CONFIG.brightnessMax),
+
+        baseX: 0 // wird beim ersten Frame gesetzt, dient als Bezugspunkt fürs Schaukeln
+    };
+}
+
+function scheduleNextLeafSpawn() {
+    const delay = randomBetween(LEAF_CONFIG.spawnIntervalMin, LEAF_CONFIG.spawnIntervalMax);
+    leafSpawnTimeoutId = setTimeout(() => {
+        if (leafStopped) return;
+        if (fallingLeaves.length < LEAF_CONFIG.maxActiveLeaves) {
+            const leaf = createFallingLeaf();
+            leaf.baseX = leaf.x;
+            fallingLeaves.push(leaf);
+        }
+        scheduleNextLeafSpawn();
+    }, delay);
+}
+
+function landLeaf(leaf) {
+    restingLeaves.push({
+        imgIndex: leaf.imgIndex,
+        x: leaf.baseX + Math.sin(leaf.swayPhase) * leaf.swayAmplitude,
+        y: leaf.restY,
+        width: leaf.width,
+        height: leaf.height,
+        rotation: leaf.rotation,
+        hueRotate: leaf.hueRotate,
+        saturation: leaf.saturation,
+        brightness: leaf.brightness
+    });
+    // Ring-Puffer: älteste liegende Blätter entfernen, sobald das Limit erreicht ist -
+    // dadurch bleibt die Menge konstant, statt zu einem wachsenden Haufen zu werden.
+    if (restingLeaves.length > LEAF_CONFIG.restingLeafSlots) {
+        restingLeaves.shift();
+    }
+}
+
+function drawLeafImage(leaf) {
+    const entry = leafImages[leaf.imgIndex];
+    if (!entry.loaded) return;
+    leafCtx.save();
+    leafCtx.translate(leaf.x, leaf.y);
+    leafCtx.rotate(leaf.rotation * Math.PI / 180);
+    leafCtx.filter = `hue-rotate(${leaf.hueRotate}deg) saturate(${leaf.saturation}) brightness(${leaf.brightness})`;
+    leafCtx.drawImage(entry.img, -leaf.width / 2, -leaf.height / 2, leaf.width, leaf.height);
+    leafCtx.restore();
+}
+
+function runLeafAnimation() {
+    if (!leafCtx) return;
+    leafCtx.clearRect(0, 0, leafCanvas.width, leafCanvas.height);
+
+    // Liegengebliebene Blätter zeichnen (ältestes zuerst, neueste liegen "obenauf")
+    for (const leaf of restingLeaves) {
+        drawLeafImage(leaf);
+    }
+
+    // Fallende Blätter bewegen & zeichnen
+    for (let i = fallingLeaves.length - 1; i >= 0; i--) {
+        const leaf = fallingLeaves[i];
+
+        leaf.y += leaf.speed;
+        leaf.swayPhase += leaf.swaySpeed;
+        leaf.wobblePhase += leaf.wobbleSpeed;
+        leaf.x = leaf.baseX
+            + Math.sin(leaf.swayPhase) * leaf.swayAmplitude
+            + Math.sin(leaf.wobblePhase) * leaf.wobbleAmplitude;
+
+        leaf.rotation += leaf.rotationSpeed;
+        leaf.rockPhase += leaf.rockSpeed;
+        const displayLeaf = Object.assign({}, leaf, {
+            rotation: leaf.rotation + Math.sin(leaf.rockPhase) * leaf.rockAmplitude
+        });
+
+        const restY = leafGroundY + getLeafRestOffset(leaf) + leaf.restScatter;
+        if (leaf.y >= restY) {
+            leaf.restY = restY;
+            landLeaf(leaf);
+            fallingLeaves.splice(i, 1);
+            continue;
+        }
+
+        drawLeafImage(displayLeaf);
+    }
+
+    leafAnimationFrameId = requestAnimationFrame(runLeafAnimation);
+}
+
+// ============================================================================
+// ENDE HERBSTLAUB-ANIMATION
 // ============================================================================
