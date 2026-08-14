@@ -456,7 +456,7 @@ const LEAF_CONFIG = {
     brightnessMin: 0.8,
     brightnessMax: 1.05,
 
-    restingLeafSlots: 45,     // Max. Anzahl liegender Blätter am Boden (Pool, kein wachsender Haufen)
+    restingLeafSlots: 200,     // Max. Anzahl liegender Blätter am Boden (Pool, kein wachsender Haufen)
     restingScatterY: 10,      // Zufällige Streuung der Ablage-Höhe am Boden (px), wirkt weniger "aufgereiht"
     groundReferenceSelector: '.login-info' // Element, direkt unterhalb dessen die Blätter liegen bleiben sollen
 };
