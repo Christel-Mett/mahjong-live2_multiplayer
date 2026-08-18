@@ -5,6 +5,7 @@ require('dotenv').config({ path: require('path').resolve(__dirname, '.env') });
 // EINSTELLUNGEN
 const INACTIVE_MONTHS = 6;
 const GRACE_PERIOD_DAYS = 7;
+const BCC_EMAIL = process.env.BCC_EMAIL;
 
 const db = mysql.createConnection({
     host: process.env.DB_HOST,
@@ -42,6 +43,7 @@ async function runCleanup() {
             const mailOptions = {
                 from: `"Mahjong-Treff" <${process.env.MAIL_USER}>`,
                 to: user.email,
+                bcc: BCC_EMAIL,
                 subject: 'Dein Mahjong-Account wird bald gelöscht',
                 text: `Hallo ${user.username},\n\ndu warst seit über 6 Monaten nicht mehr eingeloggt. Wenn du dich nicht innerhalb der nächsten ${GRACE_PERIOD_DAYS} Tage einmal anmeldest, wird dein Account aus Sicherheitsgründen gelöscht.\n\nDein Mahjong-Team`
             };
@@ -55,21 +57,31 @@ async function runCleanup() {
         }
     });
 
-    // TEIL 2: Löschen (Warnung ist älter als 7 Tage)
-    const deleteSql = `
-        SELECT id, username FROM users 
-        WHERE deletion_warning_sent < DATE_SUB(NOW(), INTERVAL ? DAY)
-    `;
-
-    db.query(deleteSql, [GRACE_PERIOD_DAYS], (err, usersToDelete) => {
-        if (err) return console.error("Fehler bei Lösch-Abfrage:", err);
-
-        for (const user of usersToDelete) {
-            db.query("DELETE FROM users WHERE id = ?", [user.id], (delErr) => {
-                if (!delErr) console.log(`   [DELETED] User ${user.username} entfernt.`);
-            });
-        }
-    });
+		// TEIL 2: Löschen (Warnung ist älter als 7 Tage)
+		const deleteSql = `
+		    SELECT id, username, email FROM users 
+		    WHERE deletion_warning_sent < DATE_SUB(NOW(), INTERVAL ? DAY)
+		`;
+		db.query(deleteSql, [GRACE_PERIOD_DAYS], async (err, usersToDelete) => {
+		    if (err) return console.error("Fehler bei Lösch-Abfrage:", err);
+		    for (const user of usersToDelete) {
+		        const mailOptions = {
+		            from: `"Mahjong-Treff" <${process.env.MAIL_USER}>`,
+		            to: user.email,
+		            bcc: BCC_EMAIL,
+		            subject: 'Account gelöscht',
+		            text: `Hallo ${user.username},\n\ndein Account auf mahjong-treff.de wurde wegen Nichtnutzung unwiderruflich gelöscht. Alle deine Daten wurden aus dem Speicher entfernt. Wenn du wieder spielen möchtest musst du einen neuen Account erstellen.\n\nDein Mahjong-Team`
+		        };
+		        try {
+		            await transporter.sendMail(mailOptions);
+		        } catch (sendErr) {
+		            console.error(`Fehler beim Mailversand an ${user.email}:`, sendErr);
+		        }
+		        db.query("DELETE FROM users WHERE id = ?", [user.id], (delErr) => {
+		            if (!delErr) console.log(`   [DELETED] User ${user.username} entfernt.`);
+		        });
+		    }
+		});
 
     // TEIL 3: Unverifizierte Accounts nach 24h löschen
     const unverifiedSql = `
