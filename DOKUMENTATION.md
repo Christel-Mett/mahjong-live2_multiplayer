@@ -31,6 +31,7 @@ Mahjong-Live Multiplayer 2.0 ist ein **browserbasiertes Solitär-Mahjong-Spiel**
 - ✅ **Umfrage (Survey)**: Optionale Umfrage-Funktion; der Link befindet sich in der Lobby (z. Z. auskommentiert, da derzeit keine Umfrage läuft)
 - ✅ **Leistungsbegrenzung (30 FPS)**: Optional zuschaltbarer Performance-Modus für ältere/schwächere Rechner. Schalter befindet sich in der Lobby
 - ✅ **Belohnungs-Gag**: Kleines Überraschungs-Feature bei Erreichen von 1.000.000 Gesamtpunkten
+- ✅ **Saisonale Animationen**: Herbstanfang, Advent, Weihnachten, etc.
 
 ### Technologie-Stack
 
@@ -73,6 +74,8 @@ server.js (Orchestrator)
 ├── captcha.js              → Altcha-Verifizierung
 ├── auth.js                 → Session-Middleware
 ├── millionChecker.js       → Belohnungs-Gag (Konfetti + Sound bei 1 Mio.)
+├── seasonalAnimations.js   → Saisonale Animationen
+├── seasonalSchedule.js     → Scheduler für Animationen
 └── ...
 ```
 
@@ -171,6 +174,7 @@ MAIL_HOST=mail.example.com
 MAIL_PORT=465
 MAIL_USER=noreply@example.com
 MAIL_PASS=dein_mail_passwort
+BCC_EMAIL=bcc Mailadresse
 
 # Altcha CAPTCHA
 ALTCHA_SECRET=dein_altcha_secret_hier
@@ -417,6 +421,21 @@ Optionales Umfrage-System für Spieler-Feedback:
 3. Spieler können Umfrage von der Lobby aus aufrufen
 4. Responses werden gesammelt (Backend-Speicherung je nach Anforderung)
 ```
+### 11. **seasonalAnimation.js & seasonalSchedule.js** - Animationen
+
+Animationen zu saisonalen Ereignissen:
+
+**Dateien:**
+- seasonalAnimation.js
+- seasonalSchedule.js
+
+**Funktionen:**
+- kleine Animationen zu saisonalen Anlässen wie Herbstanfang, Advent, Weihnachten, etc.
+- Zeiten für die Anzeige werden im Sheduler gesteuert.
+
+**Verwendung:**
+- Werden ausschließlich in der lobby.html aufgerufen und angezeigt.
+...
 
 ---
 
@@ -478,11 +497,11 @@ Jedes Layout hat unterschiedliche:
 
 Dieses Projekt wurde mit **Vibecoding** entwickelt – ein moderner Ansatz, der:
 - 🎨 Kreativität mit Struktur kombiniert
-- 🤖 KI-Assistenten (wie Claude) für komplexe Logik nutzt
+- 🤖 KI-Assistenten (wie Claude & Gemini) für komplexe Logik nutzt
 - ⚡ Schnelle Iterationen ermöglicht
 - 🚀 Technische Hürden überbrückt
 
-**Hinweis des Autors:** Der Entwickler hat Grundkenntnisse in Scripting (Python, Bash, PHP), ist aber kein professioneller Entwickler. Trotzdem wurde ein komplexes, produktives System durch eine Kombination aus KI-Unterstützung, bewährten Praktiken und iterativer Entwicklung geschaffen.
+**Hinweis des Autors:** Ich habe Grundkenntnisse in Scripting (Python, Bash, PHP), bin aber kein professioneller Entwickler. Trotzdem wurde ein komplexes, produktives System durch eine Kombination aus KI-Unterstützung, bewährten Praktiken und iterativer Entwicklung geschaffen.
 
 ### Projekt-Struktur
 
