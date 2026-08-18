@@ -115,23 +115,23 @@ cd mahjong-live2_multiplayer
 npm install
 ```
 
-Die installierten Pakete sind in `package.json` definiert:
+Die benötigten Pakete sind in der `package.json` definiert. Die exakten Versionsstände sowie der vollständige Abhängigkeitsbaum befinden sich in der `package-lock.json`.
 
-| Paket | Version | Zweck |
-|---|---|---|
-| **express** | ^5.2.1 | Web-Framework |
-| **socket.io** | ^4.8.3 | Echtzeit-Kommunikation |
-| **mysql2** | ^3.22.2 | MySQL-Datenbanktreiber |
-| **bcrypt** | ^6.0.0 | Passwort-Hashing |
-| **nodemailer** | ^8.0.6 | E-Mail-Versand |
-| **helmet** | ^8.1.0 | HTTP-Security-Header |
-| **express-rate-limit** | ^8.5.1 | Request-Rate-Limiting |
-| **express-session** | ^1.19.0 | Session-Management |
-| **express-mysql-session** | ^3.0.3 | MySQL-basierter Session-Store |
-| **cookie-parser** | ^1.4.7 | Cookie-Parsing |
-| **csrf-csrf** | ^2.3.0 | CSRF-Schutz |
-| **dotenv** | ^17.4.2 | Umgebungsvariablen |
-| **altcha-lib** | ^1.4.1 | CAPTCHA-Lösung (Bot-Schutz) |
+| Paket | Zweck |
+|---|---|
+| **express** | Web-Framework |
+| **socket.io** | Echtzeit-Kommunikation |
+| **mysql2** | MySQL-Datenbanktreiber |
+| **bcrypt** | Passwort-Hashing |
+| **nodemailer** | E-Mail-Versand |
+| **helmet** | HTTP-Security-Header |
+| **express-rate-limit** | Request-Rate-Limiting |
+| **express-session** | Session-Management |
+| **express-mysql-session** | MySQL-basierter Session-Store |
+| **cookie-parser** | Cookie-Parsing |
+| **csrf-csrf** | CSRF-Schutz |
+| **dotenv** | Umgebungsvariablen |
+| **altcha-lib** | CAPTCHA-Lösung (Bot-Schutz) |
 
 ### Schritt 3: Datenbank einrichten
 
