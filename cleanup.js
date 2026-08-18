@@ -70,12 +70,13 @@ async function runCleanup() {
 		            to: user.email,
 		            bcc: BCC_EMAIL,
 		            subject: 'Account gelöscht',
-		            text: `Hallo ${user.username},\n\ndein Account auf mahjong-treff.de wurde wegen Nichtnutzung unwiderruflich gelöscht. Alle deine Daten wurden aus dem Speicher entfernt. Wenn du wieder spielen möchtest musst du einen neuen Account erstellen.\n\nDein Mahjong-Team`
+		            text: `Hallo ${user.username},\n\nDein Account auf mahjong-treff.de wurde wegen Nichtnutzung unwiderruflich gelöscht. Alle deine Daten wurden aus dem Speicher entfernt. Wenn du wieder spielen möchtest musst du einen neuen Account erstellen.\n\nDein Mahjong-Team`
 		        };
 		        try {
 		            await transporter.sendMail(mailOptions);
 		        } catch (sendErr) {
-		            console.error(`Fehler beim Mailversand an ${user.email}:`, sendErr);
+		            console.error(`Fehler beim Mailversand an ${user.email}, Löschung übersprungen:`, sendErr);
+		            continue;
 		        }
 		        db.query("DELETE FROM users WHERE id = ?", [user.id], (delErr) => {
 		            if (!delErr) console.log(`   [DELETED] User ${user.username} entfernt.`);
