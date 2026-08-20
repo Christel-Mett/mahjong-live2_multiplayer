@@ -127,6 +127,14 @@
 			    color: inherit;
 			    cursor: pointer;
 			}
+			
+			/* Entfernt die Browser-Standardoptik (Kasten) des <button>-Elements */
+			#initial-prompt {
+			    background: none;
+			    border: none;
+			    padding: 0;
+			    font-family: inherit;
+			}
 
         /* Neu: Stil für die E-Mail Fehlermeldung */
         #email-error {
@@ -169,6 +177,15 @@
 			    background: #ee2222;
 			    color: #FFE000 !important;
 			}
+			
+			/*.single-tape-badge:focus-visible {
+			    filter: drop-shadow(2px 3px 5px rgba(0,0,0,0.5)) drop-shadow(0 0 6px #ffffff);
+			}*/
+			.single-tape-badge:focus-visible {
+			    background: #ee2222;
+			    outline: 3px solid #ffffff;
+			    outline-offset: 4px;
+			}
     </style>
     
 <script src="/shared/altcha.min.js" type="module"></script>
@@ -176,9 +193,13 @@
 </head>
 <body onclick="showOverlay()">
 
-    <div id="initial-prompt" class="start-prompt">
-        Klicke zum Starten
-    </div>
+    <a href="/single/" onclick="event.stopPropagation()" class="single-tape-badge">
+    Singlespiel –<br>ohne Anmeldung testen
+	 </a>
+    
+    <button type="button" id="initial-prompt" class="start-prompt" onclick="showOverlay()">
+    Klicke zum Starten
+    </button>
 
     <div class="bottom-nav" id="site-footer" onclick="event.stopPropagation()">
         <a href="impressum.html">Impressum</a>
@@ -273,9 +294,7 @@
             </div>
         </div>
     </div>
-    <a href="/single/" onclick="event.stopPropagation()" class="single-tape-badge">
-    Singlespiel –<br>ohne Anmeldung testen
-	 </a>
+    
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
