@@ -300,19 +300,50 @@
     <script>
         const socket = io();
 
-        function showOverlay() {
-            document.getElementById('main-overlay').style.display = 'flex';
-            document.getElementById('initial-prompt').classList.add('hidden');
-            document.getElementById('site-footer').classList.add('hidden');
-        }
+        let lastFocusedBeforeOverlay = null;
 
-        function closeOverlay() {
-            document.getElementById('main-overlay').style.display = 'none';
-            document.getElementById('initial-prompt').classList.remove('hidden');
-            document.getElementById('site-footer').classList.remove('hidden');
-        }
+			function showOverlay() {
+			    lastFocusedBeforeOverlay = document.activeElement;
+			    document.getElementById('main-overlay').style.display = 'flex';
+			    document.getElementById('initial-prompt').classList.add('hidden');
+			    document.getElementById('site-footer').classList.add('hidden');
+			    document.getElementById('playerName').focus();
+			}
+			
+			function closeOverlay() {
+			    document.getElementById('main-overlay').style.display = 'none';
+			    document.getElementById('initial-prompt').classList.remove('hidden');
+			    document.getElementById('site-footer').classList.remove('hidden');
+			    toggleView('login');
+			    if (lastFocusedBeforeOverlay) lastFocusedBeforeOverlay.focus();
+			}
         
         document.querySelector('.close-btn').addEventListener('click', closeOverlay);
+        
+        document.getElementById('main-overlay').addEventListener('keydown', function (e) {
+            if (e.key !== 'Tab') return;
+
+            const focusable = Array.from(
+                this.querySelectorAll('button, input, a[href], [tabindex]')
+            ).filter(el => el.offsetParent !== null);
+
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        });
+        
+        document.addEventListener('keydown', function (e) {
+			    if (e.key === 'Escape' && document.getElementById('main-overlay').style.display === 'flex') {
+			        closeOverlay();
+			    }
+			});
 
         function toggleView(view) {
             const loginSide = document.getElementById('login-section');
