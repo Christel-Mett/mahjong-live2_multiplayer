@@ -46,7 +46,8 @@ body {
 }
 
 /* Styling der Eingabefelder */
-input[type="text"], 
+input[type="text"],
+input[type="email"], 
 input[type="password"] {
     background: #1a252f;
     border: 1px solid #769091;
