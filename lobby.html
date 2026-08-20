@@ -646,7 +646,17 @@
         reportLobbyActivity();
     }
     });
-
+		document.addEventListener('keydown', function (e) {
+		    if (e.key !== 'Escape') return;
+		
+		    if (document.getElementById('search-overlay').style.display === 'flex') {
+		        cancelSearch();
+		    } else if (document.getElementById('leaderboard-overlay').style.display === 'flex') {
+		        closeLeaderboard();
+		    } else if (document.getElementById('settings-overlay').style.display === 'flex') {
+		        closeSettings();
+		    }
+		});
       window.addEventListener('keydown', reportLobbyActivity);
 
     </script>

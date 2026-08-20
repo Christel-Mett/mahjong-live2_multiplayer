@@ -47,6 +47,10 @@
             cursor: pointer;
             color: #999;
             line-height: 1;
+            background: none;
+			   border: none;
+			   padding: 0;
+			   font-family: inherit;
         }
         .close-btn:hover { color: #333; }
 
@@ -72,7 +76,7 @@
 <body>
     <div class="overlay-screen">
         <div class="menu-container">
-            <span class="close-btn" onclick="window.history.back()">&times;</span>
+            <button type="button" class="close-btn" aria-label="Schließen">&times;</button>
             <h1>Spielanleitung</h1>
             
             <h2 style="color: #2c3e50; border-bottom: 1px solid #d2b48c; padding-bottom: 6px; margin-top: 5px;">Spielziel &amp; Regeln</h2>
@@ -142,5 +146,14 @@ Die Spielechats werden automatisch gelöscht wenn das Spielfeld verlassen wird.<
 <span class="bold">Viel Spaß beim Spielen!<br><a href="lobby.html">Startseite</a></span></div>
         </div>
     </div>
+    <script>
+        document.querySelector('.close-btn').addEventListener('click', () => window.history.back());
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                window.history.back();
+            }
+        });
+    </script>
 </body>
 </html>
