@@ -260,7 +260,7 @@
     </style>
 </head>
 <body>
-    <div id="search-overlay">
+    <div id="search-overlay" role="dialog" aria-modal="true" aria-labelledby="search-status">
         <div class="loader-box">
             <div class="spinner"></div>
             <h2 id="search-status">Gegner wird gesucht...</h2>
@@ -269,9 +269,9 @@
         </div>
     </div>
 
-    <div id="leaderboard-overlay">
-        <div class="loader-box" style="width: 80%; max-width: 500px; max-height: 80vh; display: flex; flex-direction: column;">
-            <h2 style="margin-top: 0;">Globale Rangliste</h2>
+        <div id="leaderboard-overlay" role="dialog" aria-modal="true" aria-labelledby="leaderboard-heading">
+	        <div class="loader-box" style="width: 80%; max-width: 500px; max-height: 80vh; display: flex; flex-direction: column;">
+	            <h2 id="leaderboard-heading" style="margin-top: 0;">Globale Rangliste</h2>
             
             <div style="flex-grow: 1; overflow-y: auto; background: rgba(0,0,0,0.3); border: 1px solid #d2b48c; border-radius: 5px;">
                 <table class="leaderboard-table">
@@ -291,9 +291,9 @@
         </div>
     </div>
     
-    <div id="settings-overlay">
-    <div class="loader-box" style="width: 80%; max-width: 400px;">
-	        <h2 style="margin-top: 0; margin-bottom: 0;">Einstellungen</h2>
+        <div id="settings-overlay" role="dialog" aria-modal="true" aria-labelledby="settings-heading">
+	     <div class="loader-box" style="width: 80%; max-width: 400px;">
+		        <h2 id="settings-heading" style="margin-top: 0; margin-bottom: 0;">Einstellungen</h2>
 	        <p style="margin-top: 4px; opacity: 0.8;">für <span id="settings-username">-</span></p>
 
         <div style="margin: 16px 0; text-align: left;">
