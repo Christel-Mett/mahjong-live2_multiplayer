@@ -576,6 +576,10 @@
             });
         });
 
+		  socket.on('force_logout', () => {
+            logout();
+        });
+
 			function startMode(mode) {
 			    if (mode === 'single') {
 			        window.location.href = 'single/index.html';

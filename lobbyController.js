@@ -4,6 +4,8 @@ const userManager = require('./userManager');
 
 // Speichert laufende Abwesend-Timer pro Lobby-User
 const lobbyAbsentTimeouts = {};
+// Speichert laufende Auto-Logout-Timer (90 Min durchgehend abwesend) pro User
+const lobbyLogoutTimeouts = {};
 
 function scheduleLobbyAbsent(io, username) {
 	
@@ -13,6 +15,12 @@ function scheduleLobbyAbsent(io, username) {
        userManager.updateLocation(username, 'lobby');
        module.exports.broadcastUserList(io);
    }	
+
+   // Neue Aktivität stoppt einen eventuell laufenden Auto-Logout-Timer
+   if (lobbyLogoutTimeouts[username]) {
+       clearTimeout(lobbyLogoutTimeouts[username]);
+       delete lobbyLogoutTimeouts[username];
+   }
 	
     if (lobbyAbsentTimeouts[username]) {
         clearTimeout(lobbyAbsentTimeouts[username]);
@@ -23,6 +31,18 @@ function scheduleLobbyAbsent(io, username) {
         if (user && user.location === 'lobby') {
             userManager.updateLocation(username, 'absent');
             module.exports.broadcastUserList(io);
+
+            // Ab jetzt läuft die 90-Minuten-Uhr für den Auto-Logout
+            lobbyLogoutTimeouts[username] = setTimeout(() => {
+                delete lobbyLogoutTimeouts[username];
+                const stillAbsentUser = userManager.getUser(username);
+                if (stillAbsentUser && stillAbsentUser.location === 'absent') {
+                    io.to(stillAbsentUser.socketId).emit('force_logout');
+                    userManager.removeUser(username);
+                    module.exports.broadcastUserList(io);
+                    console.log(`${username} wurde nach 90 Minuten Abwesenheit automatisch ausgeloggt.`);
+                }
+            }, 90 * 60 * 1000);
         }
     }, 5 * 60 * 1000);
 

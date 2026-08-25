@@ -296,6 +296,13 @@ Verwaltet die zentrale Lobby, wo Spieler sich treffen, chatten und auf Matchmaki
 - Ranglisten-Display
 - Spielerstatistiken abrufen
 
+**Abwesend-Erkennung & Auto-Logout:**
+- Nach 5 Minuten ohne Aktivität (Klick, Tastatur, Chat) wird ein Lobby-User als `absent` (abwesend) markiert
+- Bleibt der User durchgehend `absent`, wird nach weiteren 90 Minuten automatisch ausgeloggt: Server sendet `force_logout` an den Client, der User wird aus `userManager` entfernt
+- Jede Aktivität setzt beide Timer zurück (5-Min-Absent-Timer und 90-Min-Logout-Timer)
+- Client-seitig (`lobby.html`) reagiert ein `socket.on('force_logout', ...)`-Listener und ruft die bestehende `logout()`-Funktion auf (Socket trennen, `localStorage` leeren, Weiterleitung zu `/logout` → Startseite)
+
+
 **Chat-Datenstruktur:**
 ```javascript
 {
