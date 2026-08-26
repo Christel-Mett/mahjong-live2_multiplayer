@@ -338,8 +338,9 @@ Intelligentes System zur Paarung von Spielern:
 ```
 
 **Ranking-Faktor:**
-- Spieler werden bevorzugt mit ähnlichem Rang (score) gematcht
-- `maxRang` wird alle 60 Sekunden aktualisiert
+- ~~Spieler werden bevorzugt mit ähnlichem Rang (score) gematcht~~
+- ~~`maxRang` wird alle 60 Sekunden aktualisiert~~
+- wurde temporär deaktiviert
 
 ### 6. **gameController.js** – Spielverwaltung
 
