@@ -119,6 +119,14 @@ const sessionMiddleware = session({
 });
 
 app.use(sessionMiddleware);
+
+app.use((req, res, next) => {
+    if (!req.session.initialized) {
+        req.session.initialized = true;
+    }
+    next();
+});
+
 io.engine.use(sessionMiddleware);
 
 app.get('/csrf-token', (req, res) => {
@@ -170,21 +178,15 @@ app.get('/altcha-challenge', pageLimiter, async (req, res) => {
     res.json(challenge);
 });
 
+
 app.post('/set-session', csrfProtection, (req, res) => {
-    const username = req.body.username;
-    const userId = req.body.userId || req.body.id || req.session.userId;
-
-    if (username) {
-        req.session.username = username;
-        if (userId) req.session.userId = userId;
-
-        req.session.save((err) => {
-            if (err) return res.status(500).json({ success: false });
-            res.json({ success: true });
-        });
-    } else {
-        res.status(400).json({ success: false });
+    if (!req.session.username) {
+        return res.status(401).json({ success: false });
     }
+    req.session.save((err) => {
+        if (err) return res.status(500).json({ success: false });
+        res.json({ success: true });
+    });
 });
 
 app.get('/lobby', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/lobby.html'));
