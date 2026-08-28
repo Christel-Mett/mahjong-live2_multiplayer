@@ -74,11 +74,11 @@ handleGameFinished: (io, socket, data) => {
     }
 
     activeGames[room].players[socket.id] = { 
-        name: data.name || data.user || "Spieler", 
-        points: finalPoints,
-        time: data.finalTime || 0,
-        finished: true 
-    };
+	     name: userManager.getUsernameBySocketId(socket.id), 
+	     points: finalPoints,
+	     time: data.finalTime || 0,
+	     finished: true 
+	 };
 
     if (gameRooms[room]) gameRooms[room].delete(socket.id);
 
