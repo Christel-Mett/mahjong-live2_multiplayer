@@ -8,7 +8,8 @@ module.exports = {
     // Verarbeitet den Registrierungsversuch (socket.on('register_attempt'))
 handleRegister: (socket, data, transporter) => {
     const { username, password, email } = data;
-    const token = Math.random().toString(36).substr(2);
+    //const token = Math.random().toString(36).substr(2);
+    const token = require('crypto').randomBytes(32).toString('hex');
 
     dbInterface.checkUserExists(username, email, async (err, results) => {
         if (err) return socket.emit('register_response', { success: false, message: 'Datenbankfehler.' });
