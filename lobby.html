@@ -127,6 +127,34 @@
             50%       { opacity: 0.15; }
         }
         
+        .share-link-btn {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #2c3e50;
+            border: 1px solid #03f3f0;
+            border-radius: 6px;
+            color: #d7dbde !important;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.95em; /* Kompakt genug für die Zeile, da jetzt zweizeilig */
+            font-family: inherit;
+            padding: 4px 8px;
+            margin-left: 50px;
+            text-decoration: none;
+            line-height: 1.2;
+            white-space: nowrap;
+            vertical-align: middle;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        
+        .share-link-btn:hover {
+            background-color: rgba(210, 180, 140, 0.2);
+            border-color: #ffffff;
+            text-decoration: none !important;
+        }
+        
 			/* Container für die gesamte Emoji-Zeile inkl. Pfeile */
 			.emoji-wrapper {
 			    display: flex;
@@ -381,7 +409,11 @@
 					 <a href="news.html" class="info-pop-link" style="text-decoration: none;">
     <img src="shared/bilder/link/news.png" alt="News" style="height: 40px; vertical-align: middle; margin: 0 5px;">
 </a>
-					 
+				 
+					 <button type="button" class="share-link-btn" onclick="copyGameLink()">
+                    Dir gefällt das Spiel? Adresse hier<br>kopieren und an Freunde schicken.
+                </button>
+
 					 <!-- display:none entfernt, Link dauerhaft sichtbar seit 7.6.2026 -->                
                <!-- <a href="news.html" class="survey-link" id="survey-link">Umfrageergebnis</a>-->
                 
@@ -654,6 +686,34 @@
 
     </script>
     
+    <script>
+    function copyGameLink() {
+            const gameUrl = "https://mahjong-treff.de";
+            
+            // Moderne Clipboard-API nutzen mit Fallback falls nötig
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(gameUrl).then(() => {
+                    alert("Der Link zum Spiel wurde in die Zwischenablage kopiert");
+                }).catch(err => {
+                    console.error("Fehler beim Kopieren: ", err);
+                });
+            } else {
+                // Fallback für ältere Browser
+                const dummyInput = document.createElement("input");
+                document.body.appendChild(dummyInput);
+                dummyInput.value = gameUrl;
+                dummyInput.select();
+                try {
+                    document.execCommand("copy");
+                    alert("Der Link zum Spiel wurde in die Zwischenablage kopiert");
+                } catch (err) {
+                    console.error("Fallback Fehler beim Kopieren: ", err);
+                }
+                document.body.removeChild(dummyInput);
+            }
+        }
+    </script>
+       
     <script src="seasonalAnimations.js"></script>
     <script src="seasonalSchedule.js"></script>
 	 <script>
