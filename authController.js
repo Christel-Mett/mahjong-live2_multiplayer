@@ -31,7 +31,7 @@ handleRegister: (socket, data, transporter) => {
                 console.log(`Neue Registrierung: ${username} (${email}).`);
                 
             // --- MAIL-VERSAND LÄUFT JETZT IM HINTERGRUND ---
-            const verifyLink = `https://2.staging.mahjong-treff.de/verify?token=${token}`;
+            const verifyLink = `${process.env.APP_URL}/verify?token=${token}`;
             const mailOptions = {
                 from: `"Mahjong-Treff" <${process.env.MAIL_USER}>`,
                 to: email,
@@ -118,7 +118,7 @@ handleRegister: (socket, data, transporter) => {
             dbInterface.updateUserToken(results[0].id, resetToken, (updateErr) => {
                 if (updateErr) return;
 
-                const resetLink = `https://2.staging.mahjong-treff.de/reset-password?token=${resetToken}`;
+                const resetLink = `${process.env.APP_URL}/reset-password?token=${resetToken}`;
                 const mailOptions = {
                     from: `"Mahjong-Treff" <${process.env.MAIL_USER}>`,
                     to: email,
