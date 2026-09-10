@@ -14,5 +14,8 @@
     "nodemailer": "^9.1.1",
     "socket.io": "^4.8.3",
     "socket.io-parser": "4.2.7"
+  },
+  "overrides": {
+    "mysql2": "^3.23.1"
   }
 }
