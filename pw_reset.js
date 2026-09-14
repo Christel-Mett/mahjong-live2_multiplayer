@@ -14,7 +14,7 @@ function handleForgotPassword(socket, db, email, transporter) {
         db.query('UPDATE users SET token = ? WHERE email = ?', [resetToken, email], (updateErr) => {
             if (updateErr) return console.error('DB Fehler:', updateErr);
 
-            const resetLink = `https://staging.mahjong-treff.de/reset-password?token=${resetToken}`;
+            const resetLink = `${process.env.APP_URL}/reset-password?token=${resetToken}`;
             const mailOptions = {
                 from: `"Mahjong-Treff" <${process.env.MAIL_USER}>`,
                 to: email,
