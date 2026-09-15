@@ -9,8 +9,133 @@
     <link rel="apple-touch-icon" sizes="180x180" href="shared/bilder/favicon/apple-touch-icon-180x180.png">
     <link rel="icon" type="image/png" sizes="192x192" href="shared/bilder/favicon/android-icon-192x192.png">
     <link rel="shortcut icon" href="shared/bilder/favicon/favicon-32x32.ico">
-    <link rel="stylesheet" href="style.css">
+
     <style>
+        /* ---- Übernommen aus style.css ---- */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('shared/hintergrund/mahjong2-treff.png') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+        }
+
+        .lobby-container-flex {
+            background: rgba(44, 62, 80, 0.95);
+            padding: 20px 40px;
+            border-radius: 20px;
+            border: 3px solid #d2b48c;
+            box-shadow: 0 0 50px rgba(0,0,0,0.9);
+            width: 90vw;
+            max-width: 1200px;
+            height: 85vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-title {
+            color: #d2b48c;
+            margin: 10px 0 20px 0;
+            font-size: 2.2em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .lobby-content-row {
+            display: flex;
+            gap: 20px;
+            flex-grow: 1;
+            min-height: 0;
+            margin-bottom: 25px;
+        }
+
+        .chat-area { flex: 3; }
+        .user-area { flex: 1; min-width: 200px; }
+
+        .chat-area, .user-area {
+            background: rgba(26, 37, 47, 0.85);
+            border: 1px solid #769091;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .area-label {
+            background: #d2b48c;
+            color: #1a252f;
+            font-weight: bold;
+            padding: 8px;
+            font-size: 0.85em;
+            text-transform: uppercase;
+        }
+
+        #chat-messages, #user-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .chat-input-row {
+            display: flex;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+            border-top: 1px solid #444;
+        }
+
+        .chat-input-row input {
+            flex-grow: 1;
+            padding: 10px;
+            border-radius: 5px 0 0 5px;
+            border: 1px solid #769091;
+            background: #0d141b;
+            color: white;
+        }
+
+        .send-btn {
+            background: #d2b48c;
+            border: none;
+            padding: 0 20px;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .lobby-footer-nav {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .nav-btn {
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .nav-btn:hover { transform: scale(1.02); }
+
+        .btn-1 { background-color: #3498db; }
+        .btn-3 { background-color: #9b59b6; }
+        .btn-4 { background-color: #c0392b; }
+
+        .login-info {
+            font-size: 0.9em;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        /* ---- Bisheriger eigener Inhalt der lobby.html (unverändert) ---- */
         /* Overlay Styles */
         #search-overlay, #leaderboard-overlay, #settings-overlay {
             display: none;
@@ -138,7 +263,7 @@
             color: #d7dbde !important;
             font-weight: bold;
             cursor: pointer;
-            font-size: 0.95em; /* Kompakt genug für die Zeile, da jetzt zweizeilig */
+            font-size: 0.95em;
             font-family: inherit;
             padding: 4px 8px;
             margin-left: 50px;
@@ -171,12 +296,11 @@
 			    overflow-x: auto;
 			    white-space: nowrap;
 			    flex-grow: 1;
-			    /* Versteckt den Scrollbalken in allen Browsern */
-			    scrollbar-width: none; /* Firefox */
-			    -ms-overflow-style: none; /* IE/Edge */
+			    scrollbar-width: none;
+			    -ms-overflow-style: none;
 			}
 			#emoji-container::-webkit-scrollbar {
-			    display: none; /* Chrome/Safari */
+			    display: none;
 			}
 			
 			/* Styling für die Scroll-Pfeile */
