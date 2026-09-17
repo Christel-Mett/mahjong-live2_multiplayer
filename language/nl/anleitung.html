@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Mahjong Multiplayer Solitaire – Spelinstructies | Mahjong-Treff</title>
+    <meta name="description" content="Spelinstructies voor Mahjong-Treff: Gratis Mahjong Solitaire als multiplayer-browsergame. Speel tegen echte tegenstanders, leer de regels en puntentelling.">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #2c3e50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+        .overlay-screen {
+            background: rgba(0, 0, 0, 0.85);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+        .menu-container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            line-height: 1.6;
+            text-align: left;
+        }
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 35px;
+            cursor: pointer;
+            color: #999;
+            line-height: 1;
+            background: none;
+			   border: none;
+			   padding: 0;
+			   font-family: inherit;
+        }
+        .close-btn:hover { color: #333; }
+
+        h1 { 
+            margin-top: 0; 
+            border-bottom: 2px solid #d2b48c; 
+            padding-bottom: 10px;
+            color: #2c3e50;
+            font-size: 1.8em;
+        }
+
+        .odt-section {
+/*            white-space: pre-wrap;*/
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay-screen">
+        <div class="menu-container">
+            <button type="button" class="close-btn" aria-label="Sluiten">&times;</button>
+            <h1>Spelinstructies</h1>
+            
+            <h2 style="color: #2c3e50; border-bottom: 1px solid #d2b48c; padding-bottom: 6px; margin-top: 5px;">Speldoel &amp; Regels</h2>
+            <div class="odt-section">Dit spel is een solitaire mahjong-variant.</div>
+<div class="odt-section">Het spel is ontworpen als browsergame voor een pc. <a href="lobby.html">Startpagina</a></span></div> Het is ook speelbaar op grotere tablets met een 
+„fullscreen browser-app” (bijv. „Fully Kiosk Browser”), 
+maar is daar niet specifiek voor ontworpen; sommige elementen zijn zonder muis en extern toetsenbord lastig te bereiken. Apple iPads kunnen problemen hebben bij de multiplayergames, probeer het met verschillende browsers, dat heeft zich vaak als oplossing bewezen.
+Op een smartphone kan het spel ook geladen worden, maar door het kleine scherm is het daar nauwelijks speelbaar en is het ook qua resolutie niet daarvoor ontworpen.
+Het volledige spel is open source en staat onder de GNU GPL-licentie.
+Afbeeldingen en speelvelden zijn overgenomen uit het onder dezelfde licentie staande spel "KMahjong"<br><br>
+In alle spelvarianten is er een zijbalk waarin met schuifregelaars het volume en de grootte van de speelstenen 
+kunnen worden aangepast.<br><br>
+Doel van het spel is om zoveel mogelijk stenen van een speelveld te verwijderen.
+Dit gebeurt door twee stenen met hetzelfde symbool aan te klikken.
+Een steen is alleen aanklikbaar als hij volledig vrij naar boven ligt en aan minstens één zijde (links of rechts) 
+vrij ligt.<br><br>
+Voor elk zo verwijderd stenenpaar krijgt de speler één punt.
+Wordt direct daarna nog een stenenpaar met hetzelfde symbool aangeklikt, krijgt hij daarvoor en voor elk 
+volgend paar met hetzelfde symbool vijf punten.
+Wordt het speelveld volledig leeggemaakt, dan krijgt de speler 50 extra punten. Daarnaast krijgt hij voor elke seconde die 
+nog overblijft tot het bereiken van drieënhalve minuut speeltijd, één extra punt.
+Na 3:30 minuten speeltijd vervalt deze bonus.<br><br>
+De stenen voor „bloemen” (met cijfer) en „seizoenen” (met schrifttekens) vormen elk een groep waarbinnen alle stenen 
+onderling gematcht kunnen worden.<br><br>
+Het spel eindigt óf doordat alle stenen op het speelveld verwijderd zijn, óf door het bereiken van een „impasse” 
+(er zijn geen aanklikbare paren meer beschikbaar), 
+óf door opgave door de speler.<br><br>
+<h2 style="color: #2c3e50; border-bottom: 1px solid #d2b48c; padding-bottom: 6px; margin-top: 20px;">Mahjong Multiplayer – Spelvarianten</h2>
+Er zijn drie spelvarianten beschikbaar:<br>
++ Singleplayer – voor één speler, zonder puntentelling in de ranglijst.<br>
++ Multiplayer Random – spel tegen een tegenstander met willekeurige keuze van het speelbord.<br>
++ Multiplayer Keuze – spel tegen een tegenstander met vooraf gekozen speelbord.<br><br>
+In de singleplayervariant kan men één of meerdere zetten ongedaan maken en een hint laten geven voor een 
+vrij stenenpaar.
+Het is mogelijk om dezelfde bordopstelling opnieuw te starten of een nieuw spel te beginnen.
+De keuze van het speelbord is direct mogelijk. Er zijn 62 verschillende speelborden.
+Er is een topscorelijst, die echter alleen lokaal op het apparaat wordt opgeslagen. Deze heeft geen invloed op de 
+ranglijst.<br><br>
+De multiplayergames zijn beperkt tot 17 borden, waarvan elk met 144 stenen is opgebouwd.
+In de variant „Keuze” kan een specifiek bord gekozen worden.<br><br>
+Het matchen van twee spelers verloopt in meerdere fasen.<br>
+Eerst voor de variant Random:<br>
+Twee zoekende spelers worden zonder wachttijd direct met elkaar verbonden.
+<s>Fase 1: Er wordt gezocht naar een tegenstander met maximaal +-20 rangplaatsen ten opzichte van de eigen rang.<br>
+Fase 2: Wordt binnen 30 seconden geen passende tegenstander gevonden, dan wordt verbonden met de dichtstbijzijnde.</s><br><br>
+Voor de variant Keuze:<br>
+Spelers in de layoutruimtes worden direct met elkaar verbonden, eerst uit dezelfde layoutruimte, secundair ook uit andere ruimtes. Na 15 seconden wordt de zoektocht naar een tegenstander uitgebreid naar de hoofdlobby.<br>
+<s>Fase 1: zoals bij Random<br>
+Fase 2: Na afloop van de 30 seconden wordt nog eens 30 seconden gezocht naar een willekeurige tegenstander voor het gekozen bord.<br>
+Fase 3: Daarna wordt gematcht met een willekeurige speler uit een andere ruimte.
+Hierbij wordt het speelveld gebruikt van de speler die de zoektocht naar een tegenstander als eerste startte.</s><br><br>
+Nieuwe spelers, die de onderste 10% van de plaatsen bezetten, worden onmiddellijk verbonden. De reden hiervoor is dat ze bij hun eerste spellen niet meteen de motivatie verliezen als het zoeken naar een tegenstander wat langer duurt.<br><br>
+De multiplayergames eindigen op dezelfde manier als de singleplayergames, met één verschil: 
+nadat de eerste speler zijn spel heeft beëindigd, krijgt de tweede speler nog een resterende speeltijd van 
+30 seconden voordat ook zijn spel eindigt.<br><br>
+De punten tellen voor beide spelers, er is geen „overwinningsbonus”, er worden geen punten afgetrokken.<br><br>
+De rangen/plaatsen van de spelers worden bepaald door hun totale puntenaantal van alle tot nu toe gespeelde partijen.<br><br>
+Er zijn chatfuncties beschikbaar.
+In de lobby is er een groot chatvenster dat elke aangemelde gebruiker kan gebruiken.
+In de multiplayergames is er een „chat voor twee personen”. Deze functie is op tablets eigenlijk alleen met 
+een extern toetsenbord bruikbaar.
+Voor alle chats geldt de <a href="https://de.wikipedia.org/wiki/Netiquette" target="_blank" style="color: #2c3e50; text-decoration: underline;">netiquette</a>, zie hiervoor ook het betreffende deel in de gebruiksvoorwaarden. De chats worden niet 
+permanent opgeslagen.
+In de lobbychat worden alleen de laatste 50 berichten getoond, oudere worden automatisch verwijderd.
+De spelchats worden automatisch verwijderd zodra het speelveld verlaten wordt.<br><br>
+
+<span class="bold">Veel speelplezier!<br><a href="lobby.html">Startpagina</a></span></div>
+        </div>
+    </div>
+    <script>
+        document.querySelector('.close-btn').addEventListener('click', () => window.history.back());
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                window.history.back();
+            }
+        });
+    </script>
+</body>
+</html>

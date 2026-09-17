@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mahjong Multiplayer Solitaire – Game Instructions | Mahjong-Treff</title>
+    <meta name="description" content="Game instructions for Mahjong-Treff: Free Mahjong Solitaire as a multiplayer browser game. Play against real opponents, learn the rules and scoring system.">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #2c3e50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+        .overlay-screen {
+            background: rgba(0, 0, 0, 0.85);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+        .menu-container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            line-height: 1.6;
+            text-align: left;
+        }
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 35px;
+            cursor: pointer;
+            color: #999;
+            line-height: 1;
+            background: none;
+			   border: none;
+			   padding: 0;
+			   font-family: inherit;
+        }
+        .close-btn:hover { color: #333; }
+
+        h1 { 
+            margin-top: 0; 
+            border-bottom: 2px solid #d2b48c; 
+            padding-bottom: 10px;
+            color: #2c3e50;
+            font-size: 1.8em;
+        }
+
+        .odt-section {
+/*            white-space: pre-wrap;*/
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay-screen">
+        <div class="menu-container">
+            <button type="button" class="close-btn" aria-label="Close">&times;</button>
+            <h1>Game Instructions</h1>
+            
+            <h2 style="color: #2c3e50; border-bottom: 1px solid #d2b48c; padding-bottom: 6px; margin-top: 5px;">Objective &amp; Rules</h2>
+            <div class="odt-section">The game is a Solitaire Mahjong.</div>
+<div class="odt-section">The game is designed as a browser game for a PC. <a href="lobby.html">Home page</a></span></div> It can also be played on larger tablets with a 
+"Fullscreen Browser App" (e.g., "Fully Kiosk Browser"), 
+but it was not designed for that purpose; some elements are difficult to reach without a mouse and external keyboard. Apple iPads may have difficulties with the multiplayer games, try different browsers, this has often proven to be a solution.
+You can also load it on a smartphone, but due to the small screen it is hardly playable there, and the resolutions were not designed for it either.
+The entire game is open source and is licensed under the GNU GPL license.
+Images and game layouts are taken from the game "KMahjong", which is under the same license<br><br>
+In all game variants there is a sidebar where the volume and the size of the game character 
+can be adjusted using sliders.<br><br>
+The aim of the game is to remove as many tiles as possible from the board.
+This is done by clicking on two tiles with the same symbol.
+A tile can only be clicked if it is completely free on top and on at least one side (left or right).<br><br>
+For each pair of tiles removed this way, the player receives one point.
+If another pair with the same symbol is clicked immediately afterwards, they receive five points for this and every 
+further pair with the same symbol.
+If the board is completely cleared, the player receives 50 bonus points. In addition, they receive one further point for each second 
+remaining until three and a half minutes of playing time is reached.
+After 3:30 minutes of playing time, this bonus no longer applies.<br><br>
+The tiles for "Flowers" (with a number) and "Seasons" (with a character) each form a group in which all tiles 
+can be matched with one another.<br><br>
+The game ends either by removing all tiles from the board, by reaching a "dead end" 
+(there are no more clickable pairs) 
+or by the player resigning.<br><br>
+<h2 style="color: #2c3e50; border-bottom: 1px solid #d2b48c; padding-bottom: 6px; margin-top: 20px;">Mahjong Multiplayer – Game Variants</h2>
+Three game variants are available:<br>
++ Single player – for a single player without scoring in the ranking list.<br>
++ Multiplayer Random – game with one opponent and random selection of the game board.<br>
++ Multiplayer Choice – game with one opponent and prior board selection.<br><br>
+In the single player variant, you can undo one or more moves and get a hint for an 
+available pair of tiles.
+It is possible to restart the same board layout or to begin a new game.
+The choice of boards is directly available. There are 62 different game boards.
+There is a high score list, but it is only stored locally on the device. It has no effect on the 
+ranking list.<br><br>
+The multiplayer games are limited to 17 boards, each of which is built with 144 tiles.
+In the "Choice" variant, a specific board can be selected.<br><br>
+The matching of two players takes place in several stages.<br>
+First, for the Random variant:<br>
+Two searching players are connected directly without waiting time.
+<s>Stage 1: A search is made for an opponent with at most +-20 ranking places from one's own rank.<br>
+Stage 2: If no suitable opponent is found within 30 seconds, the player is connected with the closest one.</s><br><br>
+For the Choice variant:<br>
+Players in the layout rooms are connected directly with each other, first from the same layout room, secondarily also from other rooms. After 15 seconds, the opponent search is extended to the main lobby.<br>
+<s>Stage 1: as in Random<br>
+Stage 2: After the 30 seconds have elapsed, a further 30 seconds are spent searching for any opponent for the selected board.<br>
+Stage 3: After that, the player is matched with any player from another room.
+In that case, the board of the player who initiated the opponent search first is used.</s><br>
+New players who occupy the bottom 10% of the ranks are connected immediately. The reason for this is that they should not lose interest right away in their first games if the opponent search takes a while.<br><br>
+The multiplayer games end exactly like the single player games, the only difference being: 
+After the first player has finished their game, the second player is granted a remaining playing time of 
+30 seconds before their game also ends.<br><br>
+Points are counted for both players, there is no "victory bonus", there are no point deductions.<br><br>
+The ranks/positions of the players result from their total score of all games played so far.<br><br>
+There are chat functions.
+In the lobby there is a large chat window that every registered user can use.
+In the multiplayer games there is a "two-person chat". This function is actually only usable on tablets with an 
+external keyboard.
+The <a href="https://de.wikipedia.org/wiki/Netiquette" target="_blank" style="color: #2c3e50; text-decoration: underline;">netiquette</a> applies to all chats; see also the section in the terms of use. The chats are not 
+stored permanently.
+Only the last 50 messages are displayed in the lobby chat; older ones are deleted automatically.
+The game chats are deleted automatically when the board is left.<br><br>
+
+<span class="bold">Have fun playing!<br><a href="lobby.html">Home page</a></span></div>
+        </div>
+    </div>
+    <script>
+        document.querySelector('.close-btn').addEventListener('click', () => window.history.back());
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                window.history.back();
+            }
+        });
+    </script>
+</body>
+</html>

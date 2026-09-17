@@ -10,7 +10,7 @@ Hintergrundbild: "Chinese Landscape" © 2006 Eugene Trounev eugene.trounev@gmail
 Software & Bibliotheken:
 * 3D-Engine: Dieses Spiel nutzt Three.js (MIT Lizenz).
 
-Backend & Tools: Die Funktionalität basiert auf Node.js sowie den Bibliotheken Express, Socket.io, Axios, Bcrypt, Helmet, MySQL2 und Nodemailer (jeweils lizenziert unter der MIT-Lizenz oder vergleichbaren Open-Source-Lizenzen).
+Backend & Tools: Die Funktionalität basiert auf Node.js sowie den Bibliotheken Express, Socket.io, Axios, Bcrypt, Helmet, MySQL2, Nodemailer, i18next und i18next-http-backend (jeweils lizenziert unter der MIT-Lizenz oder vergleichbaren Open-Source-Lizenzen).
 
 Entwicklung: Die Softwarearchitektur, einschließlich der Spiellogik für den Einzelspielermodus sowie der vernetzten Mehrspieler-Funktionalität, wurde als Open-Source-Projekt unter der GNU GPL entwickelt.
 

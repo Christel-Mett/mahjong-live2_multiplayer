@@ -23,7 +23,7 @@
             justify-content: center;
             align-items: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: url('shared/hintergrund/mahjong2-treff.png') no-repeat center center fixed;
+            background: url('shared/hintergrund/mahjong2.1-treff.png') no-repeat center center fixed;
             background-size: cover;
             color: white;
         }
@@ -319,26 +319,71 @@
 			    outline: 3px solid #ffffff;
 			    outline-offset: 4px;
 			}
+			
+
+        .lang-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            display: flex;
+            gap: 8px;
+        }
+
+        .lang-flag {
+            background: none;
+            border: none;
+            padding: 0;
+            font-size: 1.4em;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.2s, transform 0.2s;
+            line-height: 1;
+        }
+
+        .lang-flag:hover {
+            opacity: 1;
+            transform: scale(1.15);
+            
+        }
+		  .lang-flag.active {
+            background: rgba(210, 180, 140, 0.35);
+            border: 1px solid #ffffff;
+            border-radius: 5px;
+            opacity: 1;
+            transform: scale(1.5);
+            box-shadow: 0 0 8px rgba(210, 180, 140, 0.6);
+        }
     </style>
-    
+
+<script src="https://cdn.jsdelivr.net/npm/i18next@23/dist/umd/i18next.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/i18next-http-backend@4/i18nextHttpBackend.min.js"></script>  
 <script src="/shared/altcha.min.js" type="module"></script>
     
 </head>
 <body onclick="showOverlay()">
 
-    <a href="/single/" onclick="event.stopPropagation()" class="single-tape-badge">
+	 <a href="/single/" onclick="event.stopPropagation()" class="single-tape-badge" data-i18n="badge.singleplayer">
     Singlespiel –<br>ohne Anmeldung testen
 	 </a>
     
-    <button type="button" id="initial-prompt" class="start-prompt" onclick="showOverlay()">
+    <button type="button" id="initial-prompt" class="start-prompt" onclick="showOverlay()" data-i18n="button.globalstart">
     Klicke zum Starten
     </button>
 
+	<div class="lang-switcher" onclick="event.stopPropagation()">
+	    <button type="button" class="lang-flag" data-lang="de" title="de">🇩🇪</button>
+	    <button type="button" class="lang-flag" data-lang="da" title="dk">🇩🇰</button>
+	    <button type="button" class="lang-flag" data-lang="en" title="en">🇬🇧</button>
+	    <button type="button" class="lang-flag" data-lang="nl" title="nl">🇳🇱️</button>
+	    
+	</div>
+
     <div class="bottom-nav" id="site-footer" onclick="event.stopPropagation()">
-        <a href="impressum.html">Impressum</a>
-        <a href="datenschutz.html">Datenschutz</a>
-        <a href="nutzung.html">Nutzungsbedingungen</a>
-        <a href="anleitung.html">Spielanleitung</a>
+        <a href="impressum.html" data-i18n="footer.impressum">Impressum</a>
+        <a href="datenschutz.html" data-i18n="footer.data">Datenschutz</a>
+        <a href="nutzung.html" data-i18n="footer.using">Nutzungsbedingungen</a>
+        <a href="anleitung.html" data-i18n="footer.instruction">Spielanleitung</a>
     </div>
 
     <div id="main-overlay" class="overlay-screen" role="dialog" aria-modal="true" aria-labelledby="login-heading" onclick="event.stopPropagation()">
@@ -349,78 +394,78 @@
 
             <div id="login-section">
                 <div class="input-group">
-                    <label for="playerName">Benutzername</label>
-                    <input type="text" id="playerName" placeholder="Name eingeben..." maxlength="15">
+                    <label for="playerName" data-i18n="login.username">Benutzername</label>
+                    <input type="text" id="playerName" placeholder="Name eingeben..." maxlength="15" data-i18n-placeholder="login.nameplaceholder">
                 </div>
                 <div class="input-group">
-                    <label for="playerPass">Passwort</label>
-                    <input type="password" id="playerPass" placeholder="Passwort...">
+                    <label for="playerPass" data-i18n="login.password">Passwort</label>
+                    <input type="password" id="playerPass" placeholder="Passwort..." data-i18n-placeholder="login.passplaceholder">
                 </div>
-                <button onclick="attemptLogin()" class="menu-btn">Anmelden</button>
+                <button onclick="attemptLogin()" class="menu-btn" data-i18n="login.login">Anmelden</button>
                 
                 <p class="footer-note">
-                    <button type="button" onclick="forgotPassword()" class="reg-link" style="font-size: 0.85em; opacity: 0.7;">Passwort vergessen?</button>
+                    <button type="button" onclick="forgotPassword()" class="reg-link" style="font-size: 0.85em; opacity: 0.7;" data-i18n="login.pwforget">Passwort vergessen?</button>
                 </p>
 
                 <p class="footer-note">
-                    Noch kein Konto? <br>
-                    <button type="button" onclick="toggleView('register')" class="reg-link">Hier registrieren</button>
-                </p>
+					     <span data-i18n="login.noaccount">Noch kein Konto?</span> <br>
+					     <button type="button" onclick="toggleView('register')" class="reg-link" data-i18n="login.register">Hier registrieren</button>
+					 </p>
 
                 <div class="overlay-footer">
-                    <a href="impressum.html">Impressum</a> | 
-                    <a href="datenschutz.html">Datenschutz</a> | 
-                    <a href="nutzung.html">Nutzungsbedingungen</a>
+                    <a href="impressum.html" data-i18n="footer.impressum">Impressum</a> | 
+                    <a href="datenschutz.html" data-i18n="footer.data">Datenschutz</a> | 
+                    <a href="nutzung.html" data-i18n="footer.using">Nutzungsbedingungen</a>
                 </div>
             </div>
 
             <div id="register-section" class="hidden">
-                <h2>Registrierung</h2>
+                <h2 data-i18n="login.registerheading">Registrierung</h2>
                 <div class="input-group">
-                    <label for="regName">Benutzername</label>
+                    <label for="regName" data-i18n="login.username">Benutzername</label>
                     <input type="text" id="regName" maxlength="15">
                 </div>
                 <div class="input-group">
-                    <label for="regEmail">E-Mail Adresse</label>
+                    <label for="regEmail" data-i18n="login.mail1">E-Mail Adresse</label>
                     <input type="email" id="regEmail" oninput="toggleRegisterButton()">
                 </div>
                 <div class="input-group">
-                    <label for="regEmailConfirm">E-Mail Adresse wiederholen</label>
+                    <label for="regEmailConfirm" data-i18n="login.mail2">E-Mail Adresse wiederholen</label>
                     <input type="email" id="regEmailConfirm" oninput="toggleRegisterButton()" aria-describedby="email-error">
                 </div>
-                <div id="email-error" role="alert">Die E-Mail-Adressen stimmen nicht überein.</div>
+                <div id="email-error" role="alert" data-i18n="login.mailfail">Die E-Mail-Adressen stimmen nicht überein.</div>
                 <div class="input-group">
-                    <label for="regPass">Passwort</label>
+                    <label for="regPass" data-i18n="login.password">Passwort</label>
                     <input type="password" id="regPass">
                 </div>
                 <div class="input-group">
-                    <label for="regPassConfirm">Passwort wiederholen</label>
+                    <label for="regPassConfirm" data-i18n="login.password2">Passwort wiederholen</label>
                     <input type="password" id="regPassConfirm">
                 </div>
                
                 <div class="input-group" style="text-align: left; margin-bottom: 15px;">
                     <input type="checkbox" id="acceptTerms" style="width: auto; margin-right: 10px;" onclick="toggleRegisterButton()">
-                    <label for="acceptTerms" style="display: inline; font-size: 0.8em; cursor: pointer;">
+                    <label for="acceptTerms" style="display: inline; font-size: 0.8em; cursor: pointer;" data-i18n="login.accept">
                         Datenschutzbestimmungen und die Nutzungsbedingungen gelesen
                     </label>
                 </div>
    
 <altcha-widget id="altcha-widget" challengeurl="/altcha-challenge"></altcha-widget>   
                 
-                <button id="registerBtn" onclick="attemptRegister()" class="menu-btn" disabled style="opacity: 0.5; cursor: not-allowed;">
+                <button id="registerBtn" onclick="attemptRegister()" class="menu-btn" disabled style="opacity: 0.5; cursor: not-allowed;" data-i18n="login.createaccount">
                     Konto erstellen
                 </button>
 
                 <p class="footer-note">
-                    Bereits registriert? <br>
-                    <button type="button" onclick="toggleView('login')" class="reg-link">Zurück zum Login</button>
-                </p>
+					     <span data-i18n="login.stillregistered">Bereits registriert?</span> <br>
+					     <button type="button" onclick="toggleView('login')" class="reg-link" data-i18n="login.back2login">Zurück zum Login</button>
+					 </p>
 
                 <div class="overlay-footer">
-                    <a href="impressum.html">Impressum</a> | 
-                    <a href="datenschutz.html">Datenschutz</a> | 
-                    <a href="nutzung.html">Nutzungsbedingungen</a>
-               <p style="font-size: 0.7em; opacity: 0.6; margin-top: 10px;">
+                    <a href="impressum.html" data-i18n="footer.impressum">Impressum</a> | 
+                    <a href="datenschutz.html" data-i18n="footer.data">Datenschutz</a> | 
+                    <a href="nutzung.html" data-i18n="footer.using">Nutzungsbedingungen</a>
+               <p style="font-size: 0.7em; opacity: 0.6; margin-top: 10px;" data-i18n="login.captcha">
 					    Diese Seite ist durch Altcha geschützt.
 					</p>
                 </div>
@@ -430,9 +475,10 @@
     
 
     <script src="/socket.io/socket.io.js"></script>
-    <script>
+       <script src="/i18n.js"></script>
+       <script>
         const socket = io();
-
+        
         let lastFocusedBeforeOverlay = null;
 
 			function showOverlay() {
@@ -522,7 +568,7 @@
             const name = document.getElementById('playerName').value.trim();
             const pass = document.getElementById('playerPass').value.trim();
             if (!name || !pass) {
-                alert('Bitte Name und Passwort eingeben!');
+                alert(i18next.t('alert.loginmissing')	);
                 return;
             }
             socket.emit('login_attempt', { username: name, password: pass });
@@ -552,15 +598,15 @@
 				                    // Erst wenn der Server "Ok" sagt, leiten wir weiter
 				                    window.location.href = 'lobby.html';
 				                } else {
-				                    alert('Sitzungsfehler: Der Server konnte die Anmeldung nicht bestätigen.');
+				                    alert(i18next.t('alert.sessionerror1'));
 				                }
 				            })
 				            .catch(err => {
 				                console.error('Session-Error:', err);
-				                alert('Verbindungsfehler beim Erstellen der Sitzung.');
+				                alert(i18next.t('alert.sessionerror2'));
 				            });
 				    } else {
-				        alert('Fehler: ' + response.message);
+				        alert(i18next.t('alert.error') + response.message);
 				    }
 				});
 
@@ -572,12 +618,12 @@
 			    const passConf = document.getElementById('regPassConfirm').value;
 			
 			    if (!name || !email || !pass) {
-			        alert('Bitte alle Felder ausfüllen!');
+			        alert(i18next.t('alert.allfields'));
 			        return;
 			    }
 			    if (email !== emailConf) return;
 			    if (pass !== passConf) {
-			        alert('Die Passwörter stimmen nicht überein!');
+			        alert(i18next.t('alert.pwconfirm'));
 			        return;
 			    }
 			
@@ -585,7 +631,7 @@
 				 const hiddenInput = altcha ? altcha.querySelector('input[name="altcha"]') : null;
 				 const payload = hiddenInput ? hiddenInput.value : null;
 			    if (!payload) {
-			        alert('Bitte warte kurz, die Sicherheitsprüfung läuft noch.');
+				     alert(i18next.t('alert.wait'))
 			        return;
 			    }
 			
@@ -598,7 +644,7 @@
 			}
 
 			function forgotPassword() {
-			    const email = prompt("Bitte gib deine E-Mail-Adresse ein, um einen Reset-Link zu erhalten:");
+			    const email = prompt(i18next.t('login.pwresetprompt'));
 			    if (email && email.trim() !== "") {
 			        socket.emit('forgot_password_attempt', email.trim());
 			    }
@@ -611,10 +657,10 @@
 
         socket.on('register_response', (response) => {
             if (response.success) {
-                alert('Registrierung erfolgreich! Bitte klicke auf den Bestätigungslink in deinem E-Mail-Postfach, um dein Konto freizuschalten. Hast du keine Email erhalten, dann überprüfe die Schreibweise deine Emailadresse.');
+					 alert(i18next.t('alert.success'))                
                 toggleView('login');
             } else {
-                alert('Fehler: ' + response.message);
+                alert(i18next.t('alert.error') + response.message);
             }
         });
 

@@ -20,7 +20,7 @@
             justify-content: center;
             align-items: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: url('shared/hintergrund/mahjong2-treff.png') no-repeat center center fixed;
+            background: url('shared/hintergrund/mahjong2.1-treff.png') no-repeat center center fixed;
             background-size: cover;
             color: white;
         }
@@ -411,28 +411,32 @@
             pointer-events: none;
         }
     </style>
+    
+<script src="https://cdn.jsdelivr.net/npm/i18next@23/dist/umd/i18next.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/i18next-http-backend@4/i18nextHttpBackend.min.js"></script>    
+    
 </head>
 <body>
     <div id="search-overlay" role="dialog" aria-modal="true" aria-labelledby="search-status">
         <div class="loader-box">
             <div class="spinner"></div>
-            <h2 id="search-status">Gegner wird gesucht...</h2>
-            <p>Bitte warten, wir finden einen passenden Partner.</p>
-            <button class="cancel-btn" onclick="cancelSearch()">Suche abbrechen</button>
+            <h2 id="search-status" data-i18n="lobby.search">Gegner wird gesucht...</h2>
+            <p data-i18n="lobby.searchHint">Bitte warten, wir finden einen passenden Partner.</p>
+            <button class="cancel-btn" onclick="cancelSearch()" data-i18n="lobby.searchCancel">Suche abbrechen</button>
         </div>
     </div>
 
         <div id="leaderboard-overlay" role="dialog" aria-modal="true" aria-labelledby="leaderboard-heading">
 	        <div class="loader-box" style="width: 80%; max-width: 500px; max-height: 80vh; display: flex; flex-direction: column;">
-	            <h2 id="leaderboard-heading" style="margin-top: 0;">Globale Rangliste</h2>
+	            <h2 id="leaderboard-heading" style="margin-top: 0;" data-i18n="lobby.leaderboardTitle">Globale Rangliste</h2>
             
             <div style="flex-grow: 1; overflow-y: auto; background: rgba(0,0,0,0.3); border: 1px solid #d2b48c; border-radius: 5px;">
                 <table class="leaderboard-table">
                     <thead>
                         <tr>
-                            <th>Rang</th>
-                            <th>Name</th>
-                            <th style="text-align: right;">Punkte</th>
+                            <th data-i18n="lobby.leaderboardPlatz">Platz</th>
+                            <th data-i18n="lobby.leaderboardName">Name</th>
+                            <th style="text-align: right;" data-i18n="lobby.leaderboardPoints">Punkte</th>
                         </tr>
                     </thead>
                     <tbody id="leaderboard-body">
@@ -440,40 +444,50 @@
                 </table>
             </div>
 
-            <button class="cancel-btn" style="background-color: #7f8c8d;" onclick="closeLeaderboard()">Schließen</button>
+            <button class="cancel-btn" style="background-color: #7f8c8d;" onclick="closeLeaderboard()" data-i18n="lobby.leaderboardClose">Schließen</button>
         </div>
     </div>
     
         <div id="settings-overlay" role="dialog" aria-modal="true" aria-labelledby="settings-heading">
 	     <div class="loader-box" style="width: 80%; max-width: 400px;">
-		        <h2 id="settings-heading" style="margin-top: 0; margin-bottom: 0;">Einstellungen</h2>
-	        <p style="margin-top: 4px; opacity: 0.8;">für <span id="settings-username">-</span></p>
+		        <h2 id="settings-heading" style="margin-top: 0; margin-bottom: 0;" data-i18n="lobby.settings">Einstellungen</h2>
+	        <p style="margin-top: 4px; opacity: 0.8;" data-i18n="lobby.settingsFor">für <span id="settings-username">-</span></p>
 
         <div style="margin: 16px 0; text-align: left;">
-            <label for="klarname-input" style="display: block; margin-bottom: 4px;">Klarname (optional, für alle angemeldeten User sichtbar.):</label>
+            <label for="klarname-input" style="display: block; margin-bottom: 4px;" data-i18n="lobby.settingsKlarname">Klarname (optional, für alle angemeldeten User sichtbar.):</label>
             <input type="text" id="klarname-input" maxlength="100" placeholder="z.B. Max Mustermann"
                    style="width: 100%; box-sizing: border-box; padding: 6px 8px; border-radius: 4px; border: 1px solid #999;">
-            <button class="cancel-btn" style="background-color: #27ae60; margin-top: 8px; width: 100%;" onclick="saveKlarname()">Klarname speichern</button>
+            <button class="cancel-btn" style="background-color: #27ae60; margin-top: 8px; width: 100%;" onclick="saveKlarname()" data-i18n="lobby.settingsKlarnamesave">Klarname speichern</button>
         </div>
 
         <p style="margin: 16px 0 0 0;">
-            Punkte: <strong id="settings-points">-</strong><br>
-            Platz: <strong id="settings-rang">-</strong>
-        </p>
+			    <span data-i18n="lobby.settingsPoints">Punkte: </span><strong id="settings-points">-</strong><br>
+			    <span data-i18n="lobby.settingsPlatz">Platz: </span><strong id="settings-rang">-</strong>
+		  </p>
 
 	        <div style="margin: 20px 0;">
-            <div style="margin-bottom: 10px;">Leistungsbegrenzung<br>bei schwachen Rechnern oder schlechtem Netz</div>
+            <div style="margin-bottom: 10px;"><span data-i18n="lobby.settingsPerformance1">Leistungsbegrenzung</span><br><span data-i18n="lobby.settingsPerformance2">bei schwachen Rechnern oder schlechtem Netz</span></div>
             <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                <span>Reduziert</span>
+                <span data-i18n="lobby.settingsPerformanceLow">Reduziert</span>
                 <label class="perf-toggle-switch">
                     <input type="checkbox" id="perf-mode-toggle" onchange="setPerfMode(this.checked)">
                     <span class="perf-toggle-slider"></span>
                 </label>
-                <span>Normal</span>
+                <span data-i18n="lobby.settingsPerformanceNormal">Normal</span>
             </div>
         </div>
 	
-	        <button class="cancel-btn" style="background-color: #7f8c8d;" onclick="closeSettings()">Schließen</button>
+			<div style="margin: 20px 0;">
+			    <div style="margin-bottom: 10px;" data-i18n="lobby.settingsLanguage">Eingestellte Sprache:</div>
+			    <select id="settings-lang-select" onchange="setLanguageCookie(this.value); window.location.reload();" style="width: 100%; box-sizing: border-box; padding: 6px 8px; border-radius: 4px; border: 1px solid #999;">
+			        <option value="de">🇩🇪 Deutsch</option>
+			        <option value="da">🇩🇰 Dansk</option>
+			        <option value="en">🇬🇧 English</option>
+			        <option value="nl">🇳🇱️ Nederlands</option>
+			    </select>
+			</div>	
+	
+	        <button class="cancel-btn" style="background-color: #7f8c8d;" onclick="closeSettings()" data-i18n="lobby.settingsClose">Schließen</button>
 	    </div>
     </div>
     
@@ -482,15 +496,15 @@
     <div class="lobby-container-flex">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h1 class="top-title">Mahjong-Treff Lobby</h1>
-            <button type="button" onclick="openSettings()" title="Einstellungen" style="display: flex; align-items: center; gap: 6px; cursor: pointer; background: none; border: none; padding: 0; font: inherit; color: inherit;">
-    Einstellungen
-   <span id="settings-gear-icon" style="font-size: 1.5em;">⚙️</span>
-   </button>
+			   <button type="button" onclick="openSettings()" title="Einstellungen" style="display: flex; align-items: center; gap: 6px; cursor: pointer; background: none; border: none; padding: 0; font: inherit; color: inherit;">
+			      <span data-i18n="lobby.settings">Einstellungen</span>
+			      <span id="settings-gear-icon" style="font-size: 1.5em;">⚙️</span>
+			   </button>
         </div>
         
         <div class="lobby-content-row">
 				<div class="chat-area">
-				    <div class="area-label">Chatbereich</div>
+				    <div class="area-label" data-i18n="lobby.chatArea">Chatbereich</div>
 				    
 				    <div id="chat-messages"></div>
 				
@@ -505,39 +519,39 @@
 				
 				    <div class="chat-input-row">
 				        <input type="text" id="chatInput" placeholder="Nachricht schreiben...">
-				        <button class="send-btn" onclick="sendMessage()">Senden</button>
+				        <button class="send-btn" onclick="sendMessage()" data-i18n="lobby.chatSend">Senden</button>
 				    </div>
 				</div>
 
             <div class="user-area" id="user-area">
-                <div class="area-label">User online</div>
+                <div class="area-label" data-i18n="lobby.user">User online</div>
                 <div id="user-list"></div>
             </div>
         </div>
 
 
         <div class="lobby-footer-nav" style="display: flex; gap: 10px; width: 100%; justify-content: space-between;">
-			    <button onclick="startMode('single')" class="nav-btn btn-1" style="flex: 1; min-width: 0; padding: 10px 5px; white-space: nowrap;">Einzelspiel</button>
-			    <button onclick="startMode('multi-random')" class="nav-btn btn-3" style="flex: 1; min-width: 0; padding: 10px 5px; white-space: nowrap;">Multi Zufall</button>
-			    <button onclick="startMode('multi-select')" class="nav-btn btn-3" style="flex: 1; min-width: 0; padding: 10px 5px; white-space: nowrap;">Multi Auswahl</button>
-			    <button onclick="showLeaderboard()" class="nav-btn" style="flex: 1; min-width: 0; padding: 10px 5px; white-space: nowrap; background-color: #f39c12; color: white;">Rangliste</button>
-			    <button onclick="logout()" class="nav-btn btn-4" style="flex: 1; min-width: 0; padding: 10px 5px; white-space: nowrap;">Abmelden</button>
+			    <button onclick="startMode('single')" class="nav-btn btn-1" style="flex: 1; min-width: 0; padding: 10px 5px; white-space: nowrap;" data-i18n="lobby.buttonSinglegame">Einzelspiel</button>
+			    <button onclick="startMode('multi-random')" class="nav-btn btn-3" style="flex: 1; min-width: 0; padding: 10px 5px; white-space: nowrap;" data-i18n="lobby.buttonMultirandomgame">Multi Zufall</button>
+			    <button onclick="startMode('multi-select')" class="nav-btn btn-3" style="flex: 1; min-width: 0; padding: 10px 5px; white-space: nowrap;" data-i18n="lobby.buttonMultichoicegame">Multi Auswahl</button>
+			    <button onclick="showLeaderboard()" class="nav-btn" style="flex: 1; min-width: 0; padding: 10px 5px; white-space: nowrap; background-color: #f39c12; color: white;" data-i18n="lobby.buttonLeaderboard">Rangliste</button>
+			    <button onclick="logout()" class="nav-btn btn-4" style="flex: 1; min-width: 0; padding: 10px 5px; white-space: nowrap;" data-i18n="lobby.buttonLogout">Abmelden</button>
 			</div>
 			        
         <div class="login-info">
-            Angemeldet als: <strong id="display-name-footer">-</strong>
+            <span data-i18n="lobby.signedinas">Angemeldet als: </span><strong id="display-name-footer">-</strong>
             <span class="footer-links">
-                <a href="impressum.html">Impressum</a> | 
-                <a href="datenschutz.html">Datenschutz</a> | 
-                <a href="nutzung.html">Nutzungsbedingungen</a> |
-                <a href="anleitung.html"><b>Spielanleitung</b></a> |
+                <a href="impressum.html" data-i18n="footer.impressum">Impressum</a> | 
+                <a href="datenschutz.html" data-i18n="footer.data">Datenschutz</a> | 
+                <a href="nutzung.html" data-i18n="footer.using">Nutzungsbedingungen</a> |
+                <a href="anleitung.html" data-i18n="footer.instruction"><b>Spielanleitung</b></a> |
 					 <a href="news.html" class="info-pop-link" style="text-decoration: none;">
     <img src="shared/bilder/link/news.png" alt="News" style="height: 40px; vertical-align: middle; margin: 0 5px;">
 </a>
 				 
 					 <button type="button" class="share-link-btn" onclick="copyGameLink()">
-                    Dir gefällt das Spiel? Adresse hier<br>kopieren und an Freunde schicken.
-                </button>
+					    <span data-i18n="lobby.buttonLink">Dir gefällt das Spiel? Adresse hier</span><span data-i18n="lobby.buttonLink2">kopieren und an Freunde schicken.</span>
+					 </button>
 
 					 <!-- display:none entfernt, Link dauerhaft sichtbar seit 7.6.2026 -->                
                <!-- <a href="news.html" class="survey-link" id="survey-link">Umfrageergebnis</a>-->
@@ -547,6 +561,7 @@
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
+    <script src="/i18n.js"></script>
     <script>
         const socket = io();
         const meinName = localStorage.getItem('mahjongPlayerName');
@@ -590,7 +605,7 @@
 			    const list = document.getElementById('user-list');
 			    list.innerHTML = '';
 			    users.sort((a, b) => a.rang - b.rang);
-			    document.querySelector('.user-area .area-label').textContent = `User online (${users.length})`;
+			    document.querySelector('.user-area .area-label').textContent = `${i18next.t('lobby.user')} (${users.length})`;
 
 			    users.forEach(userData => {
 			        const div = document.createElement('div');
@@ -601,19 +616,20 @@
 			
 			        // Logik für die Farbhierarchie:
 			        if (userData.ingame) {
-			            // Spieler ist im Spiel -> gelb
-			            div.style.color = '#ede027'; 
-			            div.textContent += " (im Spiel)";
-			        } else if (userData.absent) {
-			            // Spieler ist abwesend -> grau
-			            div.style.color = '#7f8c8d'; 
-			            div.textContent += " (abwesend)";
-			        } else if (userData.username.toLowerCase() === meinName.toLowerCase()) {
-			            // Ich selbst (und nicht im Spiel) -> Grün
-			            div.style.color = '#2ecc71';
-			            div.style.fontWeight = 'bold';
-			        }
-			        
+				     // Spieler ist im Spiel -> gelb
+					     div.style.color = '#ede027'; 
+					     div.textContent += ` (${i18next.t('lobby.statusIngame')})`;
+					 } else if (userData.absent) {
+					     // Spieler ist abwesend -> grau
+					     div.style.color = '#7f8c8d'; 
+					     div.textContent += ` (${i18next.t('lobby.statusAbsent')})`;
+					 } else if (userData.username.toLowerCase() === meinName.toLowerCase()) {
+				        // Ich selbst (und nicht im Spiel) -> Grün
+				        div.style.color = '#2ecc71';
+				        div.style.fontWeight = 'bold';
+				    }
+    
+			      			        
                  // Throbber für Spieler in der Suche
 			        if (userData.searching) {
 			            const throbber = document.createElement('span');
@@ -655,8 +671,8 @@
 
         // Event wenn ein Match gefunden wurde
         socket.on('match_found', (data) => {
-            const statusLabel = document.getElementById('search-status');
-            if (statusLabel) statusLabel.textContent = "Gegner gefunden! Synchronisiere Start...";
+			   const statusLabel = document.getElementById('search-status');
+			   if (statusLabel) statusLabel.textContent = i18next.t('lobby.matchFound');
             
             const jetzt = Date.now();
             const verzögerung = data.startTime - jetzt;
@@ -684,6 +700,10 @@
 		 function openSettings() {
 		     socket.emit('get_leaderboard');
 		     document.getElementById('settings-overlay').style.display = 'flex';
+		     const langSelect = document.getElementById('settings-lang-select');
+       if (langSelect) {
+           langSelect.value = getCookie('lang') || 'de';
+       }
 		 }
 		
 		 function closeSettings() {
@@ -697,7 +717,7 @@
 
 		 socket.on('klarname_response', (data) => {
 		     if (!data.success) {
-		         alert('Klarname konnte nicht gespeichert werden. Bitte versuch es erneut.');
+		         alert(i18next.t('lobby.alertKlarnameFail'));
 		     }
 		 })
 
@@ -746,12 +766,12 @@
 			        // Neu: Weiterleitung zur Auswahl-Lobby
 			        window.location.href = 'auswahl/lobby-auswahl.html';
 			    } else {
-			        alert('Modus kommt bald!');
+			        alert(i18next.t('lobby.alertModusinfo'));
 			    }
 			}
 			        function showSearchOverlay() {
             searchStartTime = Date.now();
-            document.getElementById('search-status').textContent = "Gegner wird gesucht...";
+            document.getElementById('search-status').textContent = i18next.t('lobby.search');
             document.getElementById('search-overlay').style.display = 'flex';
             socket.emit('join_queue');
         }
@@ -818,7 +838,7 @@
             // Moderne Clipboard-API nutzen mit Fallback falls nötig
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(gameUrl).then(() => {
-                    alert("Der Link zum Spiel wurde in die Zwischenablage kopiert");
+                    alert(i18next.t('lobby.alertCopylink'));
                 }).catch(err => {
                     console.error("Fehler beim Kopieren: ", err);
                 });
@@ -830,7 +850,7 @@
                 dummyInput.select();
                 try {
                     document.execCommand("copy");
-                    alert("Der Link zum Spiel wurde in die Zwischenablage kopiert");
+                    alert(i18next.t('lobby.alertCopylink'));
                 } catch (err) {
                     console.error("Fallback Fehler beim Kopieren: ", err);
                 }

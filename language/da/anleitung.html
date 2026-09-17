@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <title>Mahjong Multiplayer Solitær – Spilvejledning | Mahjong-Treff</title>
+    <meta name="description" content="Spilvejledning til Mahjong-Treff: Gratis Mahjong Solitær som multiplayer-browserspil. Spil mod rigtige modstandere, lær reglerne og pointgivningen.">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #2c3e50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+        .overlay-screen {
+            background: rgba(0, 0, 0, 0.85);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+        .menu-container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            line-height: 1.6;
+            text-align: left;
+        }
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 35px;
+            cursor: pointer;
+            color: #999;
+            line-height: 1;
+            background: none;
+			   border: none;
+			   padding: 0;
+			   font-family: inherit;
+        }
+        .close-btn:hover { color: #333; }
+
+        h1 { 
+            margin-top: 0; 
+            border-bottom: 2px solid #d2b48c; 
+            padding-bottom: 10px;
+            color: #2c3e50;
+            font-size: 1.8em;
+        }
+
+        .odt-section {
+/*            white-space: pre-wrap;*/
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+   </style>
+</head>
+<body>
+    <div class="overlay-screen">
+        <div class="menu-container">
+            <button type="button" class="close-btn" aria-label="Luk">&times;</button>
+            <h1>Spilvejledning</h1>
+            
+            <h2 style="color: #2c3e50; border-bottom: 1px solid #d2b48c; padding-bottom: 6px; margin-top: 5px;">Spilmål &amp; regler</h2>
+            <div class="odt-section">Spillet er en Solitær-Mahjong.</div>
+<div class="odt-section">Spillet er designet som et browserspil til en PC. <a href="lobby.html">Forside</a></span></div> Det kan også spilles på større tablets med en 
+"Fullscreen Browser App" (f.eks. "Fully Kiosk Browser"), 
+men det blev ikke designet til det; nogle elementer er svære at nå uden mus og eksternt tastatur. Apple iPads kan have problemer med multiplayer-spillene, prøv forskellige browsere, det har ofte vist sig at være en løsning.
+Man kan også indlæse det på en smartphone, men på grund af den lille skærm er det næppe spilbart der, og opløsningerne blev heller ikke designet til det.
+Hele spillet er open source og er under GNU GPL-licensen.
+Billeder og spillayouts er taget fra spillet "KMahjong", som står under samme licens<br><br>
+I alle spilvarianter er der en sidebar, hvor lydstyrken og størrelsen af spilfiguren 
+kan justeres med skydere.<br><br>
+Målet med spillet er at fjerne så mange brikker som muligt fra brættet.
+Dette gøres ved at klikke på to brikker med det samme symbol.
+En brik kan kun klikkes, hvis den er helt fri opad og på mindst den ene side (venstre eller højre).<br><br>
+For hvert par, der fjernes på denne måde, modtager spilleren ét point.
+Hvis der umiddelbart efter klikkes på endnu et par med det samme symbol, modtager spilleren fem point for dette og hvert 
+yderligere par med samme symbol.
+Hvis brættet fjernes helt, modtager spilleren 50 ekstrapoint. Derudover modtager spilleren ét point mere for hvert sekund, 
+der er tilbage, indtil der er nået tre et halvt minuts spilletid.
+Efter 3:30 minutters spilletid gives der ikke længere denne bonus.<br><br>
+Brikkerne for "Blomster" (med tal) og "Årstider" (med skrifttegn) danner hver især en gruppe, hvor alle brikker 
+kan matches med hinanden.<br><br>
+Spillet slutter enten ved at alle brikker på spillebrættet er fjernet, ved at nå en "blindgyde" 
+(der er ikke flere klikbare par) 
+eller ved, at spilleren giver op.<br><br>
+<h2 style="color: #2c3e50; border-bottom: 1px solid #d2b48c; padding-bottom: 6px; margin-top: 20px;">Mahjong Multiplayer – spilvarianter</h2>
+Der er tre spilvarianter til rådighed:<br>
++ Enkeltspiller – til en enkelt spiller uden pointgivning på ranglisten.<br>
++ Multiplayer Tilfældig – spil med en modstander og tilfældigt valg af spillebræt.<br>
++ Multiplayer Valg – spil med en modstander og forudgående valg af spillebræt.<br><br>
+I enkeltspillervarianten kan man fortryde et eller flere træk og få et tip til et ledigt brikpar.
+Det er muligt at starte samme spillebræt igen eller at begynde et nyt spil.
+Valget af spillebræt er muligt direkte. Der er 62 forskellige spillebrætter.
+Der er en top-liste, som dog kun gemmes lokalt på enheden. Den har ingen betydning for 
+ranglisten.<br><br>
+Multiplayerspillene er begrænset til 17 brætter, som alle er bygget med 144 brikker.
+I varianten "Valg" kan man vælge et bestemt bræt.<br><br>
+Matchingen af to spillere foregår i flere trin.<br>
+Først for varianten Tilfældig:<br>
+To søgende spillere forbindes direkte uden ventetid.
+<s>Trin 1: Der søges efter en modstander med højst +-20 rangeringspladser fra egen rang.<br>
+Trin 2: Hvis der ikke findes en passende modstander inden for 30 sekunder, forbindes spilleren med den nærmeste.</s><br><br>
+For varianten Valg:<br>
+Spillere i layoutrum forbindes direkte med hinanden, først fra samme layoutrum, sekundært også fra andre rum. Efter 15 sekunder udvides modstandersøgningen til hovedlobbyen.<br>
+<s>Trin 1: som i Tilfældig<br>
+Trin 2: Efter de 30 sekunder søges der i yderligere 30 sekunder efter en vilkårlig modstander til det valgte bræt.<br>
+Trin 3: Derefter matches spilleren med en vilkårlig spiller fra et andet rum.
+I så fald bruges spillebrættet fra den spiller, som først startede modstandersøgningen.</s><br>
+Nye spillere, der befinder sig i de nederste 10% af pladserne, forbindes med det samme. Grunden er, at de ikke skal miste lysten med det samme i deres første spil, hvis modstandersøgningen tager længere tid.<br><br>
+Multiplayerspillene slutter på samme måde som enkeltspillerspillene, eneste forskel: 
+Efter at den første spiller har afsluttet sit spil, får den anden spiller stadig en restspilletid på 
+30 sekunder, før spillet også slutter.<br><br>
+Point tælles for begge spillere, der er ingen "sejrsbonus", der er ingen pointfradrag.<br><br>
+Spillernes rangeringer/pladser fremgår af deres samlede pointsum fra alle spillede partier indtil videre.<br><br>
+Der er chatfunktioner.
+I lobbyen er der et stort chatvindue, som enhver registreret bruger kan bruge.
+I multiplayer-spillene er der en "to-personers-chat". Denne funktion kan egentlig kun bruges på tablets med 
+eksternt tastatur.
+For alle chats gælder <a href="https://de.wikipedia.org/wiki/Netiquette" target="_blank" style="color: #2c3e50; text-decoration: underline;">netiketten</a>, se også afsnittet i brugsbetingelserne. Chattene gemmes ikke 
+permanent.
+I lobbychatten vises kun de seneste 50 beskeder, ældre slettes automatisk.
+Spilchattene slettes automatisk, når spillebrættet forlades.<br><br>
+
+<span class="bold">God fornøjelse med at spille!<br><a href="lobby.html">Forside</a></span></div>
+        </div>
+    </div>
+    <script>
+        document.querySelector('.close-btn').addEventListener('click', () => window.history.back());
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                window.history.back();
+            }
+        });
+    </script>
+</body>
+</html>

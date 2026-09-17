@@ -4,11 +4,12 @@ node_modules/
 # Sensible Daten
 .env
 
-# Dokumente & Scripte aus dem Root (laut deinem Script)
-impressum.html
-datenschutz.html
-nutzung.html
-news.html
+# Dokumente & Scripte mit persönlichen/livespezifischen Daten (laut deinem Script)
+# jetzt unter /language/<lang>/ pro Sprache abgelegt
+language/*/impressum.html
+language/*/datenschutz.html
+language/*/nutzung.html
+language/*/news.html
 survey_votes.txt
 google2a21e9ee42e18ac7.html
 

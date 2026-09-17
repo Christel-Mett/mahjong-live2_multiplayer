@@ -10,6 +10,8 @@
     <link rel="icon" type="image/png" sizes="192x192" href="../shared/bilder/favicon/android-icon-192x192.png">
     <link rel="shortcut icon" href="../shared/bilder/favicon/favicon-32x32.ico">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/i18next@23/dist/umd/i18next.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/i18next-http-backend@4/i18nextHttpBackend.min.js"></script>
     <style>
 
 			body { 
@@ -229,22 +231,22 @@
 <body>
     <div id="game-container">
         <div id="overlay">
-            <h1 id="endMessage">Sieg!</h1>
-            <button id="overlayBtn" onclick="togglePause()">Weiter spielen</button>
+            <h1 id="endMessage" data-i18n="game.victory">Sieg!</h1>
+            <button id="overlayBtn" onclick="togglePause()" data-i18n="game.pauseWeiter">Weiter spielen</button>
         </div>
     </div>
 
     <div id="highscoreModal" class="modal" onclick="schliesseHighscore(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <h2 style="color: #d2b48c; margin-bottom: 10px;">Bestenliste</h2>
+            <h2 style="color: #d2b48c; margin-bottom: 10px;" data-i18n="game.leaderboard">Bestenliste</h2>
             <table id="highscoreTablePopup">
-                <thead><tr><th>Platz</th><th>Name</th><th>Zeit</th><th>Punkte</th></tr></thead>
+                <thead><tr><th>Platz</th><th>Name</th><th>Zeit</th><th data-i18n="lobby.leaderboardPoints">Punkte</th></tr></thead>
                 <tbody id="highscoreBodyPopup"></tbody>
             </table>
             <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 15px;">
-                <button id="saveHighscoreBtn" style="background: #27ae60; height: 40px; color: white; display: none; font-size: 1.2em;" onclick="finalisiereHighscoreSpeichern()">Speichern</button>
-                <button style="background: #769091; height: 40px; color: white; font-size: 1.2em;" onclick="schliesseHighscore(event)">Schließen</button>
-                <button style="background: #c0392b; height: 40px; color: white; font-size: 1.2em;" onclick="leereBestenliste(event)">Liste leeren</button>
+                <button id="saveHighscoreBtn" style="background: #27ae60; height: 40px; color: white; display: none; font-size: 1.2em;" onclick="finalisiereHighscoreSpeichern()" data-i18n="game.buttonSave">Speichern</button>
+                <button style="background: #769091; height: 40px; color: white; font-size: 1.2em;" onclick="schliesseHighscore(event)" data-i18n="game.buttonClose">Schließen</button>
+                <button style="background: #c0392b; height: 40px; color: white; font-size: 1.2em;" onclick="leereBestenliste(event)" data-i18n="game.buttonDeleteList">Liste leeren</button>
             </div>
         </div>
     </div>
@@ -255,48 +257,50 @@
         </h1>
 
         <div class="info-panel">
-            <h2>Statistik</h2>
+            <h2 data-i18n="game.statistic">Statistik</h2>
             <div class="stat-row"><span class="stat-label">Layout:</span><span id="layoutName" class="stat-value">-</span></div>
-            <div class="stat-row"><span class="stat-label">Steine übrig:</span><span id="count" class="stat-value">Lade...</span></div>
-            <div class="stat-row"><span class="stat-label">Mögliche Paare:</span><span id="possiblePairs" class="stat-value">0</span></div>
-            <div class="stat-row"><span class="stat-label">Zeit:</span><span id="timer" class="stat-value">00:00</span></div>
+            <div class="stat-row"><span class="stat-label" data-i18n="game.tilesLeft">Steine übrig:</span><span id="count" class="stat-value">Lade...</span></div>
+            <div class="stat-row"><span class="stat-label" data-i18n="game.possibleMoves">Mögliche Paare:</span><span id="possiblePairs" class="stat-value">0</span></div>
+            <div class="stat-row"><span class="stat-label" data-i18n="game.time">Zeit:</span><span id="timer" class="stat-value">00:00</span></div>
             <div class="stat-row" style="margin-top: 10px; border-top: 1px solid #d2b48c; padding-top: 10px;">
-                <span class="stat-label">Punkte:</span><span id="score" class="stat-value">0</span>
+                <span class="stat-label" data-i18n="game.points">Punkte:</span><span id="score" class="stat-value">0</span>
             </div>
         </div>
         
         <div class="info-panel">
-            <h2>Einstellungen</h2>
-            <div class="stat-row"><span class="stat-label">Layout wählen:</span></div>
+            <h2 data-i18n="lobby.settings">Einstellungen</h2>
+            <div class="stat-row"><span class="stat-label" data-i18n="game.choseLayout">Layout wählen:</span></div>
 <select id="layoutSelect" onchange="wechsleLayout(this.value)" style="width: 100%; padding: 6px; font-size: 1em;"></select>
             
-            <button onclick="rueckgaengig()" style="background-color: #2c3e50; color: #d2b48c; border: 1px solid #d2b48c; font-size: 1em; margin-top: 10px;">Zug zurück</button>
-            <button onclick="zeigeHinweis()" style="background-color: #2c3e50; color: #d2b48c; border: 1px solid #d2b48c; font-size: 1em; margin-top: 10px;">Hinweis</button>
-            <button id="pauseBtn" onclick="togglePause()" style="background-color: #2c3e50; color: #d2b48c; border: 1px solid #d2b48c; font-size: 1em; margin-top: 10px;">Pause</button>
-            <button id="restartBtn" onclick="gleichesBrettErneutSpielen()" style="background-color: #2c3e50; color: #d2b48c; font-size: 1em; border: 1px solid #d2b48c; margin-top: 10px;">Erneut spielen</button>
-            <button id="newGameBtn" onclick="neuesSpielStarten()" style="background-color: #2c3e50; color: #d2b48c; font-size: 1em; border: 1px solid #d2b48c; margin-top: 10px;">Neues Spiel</button>
-            <button id="showHighscoreBtn" onclick="oeffneHighscore()" style="background-color: #2c3e50; color: #d2b48c; font-size: 1em; border: 1px solid #d2b48c; margin-top: 10px;">Bestenliste anzeigen</button>
+            <button onclick="rueckgaengig()" style="background-color: #2c3e50; color: #d2b48c; border: 1px solid #d2b48c; font-size: 1em; margin-top: 10px;" data-i18n="game.buttonMoveback">Zug zurück</button>
+            <button onclick="zeigeHinweis()" style="background-color: #2c3e50; color: #d2b48c; border: 1px solid #d2b48c; font-size: 1em; margin-top: 10px;" data-i18n="game.buttonHint">Hinweis</button>
+            <button id="pauseBtn" onclick="togglePause()" style="background-color: #2c3e50; color: #d2b48c; border: 1px solid #d2b48c; font-size: 1em; margin-top: 10px;" data-i18n="game.buttonPause">Pause</button>
+            <button id="restartBtn" onclick="gleichesBrettErneutSpielen()" style="background-color: #2c3e50; color: #d2b48c; font-size: 1em; border: 1px solid #d2b48c; margin-top: 10px;" data-i18n="game.buttonSamegame">Spielbrett zurücksetzen</button>
+            <button id="newGameBtn" onclick="neuesSpielStarten()" style="background-color: #2c3e50; color: #d2b48c; font-size: 1em; border: 1px solid #d2b48c; margin-top: 10px;" data-i18n="game.buttonNewgame">Neues Spiel</button>
+            <button id="showHighscoreBtn" onclick="oeffneHighscore()" style="background-color: #2c3e50; color: #d2b48c; font-size: 1em; border: 1px solid #d2b48c; margin-top: 10px;" data-i18n="game.buttonShowleaderboard">Bestenliste anzeigen</button>
             <button onclick="window.location.href='../lobby.html'" style="background-color: #2c3e50; color: #d2b48c; font-size: 1em; border: 1px solid #d2b48c; margin-top: 10px;">Lobby</button>            
             
             <div style="margin-top: 20px;">
-                <div class="stat-row"><span class="stat-label">Lautstärke:</span><span id="volValue" class="stat-value">50%</span></div>
+                <div class="stat-row"><span class="stat-label" data-i18n="game.volume">Lautstärke:</span><span id="volValue" class="stat-value">50%</span></div>
                 <input type="range" min="0" max="1" step="0.01" value="0.5" oninput="updateVolume(this.value)" style="width: 100%;">
             </div>
             
             <div style="margin-top: 15px;">
-                <div class="stat-row"><span class="stat-label">Kamera-Zoom</span></div>
+                <div class="stat-row"><span class="stat-label" data-i18n="game.zoom">Kamera-Zoom</span></div>
                 <input type="range" id="zoomSlider" min="10" max="25" step="0.5" value="18" oninput="updateZoom(this.value)" style="width: 100%;">
             </div>            
         </div>
         
         <div class="sidebar-footer-links">
-            <a href="../impressum.html">Impressum</a> | 
-            <a href="../datenschutz.html">Datenschutz</a> | 
-            <a href="../nutzung.html">Nutzung</a>
-            <div style="font-size: 0.65em; opacity: 0.5; margin-top: 5px; line-height: 1.2;">
+            <a href="../impressum.html" data-i18n="footer.impressum">Impressum</a> | 
+            <a href="../datenschutz.html" data-i18n="footer.data">Datenschutz</a> | 
+            <a href="../nutzung.html" data-i18n="footer.using">Nutzung</a>
+            <div style="font-size: 0.65em; opacity: 0.5; margin-top: 5px; line-height: 1.2;" data-i18n="game.hint">
 		        Das Öffnen dieser Links kann das Spiel unterbrechen.
 		      </div>
         </div>
-    </div> <script src="game.js"></script>
+    </div> 
+    <script src="/i18n.js"></script>    
+    <script src="game.js"></script>
 </body>
 </html>

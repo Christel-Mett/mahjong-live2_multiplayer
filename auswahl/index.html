@@ -11,6 +11,8 @@
     <link rel="shortcut icon" href="../shared/bilder/favicon/favicon-32x32.ico">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js" integrity="sha384-bFS5CG904xYIgxBcrDF4KFNXuM7KeSGsSvS/QTaDqMTEdbaaxjg2Y2TSU3Ygs7wG" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/i18next@23/dist/umd/i18next.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/i18next-http-backend@4/i18nextHttpBackend.min.js"></script>
 <style>
 
 			body { 
@@ -331,50 +333,49 @@
         </div>
 
 		<div id="opponent-view">
-		    <div class="opponent-label">Live-Ansicht</div>
+		    <div class="opponent-label" data-i18n="game.opponentGame">Live-Ansicht</div>
 		    <div id="grace-overlay-sidebar" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(192, 57, 43, 0.2); z-index:20; flex-direction:column; justify-content:center; align-items:center; color:white; font-weight:bold;">
-<!--		        <div style="font-size: 0.8em; text-transform: uppercase;">Gegner fertig!</div>-->
+
 		        <div id="grace-timer-sidebar" style="font-size: 2.5em; line-height: 1;">30</div>
-<!--		        <div style="font-size: 0.7em;">Sekunden verbleiben</div>-->
 		    </div>
 		</div>
 
-        <h2 id="opponent-name-tag">Gegner: <span id="opponent-name">-</span></h2>
+        <h2 id="opponent-name-tag"><span data-i18n="game.opponentName">Gegner:</span> <span id="opponent-name">-</span></h2>
 
         <div class="info-panel">
             <h2>Statistik</h2>
             <div class="stat-row">
-                <span class="stat-label">Steine:</span>
+                <span class="stat-label" data-i18n="game.tilesLeft">Steine übrig:</span>
                 <span id="tiles-count" class="stat-value">0</span>
             </div>
             <div class="stat-row">
-                <span class="stat-label">Mögliche Paare:</span>
+                <span class="stat-label" data-i18n="game.possibleMoves">Mögliche Paare:</span>
                 <span id="pairs-count" class="stat-value">0</span>
             </div>
             <div class="stat-row">
-                <span class="stat-label">Deine Punkte:</span>
+                <span class="stat-label" data-i18n="game.playerPoints">Deine Punkte:</span>
                 <span id="player-points" class="stat-value">0</span>
             </div>
             <div class="stat-row">
-                <span class="stat-label">Zeit:</span>
+                <span class="stat-label" data-i18n="game.time">Zeit:</span>
                 <span id="timer" class="stat-value">00:00</span>
             </div>
         </div>
 
         <div class="info-panel">
-            <h2>Einstellungen</h2>
+            <h2 data-i18n="lobby.settings">Einstellungen</h2>
             <div class="stat-row">
-                <span class="stat-label">Lautstärke:</span>
+                <span class="stat-label" data-i18n="game.volume">Lautstärke:</span>
                 <span id="volValue" class="stat-value">50%</span>
             </div>
             <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" style="width: 100%;">
             
             <div style="margin-top: 15px;" class="stat-row">
-                <span class="stat-label">Zoom:</span>
+                <span class="stat-label" data-i18n="game.zoom">Kamera-Zoom:</span>
             </div>
             <input type="range" id="zoomSlider" min="10" max="25" step="0.1" value="18" style="width: 100%;">
 
-            <button id="leave-game-btn" onclick="leaveGame()" style="background-color: #c0392b; color: white; border: 1px solid #d2b48c; margin-top: 20px;">
+            <button id="leave-game-btn" onclick="leaveGame()" style="background-color: #c0392b; color: white; border: 1px solid #d2b48c; margin-top: 20px;" data-i18n="game.buttonLeave">
                 Spiel verlassen
             </button>
         </div>
@@ -383,15 +384,15 @@
 			    <div id="chat-messages"></div>
 			    <div id="chat-input-area">
 			        <input type="text" id="chatInput" placeholder="Nachricht..." autocomplete="off">
-			        <button onclick="sendMessage()">Senden</button>
+			        <button onclick="sendMessage()" data-i18n="lobby.chatSend">Senden</button>
 			    </div>
 			</div>
 
         <div class="sidebar-footer-links">
-            <a href="../impressum.html" target="_blank">Impressum</a> | 
-            <a href="../datenschutz.html" target="_blank">Datenschutz</a> | 
-            <a href="../nutzung.html" target="_blank">Nutzungsbedingungen</a>
-            <div style="font-size: 0.65em; opacity: 0.5; margin-top: 5px; line-height: 1.2;">
+            <a href="../impressum.html" target="_blank" data-i18n="footer.impressum">Impressum</a> | 
+            <a href="../datenschutz.html" target="_blank" data-i18n="footer.data">Datenschutz</a> | 
+            <a href="../nutzung.html" target="_blank" data-i18n="footer.using">Nutzungsbedingungen</a>
+            <div style="font-size: 0.65em; opacity: 0.5; margin-top: 5px; line-height: 1.2;" data-i18n="game.hint">
 		        Das Öffnen dieser Links kann das Spiel unterbrechen.
 		      </div>
         </div>
@@ -399,28 +400,29 @@
 
     <div id="game-end-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(0px); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; color: #d2b48c; font-family: sans-serif;">
         <div style="background: #2c3e50; padding: 40px; border: 3px solid #d2b48c; border-radius: 15px; text-align: center; min-width: 300px;">
-            <h2 id="end-status-title" style="margin-top: 0; color: #fff;">Spiel beendet</h2>
+            <h2 id="end-status-title" style="margin-top: 0; color: #fff;"data-i18n="game.gameEnd">Spiel beendet</h2>
             <p id="end-status-reason" style="font-size: 1.2em; margin-bottom: 20px;"></p>
             
             <div id="final-scoreboard" style="display: none; border-top: 1px solid #d2b48c; padding-top: 20px; margin-top: 20px;">
-                <h3 style="color: #fff;">Endergebnis:</h3>
+                <h3 style="color: #fff;"data-i18n="game.result" data-i18n=""game.result>Endergebnis:</h3>
                 <p id="winner-line" style="font-weight: bold; font-size: 1.3em; color: #f1c40f;"></p>
                 <p id="second-line" style="font-size: 1.1em;"></p>
             </div>
     
             <div id="grace-period-timer" style="display: none; color: #e74c3c; font-weight: bold; margin: 15px 0;">
-                Der Gegner hat noch <span id="grace-seconds">30</span> Sekunden...
             </div>
     
-            <button id="back-to-lobby-btn" onclick="window.location.href='lobby-auswahl.html'" style="display: none; margin-top: 20px; background: #d2b48c; color: #2c3e50; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; border-radius: 5px;">
+            <button id="back-to-lobby-btn" onclick="window.location.href='lobby-auswahl.html'" style="display: none; margin-top: 20px; background: #d2b48c; color: #2c3e50; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; border-radius: 5px;" data-i18n="game.selection">
                 Zurück zur Auswahl
             </button>
         </div>
     </div>
 
 		    <script src="/socket.io/socket.io.js"></script>
-		<script src="chat-auswahl.js"></script> <script src="game.js"></script>
-
+		<script src="chat-auswahl.js"></script>
+		<script src="game.js"></script>
+		<script src="/i18n.js"></script>
+		
 		<script>
 		document.addEventListener('DOMContentLoaded', () => {
 		    // ... (deine Zoom/Volume Initialisierungen) ...

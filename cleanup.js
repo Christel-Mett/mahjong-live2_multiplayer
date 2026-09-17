@@ -44,8 +44,8 @@ async function runCleanup() {
                 from: `"Mahjong-Treff" <${process.env.MAIL_USER}>`,
                 to: user.email,
                 bcc: BCC_EMAIL,
-                subject: 'Dein Mahjong-Account wird bald gelöscht',
-                text: `Hallo ${user.username},\n\ndu warst seit über 6 Monaten nicht mehr eingeloggt. Wenn du dich nicht innerhalb der nächsten ${GRACE_PERIOD_DAYS} Tage einmal anmeldest, wird dein Account aus Sicherheitsgründen gelöscht.\n\nDein Mahjong-Team`
+                subject: 'Dein Mahjong-Account wird bald gelöscht / Your Mahjong account will be deleted soon',
+                text: `Hallo ${user.username},\n\ndu warst seit über 6 Monaten nicht mehr eingeloggt. Wenn du dich nicht innerhalb der nächsten ${GRACE_PERIOD_DAYS} Tage einmal anmeldest, wird dein Account aus Sicherheitsgründen gelöscht.\n\nDein Mahjong-Team\n\n---\n\nHello ${user.username},\n\nyou haven not logged in for over 6 months. If you don not log in again within the next ${GRACE_PERIOD_DAYS} days, your account will be deleted for security reasons.\n\nYour Mahjong Team`
             };
 
             try {
@@ -69,8 +69,8 @@ async function runCleanup() {
 		            from: `"Mahjong-Treff" <${process.env.MAIL_USER}>`,
 		            to: user.email,
 		            bcc: BCC_EMAIL,
-		            subject: 'Account gelöscht',
-		            text: `Hallo ${user.username},\n\nDein Account auf mahjong-treff.de wurde wegen Nichtnutzung unwiderruflich gelöscht. Alle deine Daten wurden aus dem Speicher entfernt. Wenn du wieder spielen möchtest musst du einen neuen Account erstellen.\n\nDein Mahjong-Team`
+		            subject: 'Account gelöscht / Account deleted',
+		            text: `Hallo ${user.username},\n\nDein Account auf mahjong-treff.de wurde wegen Nichtnutzung unwiderruflich gelöscht. Alle deine Daten wurden aus dem Speicher entfernt. Wenn du wieder spielen möchtest musst du einen neuen Account erstellen.\n\nDein Mahjong-Team\n\n---\n\nHello ${user.username},\n\nYour account on mahjong-treff.de has been permanently deleted due to inactivity. All your data has been removed from our storage. If you want to play again, you will need to create a new account.\n\nYour Mahjong Team`
 		        };
 		        try {
 		            await transporter.sendMail(mailOptions);
