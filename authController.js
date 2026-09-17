@@ -2,6 +2,7 @@
 const dbInterface = require('./dbInterface');
 const userManager = require('./userManager');
 const bcrypt = require('bcrypt');
+const i18next = require('i18next');
 const saltRounds = 10;
 
 module.exports = {
@@ -12,21 +13,21 @@ handleRegister: (socket, data, transporter) => {
     const token = require('crypto').randomBytes(32).toString('hex');
 
     dbInterface.checkUserExists(username, email, async (err, results) => {
-        if (err) return socket.emit('register_response', { success: false, message: 'Datenbankfehler.' });
+        if (err) return socket.emit('register_response', { success: false, message: i18next.t('auth.dbError', { lng: socket.lang }) });
         if (results.length > 0) {
-            return socket.emit('register_response', { success: false, message: 'Nutzername oder E-Mail existiert bereits.' });
+            return socket.emit('register_response', { success: false, message: i18next.t('auth.nameStillexist', { lng: socket.lang }) });
             
         }
 
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         dbInterface.insertUser(username, hashedPassword, email, token, (err) => {
-            if (err) return socket.emit('register_response', { success: false, message: 'Fehler beim Speichern.' });
+            if (err) return socket.emit('register_response', { success: false, message: i18next.t('auth.savingFailure', { lng: socket.lang }) });
             
             // --- ÄNDERUNG: SOFORTIGE ANTWORT AN DEN CLIENT ---
             socket.emit('register_response', { 
                 success: true, 
-                message: 'Registrierung erfolgreich! Bitte prüfe in Kürze dein E-Mail-Postfach zur Verifizierung.' 
+                message: i18next.t('auth.registrationSuccess', { lng: socket.lang }) 
             });
                 console.log(`Neue Registrierung: ${username} (${email}).`);
                 
@@ -35,8 +36,8 @@ handleRegister: (socket, data, transporter) => {
             const mailOptions = {
                 from: `"Mahjong-Treff" <${process.env.MAIL_USER}>`,
                 to: email,
-                subject: 'Registrierung bestätigen',
-                html: `<p>Vielen Dank für deine Registrierung! Klicke hier, um dein Konto zu aktivieren:</p><a href="${verifyLink}">E-Mail verifizieren</a>`
+                subject: i18next.t('mail.subjectConfirmregistration', { lng: socket.lang }),
+                html: i18next.t('mail.htmlConfirmregistration', { lng: socket.lang, verifyLink: verifyLink })
             };
 
             // Der Callback wird nur noch für internes Logging genutzt
@@ -56,10 +57,10 @@ handleRegister: (socket, data, transporter) => {
         const { username, password } = data;
 
         dbInterface.getUserByUsername(username, (err, results) => {
-            if (err) return socket.emit('login_response', { success: false, message: 'Datenbankfehler.' });
+            if (err) return socket.emit('login_response', { success: false, message: i18next.t('auth.dbError', { lng: socket.lang }) });
             
             if (results.length === 0) {
-                return socket.emit('login_response', { success: false, message: 'Falscher Nutzername oder Passwort.' });
+                return socket.emit('login_response', { success: false, message: i18next.t('auth.wrongUser', { lng: socket.lang }) });
             }
 
             const user = results[0];
@@ -67,11 +68,11 @@ handleRegister: (socket, data, transporter) => {
             bcrypt.compare(password, user.password, (err, isMatch) => {
                 if (err || !isMatch) {
                 	  console.log(`Fehlgeschlagener Login für: ${username}.`);
-                    return socket.emit('login_response', { success: false, message: 'Falscher Nutzername oder Passwort.' });
+                    return socket.emit('login_response', { success: false, message: i18next.t('auth.wrongUser', { lng: socket.lang }) });
                 }
 
                 if (user.is_verified === 0) {
-                    return socket.emit('login_response', { success: false, message: 'Bitte verifiziere erst deine E-Mail.' });
+                    return socket.emit('login_response', { success: false, message: i18next.t('auth.verifyMail', { lng: socket.lang }) });
                 }
 
                 // Session-Daten setzen
@@ -82,7 +83,7 @@ handleRegister: (socket, data, transporter) => {
                 session.save((err) => {
                     if (err) {
                         console.error("Session-Save-Fehler:", err);
-                        return socket.emit('login_response', { success: false, message: 'Verbindungsfehler beim Erstellen der Sitzung.' });
+                        return socket.emit('login_response', { success: false, message: i18next.t('auth.sessionError', { lng: socket.lang }) });
                     }
 
                     userManager.addUser(user.username, socket.id, 'lobby');
@@ -98,12 +99,14 @@ handleRegister: (socket, data, transporter) => {
 
     // Verarbeitet die Verifizierung per URL-Aufruf (app.get('/verify'))
     handleVerify: (req, res) => {
+    	  const lang = req.cookies.lang || 'de';
         const token = req.query.token;
         dbInterface.verifyUser(token, (err, results) => {
             if (err || results.affectedRows === 0) {
-                return res.send("Verifizierung fehlgeschlagen oder Token ungültig.");
+               
+                return res.send(i18next.t('auth.verifyingFailure', { lng: lang }));
             }
-            res.send("E-Mail erfolgreich verifiziert! Du kannst dich jetzt einloggen.");
+            res.send(i18next.t('auth.verifyingSuccess', { lng: lang }));
         });
     },
 
@@ -111,7 +114,7 @@ handleRegister: (socket, data, transporter) => {
     handleForgotPassword: (socket, email, transporter) => {
         dbInterface.getUserByEmail(email, (err, results) => {
             if (err || results.length === 0) {
-                return socket.emit('forgot_password_response', { success: true, message: 'Anleitung wurde gesendet, falls die E-Mail existiert.' });
+                return socket.emit('forgot_password_response', { success: true, message: i18next.t('auth.mailSend1', { lng: socket.lang }) });
             }
 
             const resetToken = require('crypto').randomBytes(32).toString('hex');
@@ -122,12 +125,12 @@ handleRegister: (socket, data, transporter) => {
                 const mailOptions = {
                     from: `"Mahjong-Treff" <${process.env.MAIL_USER}>`,
                     to: email,
-                    subject: 'Passwort zurücksetzen',
-                    html: `<p>Klicke hier, um dein Passwort zu ändern:</p><a href="${resetLink}">Passwort zurücksetzen</a>`
+                    subject: i18next.t('mail.subjectResetpassword', { lng: socket.lang }),
+                    html: i18next.t('mail.htmlResetpassword', { lng: socket.lang, resetLink: resetLink })
                 };
 
                 transporter.sendMail(mailOptions, () => {
-                    socket.emit('forgot_password_response', { success: true, message: 'Anleitung wurde gesendet.' });
+                    socket.emit('forgot_password_response', { success: true, message: i18next.t('auth.mailSend2', { lng: socket.lang }) });
                 });
             });
         });
@@ -138,12 +141,12 @@ handleRegister: (socket, data, transporter) => {
         const { token, newPassword } = data;
         dbInterface.getUserByToken(token, async (err, results) => {
             if (err || results.length === 0) {
-                return socket.emit('reset_password_response', { success: false, message: 'Link ungültig.' });
+                return socket.emit('reset_password_response', { success: false, message: i18next.t('auth.linkFalse', { lng: socket.lang }) });
             }
 
             const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
             dbInterface.updatePasswordAndClearToken(results[0].id, hashedPassword, (updErr) => {
-                if (updErr) return socket.emit('reset_password_response', { success: false, message: 'Fehler.' });
+                if (updErr) return socket.emit('reset_password_response', { success: false, message: i18next.t('auth.error', { lng: socket.lang }) });
                 socket.emit('reset_password_response', { success: true });
             });
         });

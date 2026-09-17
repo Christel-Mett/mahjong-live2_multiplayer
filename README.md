@@ -1,4 +1,4 @@
-# Mahjong-Live Multiplayer 2.0
+# Mahjong-Live Multiplayer 2.1
 
 Online-Solitär-Mahjong Spiel (Node.js), Multiplayer.  
 **Live-Demo:** [mahjong-treff.de](https://mahjong-treff.de)  
@@ -6,7 +6,7 @@ Online-Solitär-Mahjong Spiel (Node.js), Multiplayer.
 
 ## Titelbild
 
-![Mahjong-Treff Title](shared/gitpics/mahjong2-treff-titel.png)
+![Mahjong-Treff Title](shared/gitpics/mahjong2.1-treff-titel.png)
 
 ## Über dieses Projekt
 Dieses Projekt ist ein browserbasiertes Solitär-Mahjong-Spiel mit Einzel- und Mehrspielermodus. Es basiert technisch auf Node.js und nutzt Three.js für die 3D-Darstellung der Spielsteine sowie Socket.io für die Echtzeit-Kommunikation zwischen Client und Server.
@@ -28,7 +28,7 @@ Das Kernspiel im Mehrspielermodus mit interaktiven Steinen und Live-Statistiken.
 
 Detaillierte Endergebnisse mit Platzierungen und Punktestand nach jeder Runde.
 
-## Version 2.0 – Modulare Architektur
+## Version 2.1 – Modulare Architektur
 Version 1.0 dieses Projekts ([mahjong-live_multiplayer](https://github.com/Christel-Mett/mahjong-live_multiplayer/blob/main/README.md?plain=1)) war als monolithische Anwendung konzipiert: nahezu die gesamte Logik in einer oder zwei großen Dateien.
 
 Version 2.0 wurde von Grund auf neu strukturiert. Die `server.js` dient nun ausschließlich als schlanker Orchestrator, der die einzelnen Module lädt und verbindet. Die Logik ist auf spezialisierte, austauschbare Module verteilt:
@@ -46,11 +46,13 @@ Version 2.0 wurde von Grund auf neu strukturiert. Die `server.js` dient nun auss
 
 Diese Struktur macht den Code wartbarer, testbarer und erweiterbar – ohne die Spiellogik oder das Frontend anzufassen.
 
+In Version 2.1 wurde die Internatiolasisierung des Spiels vorgenommen. Hinzugekommen ist im Hauptverzeichnis die Datei i18next.js und der Ordner langiages mit Unterordnern für jede Sprache.
+
 ## Entwicklung & Methodik
 Dieses Projekt wurde unter Anwendung von **Vibecoding** realisiert.
 
 Wichtiger Hinweis zum Hintergrund:
-Ich verfüge über Grundkenntnisse im Scripting (Python, Bash, PHP), bin jedoch kein professioneller Full-Stack-Entwickler. Die Architektur und die komplexe Logik dieses Spiels – insbesondere die Matchmaking- und Punkte-Berechnung – wurden mit moderner KI-Unterstützung entwickelt.
+Ich verfüge über Grundkenntnisse im Scripting (Python, Bash, PHP), bin jedoch kein professioneller Full-Stack-Entwickler. Die Architektur und die komplexe Logik dieses Spiels wurden mit moderner KI-Unterstützung entwickelt.
 
 Dieser moderne Ansatz ermöglichte es mir, meine bestehenden Erfahrungen effizient zu nutzen und gleichzeitig technologische Hürden zu überspringen, für die normalerweise jahrelange spezialisierte Erfahrung erforderlich wäre.
 
@@ -60,6 +62,7 @@ Dieses Projekt ist Open Source und unter der **GNU General Public License (GPL) 
 * **Grafiken:** Die Steinsymbole und Layouts basieren auf dem "KMahjongg"-Projekt (KDE Games).
 * **Hintergrund:** "Chinese Landscape" © Eugene Trounev (GPL).
 * **Engine:** Nutzt Three.js (MIT Lizenz).
+* **Übersetzung:** Nutzt i18next und i18next-http-backend (MIT Lizenz).
 
 Weitere Details findest du in der `CREDITS.txt`.
 

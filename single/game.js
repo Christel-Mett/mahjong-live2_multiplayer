@@ -13,26 +13,33 @@ const meineLayouts = [
 
 let aktuelleFigur = localStorage.getItem('mahjongLayout') || meineLayouts[0];
 
-const layoutUebersetzungen = {
-    '4_winds': '4 Winde (nur single)', 'alien': 'Alien (nur single)', 'altar': 'Altar (nur single)', 'arena': 'Arena (nur single)', 
-    'arrow': 'Pfeil (Single & Multi)', 'atlantis': 'Atlantis (nur single)', 'aztec': 'Azteken (nur single)', 'balance': 'Waage (Single & Multi)',
-    'bat': 'Fledermaus (nur single)', 'bug': 'Käfer Single & Multi)', 'castle2': 'Burg (nur single)', 
-    'chains': 'Ketten (nur single)', 'checkered': 'Karos (nur single)', 'chip': 'Chip (Single & Multi)', 
-    'clubs': 'Clubs (nur single)', 'columns': 'Säulen (nur single)', 'cross': 'Kreuz (nur single)', 
-    'eagle': 'Adler (Single & Multi)', 'enterprise': 'Enterprise (Single & Multi)',
-    'explosion': 'Explosion (nur single)', 'flowers': 'Blumen (Single & Multi)', 'future': 'Zukunft (Single & Multi)', 'galaxy': 'Galaxie (nur single)', 
-    'garden': 'Garten (Single & Multi)', 'girl': 'Mädchen (nur single)', 'glade': 'Lichtung (Single & Multi)', 'grid': 'Gitter (nur single)',
-    'helios': 'Helios (Single & Multi)', 'hole': 'Loch (nur single)', 'inner_circle': 'Innerer Kreis (Single & Multi)', 'key': 'Schlüssel (nur single)', 
-    'km': 'KM (Single & Multi)', 'labyrinth': 'Labyrinth (nur single)', 'mask': 'Maske (nur single)', 'maya': 'Maya (nur single)',
-    'maze': 'Irrgarten (nur single)', 'mesh': 'Netz (Single & Multi)', 'moth': 'Motte (nur single)', 'order': 'Ordnung (nur single)', 
-    'pattern': 'Muster (nur single)', 'penta': 'Penta (nur single)', 'pillars': 'Pfeiler (nur single)', 'pirates': 'Piraten (nur single)',
-    'rocket': 'Rakete (Single & Multi)', 'shield': 'Schild (nur single)', 
-    'squares': 'Quadrate (nur single)', 'squaring': 'Quadrierung (nur single)', 'stadion': 'Stadion (nur single)', 'stairs': 'Treppen (nur single)', 
-    'star': 'Stern (nur single)', 'star_ship': 'Sternenschiff (nur single)', 'stax': 'Stapel (nur single)', 'swirl': 'Wirbel (nur single)', 
-    'temple': 'Tempel (nur single)', 'theatre': 'Theater (nur single)', 'the_door': 'Die Tür (Single & Multi)', 
-    'time_tunnel': 'Zeittunnel (Single & Multi)', 'tomb': 'Grabmal (nur single)', 'totem': 'Totem (nur single)', 
-    'up&down': 'Auf & Ab (nur single)', 'well': 'Brunnen (nur single)', 'X_shaped': 'X-Form (nur single)'
-};
+// Layouts, die auch im Mehrspieler-Modus verfügbar sind (alle anderen: nur single)
+const multiLayouts = [
+    'arrow', 'balance', 'bug', 'chip', 'eagle', 'enterprise', 'flowers', 'future',
+    'garden', 'glade', 'helios', 'inner_circle', 'km', 'mesh', 'rocket', 'the_door', 'time_tunnel'
+];
+
+function getLayoutDisplayName(key) {
+    const suffix = multiLayouts.includes(key) ? i18next.t('singleserver.layoutBoth') : i18next.t('singleserver.layoutSingleOnly');
+    return `${i18next.t('singleserver.layoutNames.' + key, key)} (${suffix})`;
+}
+
+// Sobald i18next fertig geladen hat: Layoutname-Anzeige und Dropdown mit den jetzt verfügbaren Übersetzungen neu aufbauen
+document.addEventListener('i18nReady', () => {
+    const label = document.getElementById('layoutName');
+    if (label) label.innerText = getLayoutDisplayName(aktuelleFigur);
+
+    const sel = document.getElementById('layoutSelect');
+    if (sel) {
+        sel.innerHTML = '';
+        const sortierteLayouts = [...meineLayouts].sort((a, b) => getLayoutDisplayName(a).localeCompare(getLayoutDisplayName(b), 'de'));
+        sortierteLayouts.forEach(l => {
+            const o = document.createElement('option'); o.value = l; o.text = getLayoutDisplayName(l);
+            if (l === aktuelleFigur) o.selected = true;
+            sel.appendChild(o);
+        });
+    }
+});
 
 const rotateZ = 1.5, shiftX = 10, shiftY = 10;
 const steinB = 3.0, steinH = 4.0, steinT = 1.5, kantenRadius = 0.12;
@@ -173,7 +180,7 @@ async function init(seed = null) {
     aktuellerSeed = initialerSeedFuerDiesesBrett;
     const layoutDatei = '../shared/layout/' + aktuelleFigur + '.layout';
     const label = document.getElementById('layoutName');
-    if (label) label.innerText = layoutUebersetzungen[aktuelleFigur] || aktuelleFigur;
+    if (label) label.innerText = getLayoutDisplayName(aktuelleFigur);
     ersterStein = null; zugVerlauf = []; punkte = 0;
     spielBeendet = false; updateScoreDisplay(); istPause = false; mainGroup.visible = true;
     neuerHighscoreEintrag = null;
@@ -333,18 +340,18 @@ function checkGameState() {
         }
     }
     if (document.getElementById('possiblePairs')) document.getElementById('possiblePairs').innerText = matches;
-    if (v.length === 0 || (matches === 0 && v.length > 0)) { finishGame(v.length === 0 ? "Sieg!" : "Keine Züge mehr!"); }
+    if (v.length === 0 || (matches === 0 && v.length > 0)) { finishGame(v.length === 0); }
 }
 
 function gleichesBrettErneutSpielen() { init(initialerSeedFuerDiesesBrett); }
 function neuesSpielStarten() { init(); }
 
 
-function finishGame(msg) {
+function finishGame(gewonnen) {
     spielBeendet = true;
     if (timerInterval) clearInterval(timerInterval);
 
-    if(msg === "Sieg!") {
+    if (gewonnen) {
         // 1. Zeitunabhängiger Fixbonus von 50 Punkten
         punkte += 50;
 
@@ -357,8 +364,8 @@ function finishGame(msg) {
         pruefeUndBereiteHighscoreVor();
     }
 
-    document.getElementById('endMessage').innerText = msg;
-    document.getElementById('overlayBtn').innerText = "Schließen";
+    document.getElementById('endMessage').innerText = gewonnen ? i18next.t('game.victory') : i18next.t('game.noMovesLeft');
+    document.getElementById('overlayBtn').innerText = i18next.t('game.buttonClose');
     document.getElementById('overlayBtn').onclick = () => { document.getElementById('overlay').style.display = 'none'; };
     document.getElementById('overlay').style.display = 'flex';
 }
@@ -500,8 +507,8 @@ function togglePause() {
     if (spielBeendet) { neuesSpielStarten(); return; }
     istPause = !istPause;
     document.getElementById('overlay').style.display = istPause ? 'flex' : 'none';
-    document.getElementById('endMessage').innerText = "Pause";
-    document.getElementById('overlayBtn').innerText = "Weiter spielen";
+    document.getElementById('endMessage').innerText = i18next.t('game.buttonPause');
+    document.getElementById('overlayBtn').innerText = i18next.t('game.pauseWeiter');
     document.getElementById('overlayBtn').onclick = togglePause;
     mainGroup.visible = !istPause;
     if (!istPause) startTimer(); else clearInterval(timerInterval);
@@ -681,9 +688,9 @@ function animate(now) {
 document.addEventListener('DOMContentLoaded', () => {
     const sel = document.getElementById('layoutSelect');
     if (sel) {
-        const sortierteLayouts = [...meineLayouts].sort((a, b) => (layoutUebersetzungen[a]||a).localeCompare(layoutUebersetzungen[b]||b, 'de'));
+        const sortierteLayouts = [...meineLayouts].sort((a, b) => getLayoutDisplayName(a).localeCompare(getLayoutDisplayName(b), 'de'));
         sortierteLayouts.forEach(l => {
-            const o = document.createElement('option'); o.value = l; o.text = layoutUebersetzungen[l] || l;
+            const o = document.createElement('option'); o.value = l; o.text = getLayoutDisplayName(l);
             if (l === aktuelleFigur) o.selected = true; sel.appendChild(o);
         });
     }

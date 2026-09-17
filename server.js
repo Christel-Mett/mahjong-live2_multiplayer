@@ -10,6 +10,8 @@ const rateLimit = require('express-rate-limit');
 const crypto = require('crypto');
 const cookieParser = require('cookie-parser');
 const { createChallenge } = require('altcha-lib');
+const i18next = require('i18next');
+const i18nextFsBackend = require('i18next-fs-backend');
 
 // Eigene Module laden
 const dbInterface = require('./dbInterface');
@@ -22,6 +24,19 @@ const gameController = require('./gameController');
 const { verifyCaptcha } = require('./captcha');
 
 dotenv.config();
+
+i18next
+    .use(i18nextFsBackend)
+    .init({
+        preload: ['de', 'en', 'da', 'nl'],
+        fallbackLng: 'de',
+        backend: {
+            loadPath: __dirname + '/language/{{lng}}/translation.json'
+        }
+    }, (err) => {
+        if (err) console.error('i18next Server-Init-Fehler:', err);
+        else console.log('i18next (Server) initialisiert.');
+    });
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
@@ -56,7 +71,8 @@ app.use(helmet({
                 "'self'", 
                 "'unsafe-inline'", 
                 "'unsafe-eval'", 
-                "https://cdnjs.cloudflare.com" 
+                "https://cdnjs.cloudflare.com",
+                "https://cdn.jsdelivr.net" 
             ],
             "script-src-attr": ["'unsafe-inline'"],
             "connect-src": ["'self'", "wss:", "ws:", "https:", "http:"],
@@ -196,17 +212,32 @@ app.get('/multi/index.html', pageLimiter, authMiddleware, (req, res) => res.send
 app.get('/auswahl/lobby-auswahl.html', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/auswahl/lobby-auswahl.html'));
 app.get('/auswahl/index.html', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/auswahl/index.html'));
 app.get('/auswahl/', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dirname + '/auswahl/index.html'));
-app.get('/impressum.html', pageLimiter, (req, res) => res.sendFile(__dirname + '/impressum.html'));
-app.get('/datenschutz.html', pageLimiter, (req, res) => res.sendFile(__dirname + '/datenschutz.html'));
-app.get('/nutzung.html', pageLimiter, (req, res) => res.sendFile(__dirname + '/nutzung.html'));
-app.get('/anleitung.html', pageLimiter, (req, res) => res.sendFile(__dirname + '/anleitung.html'));
-app.get('/news.html', pageLimiter, (req, res) => res.sendFile(__dirname + '/news.html'));
+
+function sendLocalizedPage(basename) {
+    return (req, res) => {
+        const lang = req.cookies.lang || 'de';
+        res.sendFile(`${__dirname}/language/${lang}/${basename}.html`, (err) => {
+            if (err) {
+                res.sendFile(`${__dirname}/language/de/${basename}.html`);
+            }
+        });
+    };
+}
+
+app.get('/impressum.html', pageLimiter, sendLocalizedPage('impressum'));
+app.get('/datenschutz.html', pageLimiter, sendLocalizedPage('datenschutz'));
+app.get('/nutzung.html', pageLimiter, sendLocalizedPage('nutzung'));
+app.get('/anleitung.html', pageLimiter, sendLocalizedPage('anleitung'));
+app.get('/news.html', pageLimiter, sendLocalizedPage('news'));
+
 app.get('/google2a21e9ee42e18ac7.html', pageLimiter, (req, res) => res.sendFile(__dirname + '/google2a21e9ee42e18ac7.html'));
 app.get('/sitemap.xml', pageLimiter, (req, res) => res.sendFile(__dirname + '/sitemap.xml'));
 app.use('/auswahl', express.static(__dirname + '/auswahl'));
 app.use('/multi', express.static(__dirname + '/multi'));
 app.use('/single', express.static(__dirname + '/single'));
 app.use('/shared', express.static(__dirname + '/shared'));
+app.use('/i18n.js', express.static(__dirname + '/i18n.js'));
+app.use('/language', express.static(__dirname + '/language'));
 app.use('/style.css', express.static(__dirname + '/style.css'));
 app.use('/chat-module.js', express.static(__dirname + '/chat-module.js'));
 app.use('/seasonalAnimations.js', express.static(__dirname + '/seasonalAnimations.js'));
@@ -217,6 +248,9 @@ app.get('/survey', pageLimiter, authMiddleware, (req, res) => res.sendFile(__dir
 io.on('connection', (socket) => {
 	 broadcastLayoutStats();
     const session = socket.request.session;
+    const cookies = socket.handshake.headers.cookie || '';
+    const match = cookies.match(/lang=([^;]+)/);
+    socket.lang = match ? match[1] : 'de';
 
     socket.on('register_attempt', async (data) => {
 	    const ok = await verifyCaptcha(data.captchaPayload);

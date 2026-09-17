@@ -130,26 +130,16 @@ const alleMotive = [
     'SEASON_1', 'SEASON_2', 'SEASON_3', 'SEASON_4', 'WIND_1', 'WIND_2', 'WIND_3', 'WIND_4'
 ];
 
-// --- Übersetzungen ---
-const layoutUebersetzungen = {
-	 'arrow': 'Pfeil',
-    'balance': 'Waage',
-    'bug': 'Käfer',
-    'chip': 'Chip',
-    'eagle': 'Adler',
-    'enterprise': 'Enterprise',
-    'flowers': 'Blumen',
-    'future': 'Zukunft',
-    'garden': 'Garten',
-    'glade': 'Lichtung',
-    'helios': 'Helios',
-    'inner_circle': 'Innerer Kreis',
-    'km': 'KM',
-    'mesh': 'Netz',
-    'rocket': 'Rakete',
-    'the_door': 'Die Tür',
-    'time_tunnel': 'Zeittunnel',
-};
+// --- Layoutnamen (nur die im Multiplayer nutzbaren Bretter) ---
+const multiLayouts = [
+    'arrow', 'balance', 'bug', 'chip', 'eagle', 'enterprise', 'flowers',
+    'future', 'garden', 'glade', 'helios', 'inner_circle', 'km', 'mesh',
+    'rocket', 'the_door', 'time_tunnel'
+];
+
+function getLayoutName(layoutKey) {
+    return i18next.t(`singleserver.layoutNames.${layoutKey}`, { defaultValue: layoutKey });
+}
 
 const matSide = new THREE.MeshPhongMaterial({ color: farbeSeite });
 matSide.onBeforeCompile = (shader) => {
@@ -222,14 +212,13 @@ function beendeSpiel(grund) {
     }
 
     let grundAnzeige = "";
-    if (grund === 'sieg') grundAnzeige = "Sieg (Alle Steine gelöscht!)";
-    else if (grund === 'sackgasse') grundAnzeige = "Sackgasse (Keine Züge mehr möglich)";
-    else if (grund === 'aufgabe') grundAnzeige = "Aufgabe durch Spieler";
+    if (grund === 'sieg') grundAnzeige = i18next.t('game.endReasonVictory');
+    else if (grund === 'sackgasse') grundAnzeige = i18next.t('game.endReasonDeadlock');
+    else if (grund === 'aufgabe') grundAnzeige = i18next.t('game.endReasonForfeit');
 
     zeigeEndOverlay(grundAnzeige);
     
     const graceTimer = document.getElementById('grace-period-timer');
-    const graceSeconds = document.getElementById('grace-seconds');
     if (graceTimer) graceTimer.style.display = 'block';
 
 const graceFiles = ['30_1.mp3', '30_2.mp3', '30_3.mp3', '30_4.mp3', '30_5.mp3', '30_6.mp3', '30_7.mp3', '30_8.mp3', '30_9.mp3'];
@@ -242,9 +231,10 @@ const leaveBtn = document.getElementById('leave-game-btn');
 if (leaveBtn) leaveBtn.disabled = true;
 
 let timeLeft = 30;
+if (graceTimer) graceTimer.textContent = i18next.t('game.graceTimer', { seconds: timeLeft });
 const localGraceInterval = setInterval(() => {
     timeLeft--;
-    if (graceSeconds) graceSeconds.textContent = timeLeft;
+    if (graceTimer) graceTimer.textContent = i18next.t('game.graceTimer', { seconds: timeLeft });
     
     // NEU: Update Sidebar falls vorhanden
     const sidebarSeconds = document.getElementById('grace-timer-sidebar');
@@ -396,9 +386,15 @@ async function initGame() {
     const layoutNameDisplay = document.getElementById('layoutNameDisplay');
     const opponentDisplay = document.getElementById('opponent-name');
     if (opponentDisplay) opponentDisplay.textContent = gegnerName;
-    if (layoutNameDisplay) {
-        layoutNameDisplay.textContent = layoutUebersetzungen[festesLayout] || festesLayout;
-    }
+	 if (layoutNameDisplay) {
+	     layoutNameDisplay.textContent = getLayoutName(festesLayout);
+	 }
+    document.addEventListener('i18nReady', () => {
+        if (layoutNameDisplay) {
+            layoutNameDisplay.textContent = getLayoutName(festesLayout);
+        }
+    });
+
     try {
         const resp = await fetch(layoutPath);
         if (!resp.ok) throw new Error("Layout nicht gefunden");
@@ -644,12 +640,6 @@ function startTimer() {
     }, 1000);
 }
 
-/*function animate() {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
-    oppRenderer.render(oppScene, oppCamera);
-}*/
-
 const zielFPS = performanceModus ? 30 : 62;
 const zielFrameZeit = 1000 / zielFPS;
 let letzterFrameZeitpunkt = 0;
@@ -667,7 +657,6 @@ function animate(jetzt) {
 socket.on('gracePeriodStarted', () => {
     if (!spielBeendet) {
         const graceTimer = document.getElementById('grace-period-timer');
-        const graceSeconds = document.getElementById('grace-seconds');
         const sidebarOverlay = document.getElementById('grace-overlay-sidebar');
         const sidebarSeconds = document.getElementById('grace-timer-sidebar');
 
@@ -675,12 +664,13 @@ socket.on('gracePeriodStarted', () => {
         if (sidebarOverlay) sidebarOverlay.style.display = 'flex';
         
         let timeLeft = 30;
+        if (graceTimer) graceTimer.textContent = i18next.t('game.graceTimer', { seconds: timeLeft });
         // Wir speichern das Intervall in einer Konstante innerhalb des Scopes
         const interval = setInterval(() => {
             timeLeft--;
             
             // Anzeige im End-Overlay (Mitte)
-            if (graceSeconds) graceSeconds.textContent = timeLeft;
+            if (graceTimer) graceTimer.textContent = i18next.t('game.graceTimer', { seconds: timeLeft });
             // Anzeige in der Sidebar (Rechts)
             if (sidebarSeconds) sidebarSeconds.textContent = timeLeft;
 
@@ -713,7 +703,7 @@ socket.on('finalScoreboard', (data) => {
     if (timerInterval) clearInterval(timerInterval);
     if (graceAudio) { graceAudio.pause(); graceAudio.currentTime = 0; graceAudio = null; }
 
-    zeigeEndOverlay('Spiel beendet');
+    zeigeEndOverlay('');
 
     const scoreboard = document.getElementById('final-scoreboard');
     const winnerLine = document.getElementById('winner-line');
@@ -726,10 +716,10 @@ socket.on('finalScoreboard', (data) => {
     if (data.scores) {
         data.scores.sort((a, b) => b.points - a.points || a.time - b.time);
         const formatTime = s => `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
-		  if (winnerLine) winnerLine.textContent = `1. Platz: ${data.scores[0].name} (${data.scores[0].points} Pkt. ⏱ ${formatTime(data.scores[0].time)})`;
-		  if (secondLine && data.scores[1]) {
-			    secondLine.textContent = `2. Platz: ${data.scores[1].name} (${data.scores[1].points} Pkt. ⏱ ${formatTime(data.scores[1].time)})`;
-		  }
+		  if (winnerLine) winnerLine.textContent = `1. ${i18next.t('lobby.leaderboardPlatz')}: ${data.scores[0].name} (${data.scores[0].points} ${i18next.t('lobby.leaderboardPoints')} ⏱ ${formatTime(data.scores[0].time)})`;
+        if (secondLine && data.scores[1]) {
+            secondLine.textContent = `2. ${i18next.t('lobby.leaderboardPlatz')}: ${data.scores[1].name} (${data.scores[1].points} ${i18next.t('lobby.leaderboardPoints')} ⏱ ${formatTime(data.scores[1].time)})`;
+        }
         const meinEintrag = data.scores.find(s => s.name === meinName);
         if (meinEintrag && meinEintrag.millionCracked) {
             zeigeMillionenGag();
