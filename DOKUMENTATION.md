@@ -1,4 +1,4 @@
-# Dokumentation: Mahjong-Live Multiplayer 2.0
+# Dokumentation: Mahjong-Live Multiplayer 2.1
 
 ## Inhaltsverzeichnis
 1. [Projektübersicht](#projektübersicht)
@@ -32,6 +32,7 @@ Mahjong-Live Multiplayer 2.0 ist ein **browserbasiertes Solitär-Mahjong-Spiel**
 - ✅ **Leistungsbegrenzung (30 FPS)**: Optional zuschaltbarer Performance-Modus für ältere/schwächere Rechner. Schalter befindet sich in der Lobby
 - ✅ **Belohnungs-Gag**: Kleines Überraschungs-Feature bei Erreichen von 1.000.000 Gesamtpunkten
 - ✅ **Saisonale Animationen**: Herbstanfang, Advent, Weihnachten, etc.
+- ✅ **Mehrsprachigkeit**: Verfügbar in mehreren Sprachen. Die Fallbacksprache ist deutsch.
 
 ### Technologie-Stack
 
@@ -46,7 +47,8 @@ Mahjong-Live Multiplayer 2.0 ist ein **browserbasiertes Solitär-Mahjong-Spiel**
 | **Sicherheit** | Helmet, CSRF-Protection, bcrypt, Rate Limiting |
 | **Bot-Schutz** | Altcha (CAPTCHA-Alternative) |
 | **E-Mail** | Nodemailer |
-| **Sprache** | JavaScript (Node.js & Frontend) |
+| **Scriptsprache** | JavaScript (Node.js & Frontend) |
+| **Internationalisierung** | i18next, i18next-fs-backend |
 
 ---
 
@@ -76,6 +78,7 @@ server.js (Orchestrator)
 ├── millionChecker.js       → Belohnungs-Gag (Konfetti + Sound bei 1 Mio.)
 ├── seasonalAnimations.js   → Saisonale Animationen
 ├── seasonalSchedule.js     → Scheduler für Animationen
+├── i18n.js                 → Internationalisierung/Sprachsteuerung
 └── ...
 ```
 
@@ -132,6 +135,8 @@ Die benötigten Pakete sind in der `package.json` definiert. Die exakten Version
 | **csrf-csrf** | CSRF-Schutz |
 | **dotenv** | Umgebungsvariablen |
 | **altcha-lib** | CAPTCHA-Lösung (Bot-Schutz) |
+| **i18next** | Übersetzungs-Framework |
+| **i18next-fs-backend** | Lädt Übersetzungsdateien vom Dateisystem |
 
 ### Schritt 3: Datenbank einrichten
 
@@ -443,6 +448,11 @@ Animationen zu saisonalen Ereignissen:
 
 **Verwendung:**
 - Werden ausschließlich in der lobby.html aufgerufen und angezeigt.
+
+**Sprachauswahl:**
+- Übersetzungen unter Verwendung von i18n.js.
+- Auswahl mehrerer Sprachen. Deutsch ist Fallback Sprache.
+- Auswahlmöglichkeiten auf der Login Seite sowie in den Einstellungen der Lobby.
 ...
 
 ---
@@ -551,7 +561,14 @@ mahjong-live2_multiplayer/
 │   │   └── index.html           # Singleplayer (ohne Login aufrufbar)
 │   │
 │   └── /shared/
-│       └── [Gemeinsame Assets]
+│   │   └── [Gemeinsame Assets]
+│   │
+│   └── /language/
+│       └── [da]
+|       └── [de]
+|       └── [en]
+|       └── [nl]
+|       └── [...]
 ```
 
 ### Wichtige HTTP-Routen
@@ -714,6 +731,7 @@ Dieses Projekt ist unter der **GNU General Public License (GPL) v3** veröffentl
 | **Web-Framework** | Express.js | MIT |
 | **Socket.IO** | Socket.IO Team | MIT |
 | **CAPTCHA-Lösung** | Altcha | MIT |
+| **i18next / i18next-fs-backend** | i18next | MIT |
 
 **Siehe auch:** `CREDITS.txt` im Repository
 
@@ -739,6 +757,6 @@ Dieses Projekt ist unter der **GNU General Public License (GPL) v3** veröffentl
 ---
 
 **Dokumentation erstellt:** Mai 2026  
-**Letzte Aktualisierung:** Juli 2026  
-**Version:** 2.0 (Modulare Architektur)  
+**Letzte Aktualisierung:** September 2026  
+**Version:** 2.1 (Internationalisierung)  
 **Autor:** Christel-Mett
