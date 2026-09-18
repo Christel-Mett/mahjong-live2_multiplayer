@@ -14,9 +14,9 @@
 
 ## Projektübersicht
 
-### Was ist Mahjong-Live Multiplayer 2.0?
+### Was ist Mahjong-Live Multiplayer 2.1?
 
-Mahjong-Live Multiplayer 2.0 ist ein **browserbasiertes Solitär-Mahjong-Spiel** mit Multiplayer-Funktion, entwickelt mit modernen Web-Technologien. Das Spiel kombiniert klassisches Mahjong-Gameplay mit Echtzeit-Multiplayer-Herausforderungen, Benutzerkonten und einer dynamischen Ranglisten-Community.
+Mahjong-Live Multiplayer 2.1 ist ein **browserbasiertes Solitär-Mahjong-Spiel** mit Multiplayer-Funktion, entwickelt mit modernen Web-Technologien. Das Spiel kombiniert klassisches Mahjong-Gameplay mit Echtzeit-Multiplayer-Herausforderungen, Benutzerkonten und einer dynamischen Ranglisten-Community.
 
 **Live-Demo:** [mahjong-treff.de](https://mahjong-treff.de)
 
@@ -54,7 +54,7 @@ Mahjong-Live Multiplayer 2.0 ist ein **browserbasiertes Solitär-Mahjong-Spiel**
 
 ## Architektur
 
-### Version 2.0 – Modulare Struktur
+### Version 2.1 – Internationalisierung
 
 Version 1.0 war monolithisch aufgebaut. Version 2.0 wurde komplett umstrukturiert mit einem **modularen, wartbaren Design**:
 
