@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>麻阳多人在线接龙 – 游戏说明 | Mahjong-Treff</title>
+    <meta name="description" content="Mahjong-Treff 游戏说明：免费的多人网页麻将接龙游戏。与真实对手对战，了解规则与计分方式。">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #2c3e50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+        .overlay-screen {
+            background: rgba(0, 0, 0, 0.85);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+        .menu-container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            line-height: 1.6;
+            text-align: left;
+        }
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 35px;
+            cursor: pointer;
+            color: #999;
+            line-height: 1;
+            background: none;
+			   border: none;
+			   padding: 0;
+			   font-family: inherit;
+        }
+        .close-btn:hover { color: #333; }
+
+        h1 { 
+            margin-top: 0; 
+            border-bottom: 2px solid #d2b48c; 
+            padding-bottom: 10px;
+            color: #2c3e50;
+            font-size: 1.8em;
+        }
+
+        .odt-section {
+/*            white-space: pre-wrap;*/
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay-screen">
+        <div class="menu-container">
+            <button type="button" class="close-btn" aria-label="关闭">&times;</button>
+            <h1>游戏说明</h1>
+            
+            <h2 style="color: #2c3e50; border-bottom: 1px solid #d2b48c; padding-bottom: 6px; margin-top: 5px;">游戏目标与规则</h2>
+            <div class="odt-section">本游戏是一款麻将单人接龙游戏。</div>
+<div class="odt-section">本游戏专为电脑浏览器设计。<a href="lobby.html">返回首页</a></span></div> 在配备“全屏浏览器应用”（例如“Fully Kiosk Browser”）的大屏平板电脑上也可游玩，但并非为此专门设计，部分元素在没有鼠标和外接键盘的情况下较难操作。苹果 iPad 在进行多人游戏时可能会遇到困难，尝试使用不同的浏览器通常是可行的解决方案。
+在智能手机上虽然可以加载，但由于屏幕较小几乎无法游玩，且在分辨率上未针对手机进行设计。
+本游戏完全开源，并遵循 GNU GPL 许可证。
+图片与游戏布局均选自基于相同许可证开源的游戏 "KMahjong"<br><br>
+在所有游戏模式中均设有一个侧边栏，可通过滑块调节音量和棋子的大小。<br><br>
+游戏的目标是尽可能消除牌局上的所有麻将牌。
+通过点击两张具有相同图案的牌来进行消除。
+只有当一张牌的上方完全没有被压住，且左侧或右侧至少有一侧为空时，该牌才是可点击的。<br><br>
+每成功消除一对牌，玩家可获得 1 分。
+如果接连点击另一对具有相同图案的牌，该对牌及后续连续消除的相同图案牌每对可获得 5 分。
+如果成功清空整个牌局，玩家将获得 50 分的额外奖励。此外，在 3 分 30 秒的游戏时间内，每剩余一秒还可额外获得 1 分。
+超过 3 分 30 秒后将不再享有该秒数奖励。<br><br>
+带有数字的“花牌”和带有文字的“季节牌”各自组成一个组，同组内的任意两张牌都可以互相匹配消除。<br><br>
+当消除牌局上的所有牌、陷入“死局”（没有可点击的配对）或玩家主动放弃时，游戏结束。<br><br>
+<h2 style="color: #2c3e50; border-bottom: 1px solid #d2b48c; padding-bottom: 6px; margin-top: 20px;">多人麻将 – 游戏模式</h2>
+共提供三种游戏模式：<br>
++ 单人模式 – 仅供单人练习，不计入排行榜分数。<br>
++ 多人随机 – 随机选择牌局并匹配一名对手。<br>
++ 多人选择 – 提前选择牌局并匹配一名对手。<br><br>
+在单人模式中，你可以撤销一步或多步操作，并可以使用提示功能显示可消除的牌对。
+你可以重新开始当前布局的牌局，或者开始一局新游戏。
+你可以直接选择牌局布局，共有 62 种不同的牌局。
+单人模式设有最佳成绩列表，但仅保存在本地设备上，不会影响全局排行榜。<br><br>
+多人游戏限定为 17 种牌局，每种牌局均由 144 张牌组成。
+在“选择”模式中可以挑选特定的牌局。<br><br>
+两名玩家的匹配分多个阶段进行。<br>
+首先是随机模式：<br>
+两名正在寻找对手的玩家将直接连接，无需等待。
+<s>阶段 1：寻找与自己排名相差不超过 +-20 名的对手。<br>
+阶段 2：如果在 30 秒内未找到合适的对手，将与排名最接近的玩家连接。</s><br><br>
+对于选择模式：<br>
+位于相同布局房间内的玩家将直接连接，优先连接同一房间内的玩家，其次是其他房间的玩家。15 秒后，对手匹配将扩展至主大厅。<br>
+<s>阶段 1：与随机模式相同<br>
+阶段 2：30 秒倒计时结束后，将在接下来的 30 秒内为所选牌局寻找任意对手。<br>
+阶段 3：之后将与另一个房间的任意玩家匹配。
+此时将使用率先发起对手匹配的玩家所选择的牌局。</s><br><br>
+排名处于后 10% 的新玩家将立即被匹配连接。这样做的背景是防止新玩家在刚开始游戏时因匹配等待时间过长而失去兴趣。<br><br>
+多人游戏的结束方式与单人游戏完全相同，唯一的区别是：
+当第一位玩家结束游戏后，第二位玩家还将获得 30 秒的剩余游戏时间，随后其游戏也将结束。<br><br>
+得分将记入两位玩家的成绩，没有“胜利奖励”，也没有扣分。<br><br>
+玩家的排名 / 名次由其历来所有对局的总得分决定。<br><br>
+游戏包含聊天功能。
+在大厅中设有一个大型聊天窗口，所有已登录用户均可使用。
+在多人游戏对局中设有一对一的“双人聊天”。在平板电脑上，该功能实际上需要搭配外接键盘使用。
+所有聊天均须遵守 <a href="https://de.wikipedia.org/wiki/Netiquette" target="_blank" style="color: #2c3e50; text-decoration: underline;">网络礼仪（Netiquette）</a>，详见使用条款中的相关部分。聊天记录不会被永久保存。
+大厅聊天仅显示最新的 50 条消息，较旧的消息将被自动删除。
+游戏内聊天将在离开牌局后自动清除。<br><br>
+
+<span class="bold">祝你游戏愉快！<br><a href="lobby.html">返回首页</a></span></div>
+        </div>
+    </div>
+    <script>
+        document.querySelector('.close-btn').addEventListener('click', () => window.history.back());
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                window.history.back();
+            }
+        });
+    </script>
+</body>
+</html>

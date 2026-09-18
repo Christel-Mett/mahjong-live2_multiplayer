@@ -28,7 +28,7 @@ dotenv.config();
 i18next
     .use(i18nextFsBackend)
     .init({
-        preload: ['de', 'en', 'da', 'nl'],
+        preload: ['de', 'en', 'da', 'nl', 'cn'],
         fallbackLng: 'de',
         backend: {
             loadPath: __dirname + '/language/{{lng}}/translation.json'
