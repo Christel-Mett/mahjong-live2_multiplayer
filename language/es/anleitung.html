@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Mahjong Multiplayer Solitario – Instrucciones del juego | Mahjong-Treff</title>
+    <meta name="description" content="Instrucciones del juego para Mahjong-Treff: Mahjong Solitario gratuito como juego multijugador en el navegador. Juega contra adversarios reales, aprende las reglas y el sistema de puntuación.">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #2c3e50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+        .overlay-screen {
+            background: rgba(0, 0, 0, 0.85);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+        .menu-container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            line-height: 1.6;
+            text-align: left;
+        }
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 35px;
+            cursor: pointer;
+            color: #999;
+            line-height: 1;
+            background: none;
+			   border: none;
+			   padding: 0;
+			   font-family: inherit;
+        }
+        .close-btn:hover { color: #333; }
+
+        h1 { 
+            margin-top: 0; 
+            border-bottom: 2px solid #d2b48c; 
+            padding-bottom: 10px;
+            color: #2c3e50;
+            font-size: 1.8em;
+        }
+
+        .odt-section {
+/*            white-space: pre-wrap;*/
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay-screen">
+        <div class="menu-container">
+            <button type="button" class="close-btn" aria-label="Cerrar">&times;</button>
+            <h1>Instrucciones del juego</h1>
+            
+            <h2 style="color: #2c3e50; border-bottom: 1px solid #d2b48c; padding-bottom: 6px; margin-top: 5px;">Objetivo del juego y reglas</h2>
+            <div class="odt-section">El juego es un Mahjong Solitario.</div>
+<div class="odt-section">El juego está diseñado como un juego de navegador para PC. <a href="lobby.html">Página de inicio</a></span></div> También se puede jugar en tabletas grandes con una 
+«aplicación de navegador a pantalla completa» (p. ej. «Fully Kiosk Browser»), 
+pero no fue diseñado para ello; algunos elementos son difíciles de alcanzar sin ratón ni teclado externo. Los iPad de Apple pueden tener dificultades en las partidas multijugador; prueba con distintos navegadores, a menudo eso ha resultado ser una solución.
+También se puede cargar en un smartphone, pero debido a la pantalla pequeña difícilmente será jugable allí, y tampoco fue diseñado para esas resoluciones.
+Todo el juego es de código abierto y está bajo la licencia GNU GPL.
+Las imágenes y los diseños de tablero proceden del juego «KMahjong», que está bajo la misma licencia.<br><br>
+En todas las variantes de juego hay una barra lateral en la que se pueden ajustar el volumen y el tamaño 
+de las fichas mediante deslizadores.<br><br>
+El objetivo del juego es retirar del tablero la mayor cantidad posible de fichas.
+Esto se logra haciendo clic en dos fichas con el mismo símbolo.
+Una ficha solo se puede seleccionar si está completamente libre hacia arriba y al menos por un lado (izquierdo o derecho).<br><br>
+Por cada par de fichas retirado así, el jugador recibe un punto.
+Si inmediatamente después se hace clic en otro par con el mismo símbolo, el jugador recibe cinco puntos por este 
+y por cada par adicional del mismo símbolo.
+Si el tablero se despeja por completo, el jugador recibe 50 puntos adicionales. Además, recibe un punto extra por cada 
+segundo que quede hasta alcanzar los tres minutos y medio de tiempo de juego.
+Después de 3:30 minutos de tiempo de juego, esta bonificación ya no se otorga.<br><br>
+Las fichas de «flores» (con número) y «estaciones» (con caracteres) forman cada una un grupo dentro del cual todas las 
+fichas pueden emparejarse entre sí.<br><br>
+El juego termina ya sea retirando todas las fichas del tablero, alcanzando un «punto muerto» 
+(ya no hay pares seleccionables) 
+o mediante el abandono del jugador.<br><br>
+<h2 style="color: #2c3e50; border-bottom: 1px solid #d2b48c; padding-bottom: 6px; margin-top: 20px;">Mahjong Multiplayer – Variantes de juego</h2>
+Hay tres variantes de juego disponibles:<br>
++ Individual – para un solo jugador, sin puntuación en la clasificación.<br>
++ Multijugador Aleatorio – partida contra un adversario con selección aleatoria del tablero.<br>
++ Multijugador Selección – partida contra un adversario con selección previa del tablero.<br><br>
+En el modo individual se pueden deshacer uno o varios movimientos y pedir una pista para un par de fichas 
+libre.
+Es posible reiniciar la misma configuración de tablero o comenzar una partida nueva.
+La selección de tableros está disponible directamente. Hay 62 tableros diferentes.
+Existe una clasificación, pero esta solo se guarda localmente en el dispositivo. No tiene ninguna influencia en la 
+clasificación global.<br><br>
+Las partidas multijugador están limitadas a 17 tableros, cada uno compuesto por 144 fichas.
+En la variante «Selección» se puede elegir un tablero concreto.<br><br>
+El emparejamiento entre dos jugadores se realiza en varias etapas.<br>
+Primero para la variante Aleatorio:<br>
+Dos jugadores en búsqueda se conectan directamente sin tiempo de espera.
+<s>Etapa 1: Se busca un adversario con un máximo de +-20 puestos de clasificación respecto al propio rango.<br>
+Etapa 2: Si en 30 segundos no se encuentra un adversario adecuado, se conecta con el más cercano.</s><br><br>
+Para la variante Selección:<br>
+Los jugadores en las salas de tablero se conectan directamente, primero de la misma sala y, en segundo lugar, también de otras salas. Después de 15 segundos, la búsqueda de adversario se amplía al lobby principal.<br>
+<s>Etapa 1: como en Aleatorio<br>
+Etapa 2: Tras finalizar los 30 segundos, se busca durante otros 30 segundos un adversario cualquiera para el tablero elegido.<br>
+Etapa 3: Después se empareja con un jugador cualquiera de otra sala.
+En ese caso se utiliza el tablero del jugador que inició primero la búsqueda de adversario.</s><br><br>
+Los jugadores nuevos que ocupan el 10 % inferior de la clasificación se conectan de inmediato. Esto tiene como objetivo que no pierdan el interés ya en las primeras partidas si la búsqueda de adversario tardara más.<br><br>
+Las partidas multijugador terminan exactamente igual que las individuales, con una única diferencia: 
+una vez que el primer jugador ha terminado su partida, el segundo jugador dispone de 30 segundos adicionales de 
+tiempo de juego restante antes de que su partida también termine.<br><br>
+Los puntos se contabilizan para ambos jugadores, no hay «bonificación por victoria» ni deducción de puntos.<br><br>
+El rango / puesto de los jugadores resulta de su puntuación total acumulada en todas las partidas jugadas hasta el momento.<br><br>
+Existen funciones de chat.
+En el lobby hay una gran ventana de chat que puede usar cualquier usuario registrado.
+En las partidas multijugador hay un «chat entre dos personas». Esta función en realidad solo se puede usar en 
+tabletas con un teclado externo.
+Para todos los chats se aplica la <a href="https://de.wikipedia.org/wiki/Netiquette" target="_blank" style="color: #2c3e50; text-decoration: underline;">netiqueta</a>, consulta también el apartado correspondiente en las condiciones de uso. Los chats no se 
+guardan de forma permanente.
+En el chat del lobby solo se muestran los últimos 50 mensajes; los más antiguos se eliminan automáticamente.
+Los chats de partida se eliminan automáticamente al abandonar el tablero.<br><br>
+
+<span class="bold">¡Que disfrutes jugando!<br><a href="lobby.html">Página de inicio</a></span></div>
+        </div>
+    </div>
+    <script>
+        document.querySelector('.close-btn').addEventListener('click', () => window.history.back());
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                window.history.back();
+            }
+        });
+    </script>
+</body>
+</html>

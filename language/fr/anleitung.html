@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Mahjong Multiplayer Solitaire – Règles du jeu | Mahjong-Treff</title>
+    <meta name="description" content="Règles du jeu pour Mahjong-Treff : Mahjong Solitaire gratuit en tant que jeu multijoueur dans le navigateur. Joue contre de vrais adversaires, apprends les règles et le système de points.">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #2c3e50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+        .overlay-screen {
+            background: rgba(0, 0, 0, 0.85);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+        .menu-container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            line-height: 1.6;
+            text-align: left;
+        }
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 35px;
+            cursor: pointer;
+            color: #999;
+            line-height: 1;
+            background: none;
+			   border: none;
+			   padding: 0;
+			   font-family: inherit;
+        }
+        .close-btn:hover { color: #333; }
+
+        h1 { 
+            margin-top: 0; 
+            border-bottom: 2px solid #d2b48c; 
+            padding-bottom: 10px;
+            color: #2c3e50;
+            font-size: 1.8em;
+        }
+
+        .odt-section {
+/*            white-space: pre-wrap;*/
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay-screen">
+        <div class="menu-container">
+            <button type="button" class="close-btn" aria-label="Fermer">&times;</button>
+            <h1>Règles du jeu</h1>
+            
+            <h2 style="color: #2c3e50; border-bottom: 1px solid #d2b48c; padding-bottom: 6px; margin-top: 5px;">Objectif du jeu &amp; règles</h2>
+            <div class="odt-section">Le jeu est un Mahjong Solitaire.</div>
+<div class="odt-section">Le jeu est conçu comme un jeu de navigateur pour PC. <a href="lobby.html">Page d'accueil</a></span></div> Il est également jouable sur les grandes tablettes avec une 
+« application navigateur plein écran » (par ex. « Fully Kiosk Browser »), 
+mais n'a pas été conçu pour cela, certains éléments étant difficilement accessibles sans souris ni clavier externe. Les iPad Apple peuvent rencontrer des difficultés dans les parties multijoueurs, essaie différents navigateurs, cela s'est souvent avéré être une solution.
+Le jeu peut également être chargé sur un smartphone, mais en raison du petit écran, il y sera difficilement jouable et n'a pas non plus été conçu pour ces résolutions.
+L'ensemble du jeu est open source et sous licence GNU GPL.
+Les images et les dispositions de jeu sont issues du jeu « KMahjong », placé sous la même licence.<br><br>
+Il existe dans toutes les variantes de jeu une barre latérale où des curseurs permettent d'ajuster le volume et la taille 
+des pièces de jeu.<br><br>
+L'objectif du jeu est de retirer autant de pièces que possible du plateau de jeu.
+Cela se fait en cliquant sur deux pièces portant le même symbole.
+Une pièce n'est cliquable que si elle est entièrement libre vers le haut et au moins sur un côté (gauche ou droite).<br><br>
+Pour chaque paire de pièces ainsi retirée, le joueur reçoit un point.
+Si une autre paire portant le même symbole est cliquée directement à la suite, le joueur reçoit cinq points pour celle-ci et 
+pour chaque paire supplémentaire du même symbole.
+Si le plateau est entièrement vidé, le joueur reçoit 50 points bonus. De plus, il reçoit un point supplémentaire pour chaque 
+seconde restante jusqu'à atteindre trois minutes et demie de temps de jeu.
+Après 3:30 minutes de temps de jeu, ce bonus n'est plus accordé.<br><br>
+Les pièces « fleurs » (avec chiffre) et « saisons » (avec caractères) forment chacune un groupe au sein duquel toutes les 
+pièces peuvent être associées entre elles.<br><br>
+Le jeu se termine soit par le retrait de toutes les pièces du plateau, soit en atteignant une « impasse » 
+(il n'existe plus de paire cliquable), 
+soit par l'abandon du joueur.<br><br>
+<h2 style="color: #2c3e50; border-bottom: 1px solid #d2b48c; padding-bottom: 6px; margin-top: 20px;">Mahjong Multiplayer – Variantes de jeu</h2>
+Trois variantes de jeu sont disponibles :<br>
++ Solo – pour un seul joueur, sans comptage de points dans le classement.<br>
++ Multijoueur Aléatoire – partie contre un adversaire avec sélection aléatoire du plateau.<br>
++ Multijoueur Choix – partie contre un adversaire avec sélection préalable du plateau.<br><br>
+En mode solo, il est possible d'annuler un ou plusieurs coups et de se faire donner un indice pour une paire de pièces 
+libre.
+Il est possible de recommencer la même configuration de plateau ou de commencer une nouvelle partie.
+Le choix des plateaux est directement possible. Il existe 62 plateaux différents.
+Il existe un classement, mais celui-ci n'est enregistré que localement sur l'appareil. Il n'a aucune incidence sur le 
+classement global.<br><br>
+Les parties multijoueurs sont limitées à 17 plateaux, chacun composé de 144 pièces.
+Dans la variante « Choix », il est possible de sélectionner un plateau précis.<br><br>
+L'appariement de deux joueurs se fait en plusieurs étapes.<br>
+D'abord pour la variante Aléatoire :<br>
+Deux joueurs en recherche sont directement connectés sans temps d'attente.
+<s>Étape 1 : Un adversaire est recherché avec au maximum +-20 places de classement par rapport à son propre rang.<br>
+Étape 2 : Si aucun adversaire approprié n'est trouvé dans les 30 secondes, la connexion se fait avec le plus proche.</s><br><br>
+Pour la variante Choix :<br>
+Les joueurs dans les salles de plateau sont directement connectés, en priorité avec ceux de la même salle, en second lieu également avec ceux d'autres salles. Après 15 secondes, la recherche d'adversaire est étendue au lobby principal.<br>
+<s>Étape 1 : comme pour Aléatoire<br>
+Étape 2 : Après l'expiration des 30 secondes, la recherche se poursuit encore 30 secondes pour trouver un adversaire quelconque pour le plateau choisi.<br>
+Étape 3 : Ensuite, l'appariement se fait avec un joueur quelconque d'une autre salle.
+Le plateau du joueur ayant déclenché la recherche d'adversaire en premier est alors utilisé.</s><br><br>
+Les nouveaux joueurs occupant les 10 % derniers du classement sont connectés immédiatement. Cela vise à éviter qu'ils ne perdent l'envie de jouer dès les premières parties si la recherche d'adversaire devait prendre plus de temps.<br><br>
+Les parties multijoueurs se terminent exactement comme les parties solo, à une seule différence près : 
+une fois que le premier joueur a terminé sa partie, le second joueur dispose encore de 30 secondes de temps de jeu 
+restant avant que sa partie ne se termine également.<br><br>
+Les points sont comptabilisés pour les deux joueurs, il n'y a pas de « bonus de victoire », il n'y a pas de déduction de points.<br><br>
+Le classement / la place des joueurs résulte de leur total de points cumulé sur toutes les parties jouées jusqu'à présent.<br><br>
+Il existe des fonctions de chat.
+Dans le lobby, il y a une grande fenêtre de chat que tout utilisateur connecté peut utiliser.
+Dans les parties multijoueurs, il y a un « chat à deux personnes ». Cette fonction n'est en réalité utilisable sur 
+tablette qu'avec un clavier externe.
+Pour tous les chats, la <a href="https://de.wikipedia.org/wiki/Netiquette" target="_blank" style="color: #2c3e50; text-decoration: underline;">nétiquette</a> s'applique, voir aussi la partie correspondante dans les conditions d'utilisation. Les chats ne sont pas 
+enregistrés de façon permanente.
+Dans le chat du lobby, seuls les 50 derniers messages sont affichés, les plus anciens sont automatiquement supprimés.
+Les chats de partie sont automatiquement supprimés lorsque le plateau de jeu est quitté.<br><br>
+
+<span class="bold">Amuse-toi bien en jouant !<br><a href="lobby.html">Page d'accueil</a></span></div>
+        </div>
+    </div>
+    <script>
+        document.querySelector('.close-btn').addEventListener('click', () => window.history.back());
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                window.history.back();
+            }
+        });
+    </script>
+</body>
+</html>

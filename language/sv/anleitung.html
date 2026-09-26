@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Mahjong Multiplayer Solitaire – Spelinstruktioner | Mahjong-Treff</title>
+    <meta name="description" content="Spelinstruktioner för Mahjong-Treff: Gratis Mahjong Solitaire som webbläsarbaserat multiplayerspel. Spela mot riktiga motståndare, lär dig reglerna och poängsättningen.">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #2c3e50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+        .overlay-screen {
+            background: rgba(0, 0, 0, 0.85);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+        .menu-container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            line-height: 1.6;
+            text-align: left;
+        }
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 35px;
+            cursor: pointer;
+            color: #999;
+            line-height: 1;
+            background: none;
+			   border: none;
+			   padding: 0;
+			   font-family: inherit;
+        }
+        .close-btn:hover { color: #333; }
+
+        h1 { 
+            margin-top: 0; 
+            border-bottom: 2px solid #d2b48c; 
+            padding-bottom: 10px;
+            color: #2c3e50;
+            font-size: 1.8em;
+        }
+
+        .odt-section {
+/*            white-space: pre-wrap;*/
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay-screen">
+        <div class="menu-container">
+            <button type="button" class="close-btn" aria-label="Stäng">&times;</button>
+            <h1>Spelinstruktioner</h1>
+            
+            <h2 style="color: #2c3e50; border-bottom: 1px solid #d2b48c; padding-bottom: 6px; margin-top: 5px;">Spelmål &amp; regler</h2>
+            <div class="odt-section">Spelet är ett Mahjong-Patiensspel (Solitaire).</div>
+<div class="odt-section">Spelet är utformat som ett webbläsarspel för dator. <a href="lobby.html">Startsida</a></span></div> Det går även att spela på större surfplattor med en 
+„Fullscreen Browser App” (t.ex. „Fully Kiosk Browser”), men spelet är inte utformat för detta, 
+och vissa element är svåra att nå utan mus och externt tangentbord. Apple iPad kan ha problem med flerspelarspelen, prova med olika webbläsare, det har ofta visat sig fungera.
+Spelet kan även laddas på en smartphone, men på grund av den lilla skärmen är det knappast spelbart där, och det är inte heller utformat för de upplösningarna.
+Hela spelet är öppen källkod och står under GNU GPL-licensen.
+Bilder och spelbrädslayouter är hämtade från spelet "KMahjong", som står under samma licens<br><br>
+I alla spelvarianter finns det en sidopanel där du med reglage kan justera volymen och storleken på 
+spelbrickorna.<br><br>
+Målet med spelet är att ta bort så många brickor som möjligt från spelplanen.
+Detta görs genom att klicka på två brickor med samma symbol.
+En bricka kan bara klickas på om den ligger helt fri uppåt och åtminstone åt ena sidan (vänster eller höger).<br><br>
+För varje borttaget brickpar får spelaren en poäng.
+Klickas ett ytterligare par med samma symbol direkt efteråt, får spelaren fem poäng för detta och varje 
+efterföljande par med samma symbol.
+Töms spelplanen helt får spelaren 50 bonuspoäng. Dessutom får spelaren en extra poäng för varje sekund som 
+återstår tills speltiden når tre och en halv minut.
+Efter 3:30 minuters speltid finns denna bonus inte längre.<br><br>
+Brickorna för „blommor” (med siffra) och „årstider” (med skrivtecken) bildar varsin grupp där alla brickor 
+kan matchas med varandra.<br><br>
+Spelet slutar antingen genom att alla brickor tas bort från spelplanen, genom att man når en „återvändsgränd” 
+(det finns inga fler klickbara par) 
+eller genom att spelaren ger upp.<br><br>
+<h2 style="color: #2c3e50; border-bottom: 1px solid #d2b48c; padding-bottom: 6px; margin-top: 20px;">Mahjong Multiplayer – Spelvarianter</h2>
+Det finns tre spelvarianter tillgängliga:<br>
++ Enspelarläge – för en enskild spelare utan poängräkning i topplistan.<br>
++ Multiplayer Slumpmässig – spel mot en motståndare med slumpmässigt val av spelbräde.<br>
++ Multiplayer Val – spel mot en motståndare med val av spelbräde i förväg.<br><br>
+I enspelarläget kan man ångra ett eller flera drag och få ett tips på ett fritt brickpar.
+Det går att starta om samma spelbrädesuppställning eller påbörja ett nytt spel.
+Valet av spelbräde kan göras direkt. Det finns 62 olika spelbräden.
+Det finns en topplista, men den sparas endast lokalt på enheten. Den har ingen påverkan på den 
+globala rankningen.<br><br>
+Flerspelarspelen är begränsade till 17 brädor, som var och en är uppbyggda med 144 brickor.
+I varianten „Val” går det att välja ett specifikt bräde.<br><br>
+Matchningen mellan två spelare sker i flera steg.<br>
+Först för varianten Slumpmässig:<br>
+Två sökande spelare kopplas ihop direkt utan väntetid.
+<s>Steg 1: En motståndare söks med högst +-20 rankningsplatser från den egna rankningen.<br>
+Steg 2: Hittas ingen passande motståndare inom 30 sekunder kopplas spelaren ihop med den närmast liggande.</s><br><br>
+För varianten Val:<br>
+Spelare i layoutrummen kopplas ihop direkt, i första hand från samma layoutrum, i andra hand även från andra rum. Efter 15 sekunder utökas motståndarsökningen till huvudlobbyn.<br>
+<s>Steg 1: som i Slumpmässig<br>
+Steg 2: Efter att de 30 sekunderna löpt ut söks under ytterligare 30 sekunder efter en valfri motståndare för det valda brädet.<br>
+Steg 3: Därefter matchas spelaren med en valfri spelare från ett annat rum.
+Då används spelbrädet från den spelare som först startade motståndarsökningen.</s><br><br>
+Nya spelare som befinner sig på de nedersta 10 % av platserna kopplas ihop omedelbart. Bakgrunden till detta är att de inte ska tappa lusten redan under de första spelen om motståndarsökningen skulle ta längre tid.<br><br>
+Flerspelarspelen slutar precis som enspelarspelen, med en enda skillnad: 
+När den första spelaren har avslutat sitt spel får den andra spelaren ytterligare 30 sekunders 
+återstående speltid innan även dennes spel avslutas.<br><br>
+Poängen räknas för båda spelarna, det finns ingen „segerbonus” och inga poängavdrag.<br><br>
+Spelarnas rankning / placering baseras på deras totala poäng från alla hittills spelade partier.<br><br>
+Det finns chattfunktioner.
+I lobbyn finns ett stort chattfönster som alla inloggade användare kan använda.
+I flerspelarspelen finns en „tvåpersonerschatt”. Denna funktion går egentligen bara att använda på 
+surfplattor med ett externt tangentbord.
+För alla chattar gäller <a href="https://de.wikipedia.org/wiki/Netiquette" target="_blank" style="color: #2c3e50; text-decoration: underline;">nätetiketten</a>, se även avsnittet om detta i användarvillkoren. Chattarna sparas inte 
+permanent.
+I lobbychatten visas endast de senaste 50 meddelandena, äldre raderas automatiskt.
+Spelchattarna raderas automatiskt när spelplanen lämnas.<br><br>
+
+<span class="bold">Ha kul med spelandet!<br><a href="lobby.html">Startsida</a></span></div>
+        </div>
+    </div>
+    <script>
+        document.querySelector('.close-btn').addEventListener('click', () => window.history.back());
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                window.history.back();
+            }
+        });
+    </script>
+</body>
+</html>
