@@ -144,7 +144,8 @@
 			"endReasonVictory": "Sieg (Alle Steine gelöscht!)",
 			"endReasonDeadlock": "Sackgasse (Keine Züge mehr möglich)",
 			"endReasonForfeit": "Aufgabe durch Spieler",
-			"selection":"Zurück zur Auswahl"
+			"selection":"Zurück zur Auswahl",
+			"lobby":"Lobby"
 			
 	},
 	
