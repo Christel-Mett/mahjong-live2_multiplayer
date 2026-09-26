@@ -45,7 +45,7 @@ async function runCleanup() {
                 to: user.email,
                 bcc: BCC_EMAIL,
                 subject: 'Dein Mahjong-Account wird bald gelöscht / Your Mahjong account will be deleted soon',
-                text: `Hallo ${user.username},\n\ndu warst seit über 6 Monaten nicht mehr eingeloggt. Wenn du dich nicht innerhalb der nächsten ${GRACE_PERIOD_DAYS} Tage einmal anmeldest, wird dein Account aus Sicherheitsgründen gelöscht.\n\nDein Mahjong-Team\n\n---\n\nHello ${user.username},\n\nyou haven not logged in for over 6 months. If you don not log in again within the next ${GRACE_PERIOD_DAYS} days, your account will be deleted for security reasons.\n\nYour Mahjong Team`
+                text: `Hallo ${user.username},\n\ndu warst seit über 6 Monaten nicht mehr eingeloggt. Wenn du dich nicht innerhalb der nächsten ${GRACE_PERIOD_DAYS} Tage einmal anmeldest, wird dein Account aus Sicherheitsgründen gelöscht.\n\nDein Mahjong-Team\n\n---\n\nHello ${user.username},\n\nyou have not logged in for over 6 months. If you do not log in again within the next ${GRACE_PERIOD_DAYS} days, your account will be deleted for security reasons.\n\nYour Mahjong Team`
             };
 
             try {
