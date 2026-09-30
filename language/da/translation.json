@@ -224,7 +224,7 @@
 			"wrongUser":"Forkert brugernavn eller adgangskode",
 			"verifyMail":"Bekræft venligst først din e-mail.",
 			"sessionError":"Forbindelsesfejl ved oprettelse af session",
-			"mailSend1":"Vejledningen er sendt, hvis e-mailen findes.",
+			"mailSend1": "E-mailadresse eller brugernavn ukendt.",
 			"mailSend2":"Vejledningen er sendt",
 			"linkFalse":"Ugyldigt link",
 			"error":"Fejl",

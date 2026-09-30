@@ -226,7 +226,7 @@
 			"wrongUser":"Falscher Nutzername oder Passwort",
 			"verifyMail":"Bitte verifiziere erst deine E-Mail.",
 			"sessionError":"Verbindungsfehler beim Erstellen der Sitzung",
-			"mailSend1":"Anleitung wurde gesendet, falls die E-Mail existiert.",
+			"mailSend1": "Emailadresse oder Username unbekannt.",
 			"mailSend2":"Anleitung wurde gesendet",
 			"linkFalse":"Link ungültig",
 			"error":"Fehler",

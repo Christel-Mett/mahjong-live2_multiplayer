@@ -85,6 +85,10 @@ module.exports = {
     getUserByEmail: (email, callback) => {
         db.query('SELECT id FROM users WHERE email = ?', [email], callback);
     },
+    getUserByEmailOrUsername: (input, callback) => {
+    const sql = 'SELECT id, email FROM users WHERE email = ? OR LOWER(username) = LOWER(?) ORDER BY (email = ?) DESC LIMIT 1';
+        db.query(sql, [input, input, input], callback);
+    },
     getUserByToken: (token, callback) => {
         db.query('SELECT id FROM users WHERE token = ?', [token], callback);
     },

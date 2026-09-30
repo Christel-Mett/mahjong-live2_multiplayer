@@ -226,7 +226,7 @@
 			"wrongUser":"Fel användarnamn eller lösenord",
 			"verifyMail":"Verifiera först din e-postadress.",
 			"sessionError":"Anslutningsfel vid skapande av sessionen",
-			"mailSend1":"Instruktioner har skickats, om e-postadressen finns.",
+			"mailSend1": "E-postadress eller användarnamn okänt.",
 			"mailSend2":"Instruktioner har skickats",
 			"linkFalse":"Ogiltig länk",
 			"error":"Fel",

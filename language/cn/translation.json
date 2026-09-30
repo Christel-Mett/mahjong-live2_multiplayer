@@ -225,7 +225,7 @@
 			"wrongUser":"用户名或密码错误",
 			"verifyMail":"请先验证你的电子邮箱。",
 			"sessionError":"创建会话时连接错误",
-			"mailSend1":"如果该邮箱存在，验证说明已发送。",
+			"mailSend1": "邮箱地址或用户名未知。",
 			"mailSend2":"验证说明已发送",
 			"linkFalse":"链接无效",
 			"error":"错误",

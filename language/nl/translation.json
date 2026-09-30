@@ -225,7 +225,7 @@
 			"wrongUser":"Verkeerde gebruikersnaam of wachtwoord",
 			"verifyMail":"Verifieer eerst je e-mailadres.",
 			"sessionError":"Verbindingsfout bij het aanmaken van de sessie",
-			"mailSend1":"Instructies zijn verzonden, indien het e-mailadres bestaat.",
+			"mailSend1": "E-mailadres of gebruikersnaam onbekend.",
 			"mailSend2":"Instructies zijn verzonden",
 			"linkFalse":"Ongeldige link",
 			"error":"Fout",

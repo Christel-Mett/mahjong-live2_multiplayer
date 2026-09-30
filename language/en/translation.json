@@ -223,7 +223,7 @@
 			"wrongUser":"Wrong username or password",
 			"verifyMail":"Please verify your email first.",
 			"sessionError":"Connection error while creating the session",
-			"mailSend1":"Instructions have been sent, if the email exists.",
+			"mailSend1": "Email address or username unknown.",
 			"mailSend2":"Instructions have been sent",
 			"linkFalse":"Invalid link",
 			"error":"Error",

@@ -226,7 +226,7 @@
 			"wrongUser":"Nombre de usuario o contraseña incorrectos",
 			"verifyMail":"Verifica primero tu correo electrónico.",
 			"sessionError":"Error de conexión al crear la sesión",
-			"mailSend1":"Se han enviado las instrucciones, si el correo existe.",
+			"mailSend1": "Dirección de correo electrónico o nombre de usuario desconocido.",
 			"mailSend2":"Se han enviado las instrucciones",
 			"linkFalse":"Enlace no válido",
 			"error":"Error",

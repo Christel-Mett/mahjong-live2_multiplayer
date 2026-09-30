@@ -110,21 +110,25 @@ handleRegister: (socket, data, transporter) => {
         });
     },
 
-    // Teil 1: Mail-Anfrage für Passwort-Reset
-    handleForgotPassword: (socket, email, transporter) => {
-        dbInterface.getUserByEmail(email, (err, results) => {
-            if (err || results.length === 0) {
-                return socket.emit('forgot_password_response', { success: true, message: i18next.t('auth.mailSend1', { lng: socket.lang }) });
+    // Teil 1: Mail-Anfrage für Passwort-Reset (Eingabe: E-Mail ODER Username)
+    handleForgotPassword: (socket, input, transporter) => {
+        dbInterface.getUserByEmailOrUsername(input, (err, results) => {
+            if (err) {
+                return socket.emit('forgot_password_response', { success: false, message: i18next.t('auth.dbError', { lng: socket.lang }) });
+            }
+            if (results.length === 0) {
+                return socket.emit('forgot_password_response', { success: false, message: i18next.t('auth.mailSend1', { lng: socket.lang }) });
             }
 
+            const user = results[0];
             const resetToken = require('crypto').randomBytes(32).toString('hex');
-            dbInterface.updateUserToken(results[0].id, resetToken, (updateErr) => {
+            dbInterface.updateUserToken(user.id, resetToken, (updateErr) => {
                 if (updateErr) return;
 
                 const resetLink = `${process.env.APP_URL}/reset-password?token=${resetToken}`;
                 const mailOptions = {
                     from: `"Mahjong-Treff" <${process.env.MAIL_USER}>`,
-                    to: email,
+                    to: user.email,
                     subject: i18next.t('mail.subjectResetpassword', { lng: socket.lang }),
                     html: i18next.t('mail.htmlResetpassword', { lng: socket.lang, resetLink: resetLink })
                 };
