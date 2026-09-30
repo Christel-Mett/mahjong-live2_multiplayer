@@ -1,4 +1,4 @@
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 const nodemailer = require('nodemailer');
 require('dotenv').config({ path: require('path').resolve(__dirname, '.env') });
 
@@ -7,12 +7,16 @@ const INACTIVE_MONTHS = 6;
 const GRACE_PERIOD_DAYS = 7;
 const BCC_EMAIL = process.env.BCC_EMAIL;
 
-const db = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
-});
+let db;
+
+async function initDb() {
+    db = await mysql.createConnection({
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME
+    });
+}
 
 const transporter = nodemailer.createTransport({
     host: process.env.MAIL_HOST,
@@ -34,55 +38,55 @@ async function runCleanup() {
         AND deletion_warning_sent IS NULL
     `;
 
-    db.query(warnSql, [INACTIVE_MONTHS], async (err, usersToWarn) => {
-        if (err) return console.error("Fehler bei Warn-Abfrage:", err);
+    const [usersToWarn] = await db.query(warnSql, [INACTIVE_MONTHS]);
 
-        for (const user of usersToWarn) {
-            console.log(`-> Sende Warnung an: ${user.username} (${user.email})`);
+    for (const user of usersToWarn) {
+        console.log(`-> Sende Warnung an: ${user.username} (${user.email})`);
 
-            const mailOptions = {
-                from: `"Mahjong-Treff" <${process.env.MAIL_USER}>`,
-                to: user.email,
-                bcc: BCC_EMAIL,
-                subject: 'Dein Mahjong-Account wird bald gelöscht / Your Mahjong account will be deleted soon',
-                text: `Hallo ${user.username},\n\ndu warst seit über 6 Monaten nicht mehr eingeloggt. Wenn du dich nicht innerhalb der nächsten ${GRACE_PERIOD_DAYS} Tage einmal anmeldest, wird dein Account aus Sicherheitsgründen gelöscht.\n\nDein Mahjong-Team\n\n---\n\nHello ${user.username},\n\nyou have not logged in for over 6 months. If you do not log in again within the next ${GRACE_PERIOD_DAYS} days, your account will be deleted for security reasons.\n\nYour Mahjong Team`
-            };
+        const mailOptions = {
+            from: `"Mahjong-Treff" <${process.env.MAIL_USER}>`,
+            to: user.email,
+            bcc: BCC_EMAIL,
+            subject: 'Dein Mahjong-Account wird bald gelöscht / Your Mahjong account will be deleted soon',
+            text: `Hallo ${user.username},\n\ndu warst seit über 6 Monaten nicht mehr eingeloggt. Wenn du dich nicht innerhalb der nächsten ${GRACE_PERIOD_DAYS} Tage einmal anmeldest, wird dein Account aus Sicherheitsgründen gelöscht.\n\nDein Mahjong-Team\n\n---\n\nHello ${user.username},\n\nyou have not logged in for over 6 months. If you do not log in again within the next ${GRACE_PERIOD_DAYS} days, your account will be deleted for security reasons.\n\nYour Mahjong Team`
+        };
 
-            try {
-                await transporter.sendMail(mailOptions);
-                db.query("UPDATE users SET deletion_warning_sent = NOW() WHERE id = ?", [user.id]);
-            } catch (sendErr) {
-                console.error(`Fehler beim Mailversand an ${user.email}:`, sendErr);
-            }
+        try {
+            await transporter.sendMail(mailOptions);
+            await db.query("UPDATE users SET deletion_warning_sent = NOW() WHERE id = ?", [user.id]);
+        } catch (sendErr) {
+            console.error(`Fehler beim Mailversand an ${user.email}:`, sendErr);
         }
-    });
+    }
 
-		// TEIL 2: Löschen (Warnung ist älter als 7 Tage)
-		const deleteSql = `
-		    SELECT id, username, email FROM users 
-		    WHERE deletion_warning_sent < DATE_SUB(NOW(), INTERVAL ? DAY)
-		`;
-		db.query(deleteSql, [GRACE_PERIOD_DAYS], async (err, usersToDelete) => {
-		    if (err) return console.error("Fehler bei Lösch-Abfrage:", err);
-		    for (const user of usersToDelete) {
-		        const mailOptions = {
-		            from: `"Mahjong-Treff" <${process.env.MAIL_USER}>`,
-		            to: user.email,
-		            bcc: BCC_EMAIL,
-		            subject: 'Account gelöscht / Account deleted',
-		            text: `Hallo ${user.username},\n\nDein Account auf mahjong-treff.de wurde wegen Nichtnutzung unwiderruflich gelöscht. Alle deine Daten wurden aus dem Speicher entfernt. Wenn du wieder spielen möchtest musst du einen neuen Account erstellen.\n\nDein Mahjong-Team\n\n---\n\nHello ${user.username},\n\nYour account on mahjong-treff.de has been permanently deleted due to inactivity. All your data has been removed from our storage. If you want to play again, you will need to create a new account.\n\nYour Mahjong Team`
-		        };
-		        try {
-		            await transporter.sendMail(mailOptions);
-		        } catch (sendErr) {
-		            console.error(`Fehler beim Mailversand an ${user.email}, Löschung übersprungen:`, sendErr);
-		            continue;
-		        }
-		        db.query("DELETE FROM users WHERE id = ?", [user.id], (delErr) => {
-		            if (!delErr) console.log(`   [DELETED] User ${user.username} entfernt.`);
-		        });
-		    }
-		});
+    // TEIL 2: Löschen (Warnung ist älter als 7 Tage)
+    const deleteSql = `
+        SELECT id, username, email FROM users 
+        WHERE deletion_warning_sent < DATE_SUB(NOW(), INTERVAL ? DAY)
+    `;
+    const [usersToDelete] = await db.query(deleteSql, [GRACE_PERIOD_DAYS]);
+
+    for (const user of usersToDelete) {
+        const mailOptions = {
+            from: `"Mahjong-Treff" <${process.env.MAIL_USER}>`,
+            to: user.email,
+            bcc: BCC_EMAIL,
+            subject: 'Account gelöscht / Account deleted',
+            text: `Hallo ${user.username},\n\nDein Account auf mahjong-treff.de wurde wegen Nichtnutzung unwiderruflich gelöscht. Alle deine Daten wurden aus dem Speicher entfernt. Wenn du wieder spielen möchtest musst du einen neuen Account erstellen.\n\nDein Mahjong-Team\n\n---\n\nHello ${user.username},\n\nYour account on mahjong-treff.de has been permanently deleted due to inactivity. All your data has been removed from our storage. If you want to play again, you will need to create a new account.\n\nYour Mahjong Team`
+        };
+        try {
+            await transporter.sendMail(mailOptions);
+        } catch (sendErr) {
+            console.error(`Fehler beim Mailversand an ${user.email}, Löschung übersprungen:`, sendErr);
+            continue;
+        }
+        try {
+            await db.query("DELETE FROM users WHERE id = ?", [user.id]);
+            console.log(`   [DELETED] User ${user.username} entfernt.`);
+        } catch (delErr) {
+            console.error(`Fehler beim Löschen von ${user.username}:`, delErr);
+        }
+    }
 
     // TEIL 3: Unverifizierte Accounts nach 24h löschen
     const unverifiedSql = `
@@ -91,12 +95,10 @@ async function runCleanup() {
         AND created_at < DATE_SUB(NOW(), INTERVAL 1 DAY)
     `;
 
-    db.query(unverifiedSql, (err, result) => {
-        if (err) return console.error("Fehler bei Unverifiziert-Löschung:", err);
-        if (result && result.affectedRows > 0) {
-            console.log(`[CLEANUP] ${result.affectedRows} unverifizierte Accounts nach 24h entfernt.`);
-        }
-    });
+    const [unverifiedResult] = await db.query(unverifiedSql);
+    if (unverifiedResult.affectedRows > 0) {
+        console.log(`[CLEANUP] ${unverifiedResult.affectedRows} unverifizierte Accounts nach 24h entfernt.`);
+    }
 
     // TEIL 4: Verifizierte Accounts ohne Erst-Login nach 7 Tagen löschen
     const verifiedNoLoginSql = `
@@ -106,16 +108,17 @@ async function runCleanup() {
         AND created_at < DATE_SUB(NOW(), INTERVAL 7 DAY)
     `;
 
-    db.query(verifiedNoLoginSql, (err, result) => {
-        if (err) return console.error("Fehler bei Löschung verifizierter Null-Logins:", err);
-        if (result && result.affectedRows > 0) {
-            console.log(`[CLEANUP] ${result.affectedRows} verifizierte Accounts ohne Erst-Login nach 7 Tagen entfernt.`);
-        }
-    });
+    const [verifiedNoLoginResult] = await db.query(verifiedNoLoginSql);
+    if (verifiedNoLoginResult.affectedRows > 0) {
+        console.log(`[CLEANUP] ${verifiedNoLoginResult.affectedRows} verifizierte Accounts ohne Erst-Login nach 7 Tagen entfernt.`);
+    }
 }
 
 // Skript ausführen
-runCleanup().then(() => {
-    // Kurze Verzögerung vor dem Schließen, damit Mails sicher rausgehen
-    setTimeout(() => db.end(), 5000);
+initDb().then(() => {
+    return runCleanup();
+}).then(() => {
+    db.end();
+}).catch((err) => {
+    console.error("Fehler im Ablauf:", err);
 });
