@@ -31,7 +31,7 @@
 		"captcha":"Denne side er beskyttet af Altcha.",
 		"nameplaceholder": "Indtast navn...",
 		"passplaceholder": "Adgangskode...",
-		"pwresetprompt": "Indtast venligst din e-mailadresse for at modtage et nulstillingslink:"
+		"pwresetprompt": "Indtast din e-mailadresse eller dit brugernavn:"
 	
 	},
 	

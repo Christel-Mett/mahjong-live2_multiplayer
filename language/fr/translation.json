@@ -31,7 +31,7 @@
 		"captcha":"Cette page est protégée par Altcha.",
 		"nameplaceholder": "Entrer le nom...",
 		"passplaceholder": "Mot de passe...",
-		"pwresetprompt": "Indique ton adresse e-mail pour recevoir un lien de réinitialisation :"
+		"pwresetprompt": "Saisis ton adresse e-mail ou ton nom d'utilisateur :"
 	
 	},
 	

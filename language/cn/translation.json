@@ -31,7 +31,7 @@
 		"captcha":"本页面受 Altcha 保护。",
 		"nameplaceholder": "请输入用户名...",
 		"passplaceholder": "请输入密码...",
-		"pwresetprompt": "请输入你的电子邮箱地址以获取重置链接："
+		"pwresetprompt": "请输入您的邮箱地址或用户名:"
 	
 	},
 	

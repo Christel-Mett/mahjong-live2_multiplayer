@@ -31,7 +31,7 @@
 		"captcha":"This page is protected by Altcha.",
 		"nameplaceholder": "Enter name...",
 		"passplaceholder": "Password...",
-		"pwresetprompt": "Please enter your email address to receive a reset link:"
+		"pwresetprompt": "Please enter your email address or username:"
 	
 	},
 	
