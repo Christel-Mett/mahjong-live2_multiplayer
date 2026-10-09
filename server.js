@@ -382,6 +382,7 @@ io.on('connection', (socket) => {
 	        });
 	        userManager.updateLocation(username, 'searching');
 	        lobbyController.broadcastUserList(io);
+	        broadcastLayoutUserList(layoutId);
 	        console.log(`${username} wartet auf Layoutgegner: ${layoutId}.`);
 	    });
 	});
@@ -456,6 +457,9 @@ const alleLayouts = [
     'helios', 'inner_circle', 'km', 'mesh', 'rocket', 'the_door', 'time_tunnel'
 ];
 
+// Merkt sich pro User den Layoutraum, aus dem er ins Spiel gegangen ist (für die Anzeige "im Spiel" im Raum-Overlay)
+const ingameLayoutRoom = {};
+
 function broadcastLayoutStats() {
     const stats = {};
     alleLayouts.forEach(layoutId => {
@@ -470,14 +474,23 @@ function broadcastLayoutUserList(layoutId) {
     const roomName = `layout_${layoutId}`;
     const room = io.sockets.adapter.rooms.get(roomName);
 
-    if (!room || room.size === 0) {
-        io.to(roomName).emit('update_layout_userlist', []);
-        return;
-    }
+    // Spieler, die gerade im Raum sind
+    const usernames = room
+        ? Array.from(room)
+            .map(id => userManager.getUsernameBySocketId(id))
+            .filter(name => !!name)
+        : [];
 
-    const usernames = Array.from(room)
-        .map(id => userManager.getUsernameBySocketId(id))
-        .filter(name => !!name);
+    // Spieler, die aus diesem Raum ins Spiel gegangen sind und noch spielen
+    Object.keys(ingameLayoutRoom).forEach(name => {
+        const u = userManager.getUser(name);
+        if (!u || u.location !== 'ingame') {
+            // Spiel beendet oder User nicht mehr da -> Merkeintrag entfernen
+            delete ingameLayoutRoom[name];
+        } else if (ingameLayoutRoom[name] === layoutId && !usernames.includes(name)) {
+            usernames.push(name);
+        }
+    });
 
     if (usernames.length === 0) {
         io.to(roomName).emit('update_layout_userlist', []);
@@ -486,9 +499,26 @@ function broadcastLayoutUserList(layoutId) {
 
     dbInterface.getUsersByNames(usernames, (err, results) => {
         if (err) return;
-        io.to(roomName).emit('update_layout_userlist', results);
+        const displayData = results.map(r => {
+            const u = userManager.getUser(r.username);
+            const location = u ? u.location : null;
+            return {
+                ...r,
+                ingame: location === 'ingame',
+                searching: location === 'searching',
+                absent: location === 'absent'
+            };
+        });
+        io.to(roomName).emit('update_layout_userlist', displayData);
     });
 }
+
+// Bei jeder Änderung der Hauptlobby-Liste auch alle Raumlisten neu senden
+const originalBroadcastUserList = lobbyController.broadcastUserList;
+lobbyController.broadcastUserList = (ioArg) => {
+    originalBroadcastUserList(ioArg);
+    alleLayouts.forEach(id => broadcastLayoutUserList(id));
+};
 
 function startMultiplayerGame(p1, p2, layout) {
     const roomId = `room_${p1.socket.id}_${p2.socket.id}`;
@@ -518,11 +548,13 @@ function startMultiplayerGame(p1, p2, layout) {
 
     userManager.updateLocation(p1.name, 'ingame');
     userManager.updateLocation(p2.name, 'ingame');
+    [p1, p2].forEach(p => { if (p.layoutId) ingameLayoutRoom[p.name] = p.layoutId; });
     console.log(`Match gefunden: ${p1.name} vs ${p2.name} auf Layoutspiel: ${layout}.`);
 
     
     // Manuelles Update der Userliste für alle, da sich der Status geändert hat
     lobbyController.broadcastUserList(io);
+    new Set([p1.layoutId, p2.layoutId].filter(Boolean)).forEach(id => broadcastLayoutUserList(id));
 }
 
 setInterval(() => {

@@ -206,6 +206,38 @@
             color: #f1c40f;
             font-size: 0.9em;
         }
+        
+        .throbber {
+            display: inline-block;
+            position: relative;
+            width: 16px;
+            height: 16px;
+            vertical-align: middle;
+            margin-left: 6px;
+        }
+        .throbber span {
+            position: absolute;
+            width: 2px;
+            height: 5px;
+            background: #d2b48c;
+            border-radius: 1px;
+            left: 7px;
+            top: 1px;
+            transform-origin: 1px 7px;
+            animation: throbber-fade 0.8s linear infinite;
+        }
+        .throbber span:nth-child(1) { transform: rotate(0deg);   animation-delay:  0s;   }
+        .throbber span:nth-child(2) { transform: rotate(45deg);  animation-delay: -0.7s; }
+        .throbber span:nth-child(3) { transform: rotate(90deg);  animation-delay: -0.6s; }
+        .throbber span:nth-child(4) { transform: rotate(135deg); animation-delay: -0.5s; }
+        .throbber span:nth-child(5) { transform: rotate(180deg); animation-delay: -0.4s; }
+        .throbber span:nth-child(6) { transform: rotate(225deg); animation-delay: -0.3s; }
+        .throbber span:nth-child(7) { transform: rotate(270deg); animation-delay: -0.2s; }
+        .throbber span:nth-child(8) { transform: rotate(315deg); animation-delay: -0.1s; }
+        @keyframes throbber-fade {
+            0%   { opacity: 1;    }
+            100% { opacity: 0.15; }
+        }
 
         .btn-play {
             background: #27ae60;
@@ -413,16 +445,41 @@
 	        users.forEach((u) => {
 	            const div = document.createElement('div');
 	            div.className = 'user-entry';
-	            
-	            // Nutzt jetzt den echten 'rang' vom Server statt des Listen-Index
-	            div.innerHTML = `<span>${u.username}</span> <span class="user-rank">(${u.rang})</span>`;
-	            
-	            // Eigenen Namen zur besseren Orientierung hervorheben
-	            if (u.username === meinName) {
+	
+	            const nameSpan = document.createElement('span');
+	            nameSpan.textContent = u.username;
+	
+	            const rankSpan = document.createElement('span');
+	            rankSpan.className = 'user-rank';
+	            rankSpan.textContent = `(${u.rang})`;
+	
+	            // Farbhierarchie wie in lobby.html
+	            if (u.ingame) {
+	                // im Spiel -> gelb
+	                div.style.color = '#ede027';
+	                rankSpan.style.color = 'inherit';
+	                rankSpan.textContent += ` (${i18next.t('lobby.statusIngame')})`;
+	            } else if (u.absent) {
+	                // abwesend -> grau
+	                div.style.color = '#7f8c8d';
+	                rankSpan.style.color = 'inherit';
+	                rankSpan.textContent += ` (${i18next.t('lobby.statusAbsent')})`;
+	            } else if (u.username === meinName) {
+	                // ich selbst -> grün
 	                div.style.color = '#2ecc71';
 	                div.style.fontWeight = 'bold';
 	            }
 	
+	            // Throbber für Spieler in der Suche
+	            if (u.searching) {
+	                const throbber = document.createElement('span');
+	                throbber.className = 'throbber';
+	                for (let i = 0; i < 8; i++) throbber.appendChild(document.createElement('span'));
+	                rankSpan.appendChild(throbber);
+	            }
+	
+	            div.appendChild(nameSpan);
+	            div.appendChild(rankSpan);
 	            list.appendChild(div);
 	        });
 	    }
