@@ -151,6 +151,7 @@
 		"singleserver": {
 		"layoutSingleOnly": "仅限单人",
 		"layoutBoth": "单人 & 多人",
+		"layoutRandom": "随机布局",
 		"layoutNames": {
 			"4_winds": "四风",
 			"alien": "外星人",

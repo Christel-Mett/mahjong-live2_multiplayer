@@ -149,6 +149,7 @@
 		"singleserver": {
 		"layoutSingleOnly": "single only",
 		"layoutBoth": "Single & Multi",
+		"layoutRandom": "Random board",
 		"layoutNames": {
 			"4_winds": "4 Winds",
 			"alien": "Alien",

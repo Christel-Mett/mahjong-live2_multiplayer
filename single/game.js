@@ -24,6 +24,15 @@ function getLayoutDisplayName(key) {
     return `${i18next.t('singleserver.layoutNames.' + key, key)} (${suffix})`;
 }
 
+// Fügt den Eintrag "Zufallsbrett" als erste Option ins Layout-Dropdown ein
+function fuegeZufallsOptionEin(sel) {
+    const o = document.createElement('option');
+    o.value = ZUFALL_WERT;
+    o.text = i18next.t('singleserver.layoutRandom', 'Zufallsbrett');
+    if (zufallsModus) o.selected = true;
+    sel.appendChild(o);
+}
+
 // Sobald i18next fertig geladen hat: Layoutname-Anzeige und Dropdown mit den jetzt verfügbaren Übersetzungen neu aufbauen
 document.addEventListener('i18nReady', () => {
     const label = document.getElementById('layoutName');
@@ -32,10 +41,11 @@ document.addEventListener('i18nReady', () => {
     const sel = document.getElementById('layoutSelect');
     if (sel) {
         sel.innerHTML = '';
+        fuegeZufallsOptionEin(sel);
         const sortierteLayouts = [...meineLayouts].sort((a, b) => getLayoutDisplayName(a).localeCompare(getLayoutDisplayName(b), 'de'));
         sortierteLayouts.forEach(l => {
             const o = document.createElement('option'); o.value = l; o.text = getLayoutDisplayName(l);
-            if (l === aktuelleFigur) o.selected = true;
+            if (!zufallsModus && l === aktuelleFigur) o.selected = true;
             sel.appendChild(o);
         });
     }
@@ -344,7 +354,10 @@ function checkGameState() {
 }
 
 function gleichesBrettErneutSpielen() { init(initialerSeedFuerDiesesBrett); }
-function neuesSpielStarten() { init(); }
+function neuesSpielStarten() {
+    if (zufallsModus) waehleZufallsLayout();
+    init();
+}
 
 
 function finishGame(gewonnen) {
@@ -529,7 +542,29 @@ function updateZoom(val) {
     updateCamera();
 }
 
-function wechsleLayout(val) { aktuelleFigur = val; localStorage.setItem('mahjongLayout', val); init(); }
+const ZUFALL_WERT = '__zufall__';
+let zufallsModus = localStorage.getItem('mahjongZufall') === '1';
+
+// Wählt ein zufälliges Brett (nicht das aktuelle) und merkt es als aktuelles Layout
+function waehleZufallsLayout() {
+    const kandidaten = meineLayouts.filter(l => l !== aktuelleFigur);
+    aktuelleFigur = kandidaten[Math.floor(Math.random() * kandidaten.length)];
+    localStorage.setItem('mahjongLayout', aktuelleFigur);
+}
+
+function wechsleLayout(val) {
+    if (val === ZUFALL_WERT) {
+        zufallsModus = true;
+        waehleZufallsLayout();
+    } else {
+        zufallsModus = false;
+        aktuelleFigur = val;
+        localStorage.setItem('mahjongLayout', val);
+    }
+    localStorage.setItem('mahjongZufall', zufallsModus ? '1' : '0');
+    init();
+}
+
 function updateScoreDisplay() { document.getElementById('score').innerText = punkte; }
 
 function startTimer() {
@@ -688,10 +723,11 @@ function animate(now) {
 document.addEventListener('DOMContentLoaded', () => {
     const sel = document.getElementById('layoutSelect');
     if (sel) {
+        fuegeZufallsOptionEin(sel);        
         const sortierteLayouts = [...meineLayouts].sort((a, b) => getLayoutDisplayName(a).localeCompare(getLayoutDisplayName(b), 'de'));
         sortierteLayouts.forEach(l => {
             const o = document.createElement('option'); o.value = l; o.text = getLayoutDisplayName(l);
-            if (l === aktuelleFigur) o.selected = true; sel.appendChild(o);
+            if (!zufallsModus && l === aktuelleFigur) o.selected = true; sel.appendChild(o);
         });
     }
     updateVolume(aktuelleLautstaerke);

@@ -152,6 +152,7 @@
 		"singleserver": {
 		"layoutSingleOnly": "nur single",
 		"layoutBoth": "Single & Multi",
+		"layoutRandom": "Zufallsbrett",
 		"layoutNames": {
 			"4_winds": "4 Winde",
 			"alien": "Alien",

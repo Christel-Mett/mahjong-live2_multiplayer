@@ -152,6 +152,7 @@
 		"singleserver": {
 		"layoutSingleOnly": "solo uniquement",
 		"layoutBoth": "Solo et multijoueur",
+		"layoutRandom": "Plateau aléatoire",
 		"layoutNames": {
 			"4_winds": "4 vents",
 			"alien": "Alien",

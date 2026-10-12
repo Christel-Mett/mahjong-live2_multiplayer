@@ -152,6 +152,7 @@
 		"singleserver": {
 		"layoutSingleOnly": "endast enspelare",
 		"layoutBoth": "Enspelare och flerspelare",
+		"layoutRandom": "Slumpmässigt bräde",
 		"layoutNames": {
 			"4_winds": "4 vindar",
 			"alien": "Alien",

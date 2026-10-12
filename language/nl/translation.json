@@ -151,6 +151,7 @@
 		"singleserver": {
 		"layoutSingleOnly": "alleen single",
 		"layoutBoth": "Single & Multi",
+		"layoutRandom": "Willekeurig bord",
 		"layoutNames": {
 			"4_winds": "4 Winden",
 			"alien": "Alien",

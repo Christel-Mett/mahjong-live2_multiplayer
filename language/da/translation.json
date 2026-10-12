@@ -150,6 +150,7 @@
 		"singleserver": {
 		"layoutSingleOnly": "kun single",
 		"layoutBoth": "Single & Multi",
+		"layoutRandom": "Tilfældigt bræt",
 		"layoutNames": {
 			"4_winds": "4 vinde",
 			"alien": "Alien",
