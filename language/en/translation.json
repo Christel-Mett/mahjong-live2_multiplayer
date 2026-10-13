@@ -102,6 +102,7 @@
 		"pwInput": "New password",
 		"pwRepeat": "Repeat password",
 		"pwSave": "Save",
+		"success":"Success! Your password has been changed.",
 		"invalidToken": "Invalid session token.",
 		"pwTooShort": "Password must be at least 6 characters.",
 		"pwMismatch": "Passwords do not match!",
@@ -130,7 +131,7 @@
 			"volume":"Volume:",
 			"zoom":"Camera zoom",
 			"hint":"Opening these links may interrupt the game.",
-			"vicory":"Victory!",
+			"victory":"Victory!",
 			"noMovesLeft": "No more moves!",
 			"opponentGame":"Live View",
 			"opponentName":"Opponent: ",
@@ -143,7 +144,8 @@
 			"endReasonVictory": "Victory (All tiles cleared!)",
 			"endReasonDeadlock": "Deadlock (No more moves possible)",
 			"endReasonForfeit": "Forfeited by player",
-			"selection":"Back to selection"
+			"selection":"Back to selection",
+			"lobby":"Lobby"
 	},
 	
 		"singleserver": {

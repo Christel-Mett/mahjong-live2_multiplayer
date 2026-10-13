@@ -102,6 +102,7 @@
 		"pwInput": "Nyt kodeord",
 		"pwRepeat": "Gentag kodeord",
 		"pwSave": "Gem",
+		"success":"Succes! Din adgangskode er blevet ændret.",
 		"invalidToken": "Ugyldigt sessionstoken.",
 		"pwTooShort": "Kodeordet skal være mindst 6 tegn.",
 		"pwMismatch": "Kodeordene er ikke ens!",
@@ -143,7 +144,8 @@
 			"endReasonVictory": "Sejr (Alle brikker fjernet!)",
 			"endReasonDeadlock": "Dødvande (Ingen flere træk mulige)",
 			"endReasonForfeit": "Opgivet af spiller",
-			"selection":"Tilbage til udvalget"
+			"selection":"Tilbage til udvalget",
+			"lobby":"Lobby"
 			
 	},
 	

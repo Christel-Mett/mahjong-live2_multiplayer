@@ -144,7 +144,8 @@
 			"endReasonVictory": "胜利（消除了所有麻将牌！）",
 			"endReasonDeadlock": "死局（无可匹配的组合）",
 			"endReasonForfeit": "玩家放弃游戏",
-			"selection":"返回选择"
+			"selection":"返回选择",
+			"lobby":"大厅"
 			
 	},
 	

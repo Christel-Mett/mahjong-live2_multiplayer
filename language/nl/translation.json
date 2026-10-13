@@ -144,7 +144,8 @@
 			"endReasonVictory": "Overwinning (alle stenen verwijderd!)",
 			"endReasonDeadlock": "Impasse (geen zetten meer mogelijk)",
 			"endReasonForfeit": "Opgave door speler",
-			"selection":"Terug naar keuzemenu"
+			"selection":"Terug naar keuzemenu",
+			"lobby":"Lobby"
 			
 	},
 	
