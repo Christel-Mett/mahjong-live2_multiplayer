@@ -432,9 +432,10 @@ io.on('connection', (socket) => {
 	    }
 	});
 
-    socket.on('disconnect', () => {
+    socket.on('disconnect', (reason) => {
     	  matchmaking.removeFromQueues(socket.id);
         const username = userManager.getUsernameBySocketId(socket.id);
+        console.log(`[disconnect] ${username || 'unbekannt'} (${socket.id}): ${reason}`);
         if (username) {
         gameController.cleanupPlayerGame(io, socket.id);
         gameController.handleGracePeriodLeave(socket.id);
